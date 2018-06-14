@@ -9,6 +9,47 @@ import math
 
 __all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101']
 
+class CifarClassifier(nn.Module):
+
+    def __init__(self, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+
+        super(CifarClassifier, self).__init__()
+        self.inner_channels = 128
+
+        self.features = nn.Sequential(
+            nn.Conv2d(num_channels, self.inner_channels, kernel_size=3,
+                      stride=2, padding=1),
+            nn.BatchNorm2d(self.inner_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(self.inner_channels, self.inner_channels, kernel_size=3,
+                      stride=2, padding=1),
+            nn.BatchNorm2d(self.inner_channels),
+            nn.ReLU(inplace=True),
+            nn.AvgPool2d(2, 2)
+        )
+
+        self.classifier = nn.Linear(self.inner_channels, num_classes)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+
+        x = self.features(x)
+        x = x.view(x.size(0), self.inner_channels)
+        x = self.classifier(x)
+        return x
+
 
 class Elastic_ResNet34(nn.Module):
 
@@ -299,6 +340,47 @@ class Elastic_ResNet34(nn.Module):
 class Elastic_ResNet18(nn.Module):
     def __init__(self, args):
 
+        self.subnets = nn.ModuleList(self.build_modules(self.num_channels))
+
+
+    def build_modules(self, num_channels):  
+        """Builds all blocks and classifiers and add it
+        into an array in the order of the format:
+        [[block]*num_blocks [classifier]*num_blocks]
+        where the i'th block corresponds to the (i+num_block) classifier.
+
+        :param num_channels: number of input channels
+        :return: An array with all blocks and classifiers
+        """
+
+        # Init the blocks & classifiers data structure
+        modules = [None] * self.num_blocks * 2
+        model = models.resnet34(pretrained=True)
+        for i in range(0, self.num_blocks):
+            print ('|-----------------Block {:0>2d}----------------|'.format(i+1))
+
+            # Add block
+            modules[i], num_channels = self.create_block(num_channels, i)
+
+            # Calculate the last scale (smallest) channels size
+            channels_in_last_layer = num_channels *\
+                                     self.growth_factor[self.num_scales]
+
+            # Add a classifier that belongs to the i'th block
+            modules[i + self.num_blocks] = \
+                CifarClassifier(channels_in_last_layer, self.num_classes)
+        return modules        
+    def forward(self, x):
+        outputs = [None] * self.num_blocks
+        cur_input = x
+    
+        block = self.subnets
+        cur_input = block_output = block(cur_input)
+
+        class_output = self.subnets(block_output[-1])
+        outputs = class_output
+
+        return outputs
 
 class Elastic_ResNet101(nn.Module):
     def __init__(self, args):
