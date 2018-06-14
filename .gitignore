@@ -6,5 +6,11 @@
 #ignore tensorboard file
 *.yi
 
+#temporal python file
+*.pyc
 
-#ignore 
+#ignore checkpoint file
+*.t7
+
+#ignore data folder
+./data/
