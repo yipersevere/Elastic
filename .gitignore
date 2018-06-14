@@ -13,4 +13,4 @@
 *.t7
 
 #ignore data folder
-./data/
+./data/*
