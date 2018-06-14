@@ -1,0 +1,160 @@
+ -----------------------------------Epoch: 0------------------------------------------
+[11.06.2018 15:23:26] 
+ Learning rate on epoch 0 is : 0.001000
+/home/yi/anaconda3/lib/python3.6/site-packages/matplotlib/cbook/deprecation.py:106: MatplotlibDeprecationWarning: The set_color_cycle attribute was deprecated in version 1.5. Use set_prop_cycle instead.
+  warnings.warn(message, mplDeprecation, stacklevel=1)
+/home/yi/anaconda3/lib/python3.6/site-packages/matplotlib/tight_layout.py:222: UserWarning: tight_layout : falling back to Agg renderer
+  warnings.warn("tight_layout : falling back to Agg renderer")
+
+Epoch 00001: val_loss improved from 312.25779 to 34.79642, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 15:47:21] 
+ -----------------------------------Epoch: 1------------------------------------------
+[11.06.2018 15:48:38] 
+ Learning rate on epoch 1 is : 0.001000
+
+Epoch 00002: val_loss improved from 34.79642 to 28.48309, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 16:08:47] 
+ -----------------------------------Epoch: 2------------------------------------------
+[11.06.2018 16:13:32] 
+ Learning rate on epoch 2 is : 0.001000
+
+Epoch 00003: val_loss improved from 28.48309 to 26.58755, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 16:37:30] 
+ -----------------------------------Epoch: 3------------------------------------------
+[11.06.2018 16:38:53] 
+ Learning rate on epoch 3 is : 0.001000
+
+Epoch 00004: val_loss did not improve
+[11.06.2018 16:59:27] 
+ -----------------------------------Epoch: 4------------------------------------------
+[11.06.2018 17:04:33] 
+ Learning rate on epoch 4 is : 0.001000
+
+Epoch 00005: val_loss improved from 26.58755 to 26.47995, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 17:37:06] 
+ -----------------------------------Epoch: 5------------------------------------------
+[11.06.2018 17:38:31] 
+ Learning rate on epoch 5 is : 0.001000
+
+Epoch 00006: val_loss improved from 26.47995 to 25.07030, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 18:11:50] 
+ -----------------------------------Epoch: 6------------------------------------------
+[11.06.2018 18:16:53] 
+ Learning rate on epoch 6 is : 0.001000
+
+Epoch 00007: val_loss improved from 25.07030 to 23.56622, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 18:47:17] 
+ -----------------------------------Epoch: 7------------------------------------------
+[11.06.2018 18:48:40] 
+ Learning rate on epoch 7 is : 0.001000
+
+Epoch 00008: val_loss did not improve
+[11.06.2018 19:09:07] 
+ -----------------------------------Epoch: 8------------------------------------------
+[11.06.2018 19:14:04] 
+ Learning rate on epoch 8 is : 0.001000
+
+Epoch 00009: val_loss did not improve
+[11.06.2018 19:38:19] 
+ -----------------------------------Epoch: 9------------------------------------------
+[11.06.2018 19:39:42] 
+ Learning rate on epoch 9 is : 0.001000
+
+Epoch 00010: val_loss did not improve
+[11.06.2018 20:00:41] 
+ -----------------------------------Epoch: 10------------------------------------------
+[11.06.2018 20:05:49] 
+ Learning rate on epoch 10 is : 0.001000
+
+Epoch 00011: val_loss did not improve
+[11.06.2018 20:30:11] 
+ -----------------------------------Epoch: 11------------------------------------------
+[11.06.2018 20:31:37] 
+ Learning rate on epoch 11 is : 0.001000
+
+Epoch 00012: val_loss did not improve
+[11.06.2018 20:51:55] 
+ -----------------------------------Epoch: 12------------------------------------------
+[11.06.2018 20:56:44] 
+ Learning rate on epoch 12 is : 0.001000
+
+Epoch 00013: val_loss did not improve
+[11.06.2018 21:20:08] 
+ -----------------------------------Epoch: 13------------------------------------------
+[11.06.2018 21:21:25] 
+ Learning rate on epoch 13 is : 0.000100
+
+Epoch 00014: val_loss improved from 23.56622 to 19.31581, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 21:42:04] 
+ -----------------------------------Epoch: 14------------------------------------------
+[11.06.2018 21:47:10] 
+ Learning rate on epoch 14 is : 0.000100
+
+Epoch 00015: val_loss improved from 19.31581 to 19.29055, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 22:10:27] 
+ -----------------------------------Epoch: 15------------------------------------------
+[11.06.2018 22:12:05] 
+ Learning rate on epoch 15 is : 0.000100
+
+Epoch 00016: val_loss improved from 19.29055 to 19.15986, saving model to /media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/Elastic_ResNet152/Classification_Accuracy/CIFAR10_from_all_intermediate_resblock_Elastic_ResNet152_weights_1/2018-06-11-13-09-03model.best.hdf5
+[11.06.2018 22:32:19] 
+ -----------------------------------Epoch: 16------------------------------------------
+[11.06.2018 22:37:45] 
+ Learning rate on epoch 16 is : 0.000100
+
+Epoch 00017: val_loss did not improve
+[11.06.2018 23:00:57] 
+ -----------------------------------Epoch: 17------------------------------------------
+[11.06.2018 23:02:13] 
+ Learning rate on epoch 17 is : 0.000100
+
+Epoch 00018: val_loss did not improve
+[11.06.2018 23:23:31] 
+ -----------------------------------Epoch: 18------------------------------------------
+[11.06.2018 23:28:55] 
+ Learning rate on epoch 18 is : 0.000100
+
+Epoch 00019: val_loss did not improve
+[11.06.2018 23:53:50] 
+ -----------------------------------Epoch: 19------------------------------------------
+[11.06.2018 23:55:10] 
+ Learning rate on epoch 19 is : 0.000100
+
+Epoch 00020: val_loss did not improve
+[12.06.2018 00:15:47] 
+ -----------------------------------Epoch: 20------------------------------------------
+[12.06.2018 00:20:56] 
+ Learning rate on epoch 20 is : 0.000100
+
+Epoch 00021: val_loss did not improve
+[12.06.2018 00:44:33] 
+ -----------------------------------Epoch: 21------------------------------------------
+[12.06.2018 00:45:54] 
+ Learning rate on epoch 21 is : 0.000100
+
+Epoch 00022: val_loss did not improve
+[12.06.2018 01:06:17] 
+ -----------------------------------Epoch: 22------------------------------------------
+[12.06.2018 01:11:22] 
+ Learning rate on epoch 22 is : 0.000010
+
+Epoch 00023: val_loss did not improve
+[12.06.2018 01:34:19] 
+ -----------------------------------Epoch: 23------------------------------------------
+[12.06.2018 01:35:40] 
+ Learning rate on epoch 23 is : 0.000010
+
+Epoch 00024: val_loss did not improve
+[12.06.2018 01:55:48] 
+ -----------------------------------Epoch: 24------------------------------------------
+[12.06.2018 02:00:21] 
+ Learning rate on epoch 24 is : 0.000010
+
+Epoch 00025: val_loss did not improve
+[12.06.2018 02:23:46] 
+ -----------------------------------Epoch: 25------------------------------------------
+[12.06.2018 02:25:03] 
+ Learning rate on epoch 25 is : 0.000010
+
+Epoch 00026: val_loss did not improve
+
