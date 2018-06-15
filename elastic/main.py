@@ -164,8 +164,10 @@ def main(**kwargs):
 def train(model, X_val, y_val, multi_generator, batch_size, num_outputs, epoch, steps):
 
 
-    LOG("=====================Pretraining model -- %s ==============================" % args.model_name, logFile)
-    LOG("===================training the intermediate layers, not including frozen layers for %d epochs==================" % epoch, logFile)
+    LOG("=====================Pretraining model --intermediate layers outputs classifers + final outputs layers %s ==============================" % args.model_name, logFile)
+    LOG("===================training the intermediate layers outputs classifers, which I add (global average pooling 2D, dropout, dense) \
+                    layers, and also train final output layers since include_top = False, so it also needs to trian final outputs layers. \
+                    not including frozen layers for %d epochs==================" % epoch, logFile)
     # 这里的意思是训练最后一层全连接层的权重，但是没有包括之前forze
     model.fit_generator(multi_generator,
                         epochs=epoch,
@@ -188,7 +190,7 @@ def eval(model, X_val, y_val, x_test, y_test, multi_generator, batch_size, num_o
     # 经过训练之后， 再次重新编译神经网络模型
     model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=args.learning_rate), metrics=['accuracy'])
 
-    LOG("==================== trainingg previous-frozen layers and the intermedate layers ====================", logFile)
+    LOG("==================== trainingg all previous-frozen layers and the intermedate layers outputs classifiers, final outputs layers====================", logFile)
 
         # Print the Model summary
     log_summary(model, logFile)
