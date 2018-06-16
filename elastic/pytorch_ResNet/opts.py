@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser(description='PyTorch Elastic-ResNet implementat
 parser.add_argument('--data', type=str, help="training and testing data, data=cifar10; data=cifar100", default="cifar10")
 parser.add_argument('--num_classes', type=int, help="classification number, 10 or 100", default=10)
 parser.add_argument('--target_size', type=tuple, help='default target size is (224,224,3)', default=(224,224,3))
-parser.add_argument('--epoch', type=int, help="epoch number, default 1, set 100 or 1000", default=1)
+parser.add_argument('--epochs', type=int, help="epoch number, default 1, set 100 or 1000", default=1)
 parser.add_argument('--add_intermediate_layers_number', type=int, 
                     help="add intermediate layers, 2: all intermediate layers; "
                                                     "1: skip early intermediate layers output;"
@@ -14,8 +14,8 @@ parser.add_argument('--add_intermediate_layers_number', type=int,
 # parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet")
 # parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_all_intermediate_resblock_Elastic_ResNet50")
 
-parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet152")
-parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_from_0_intermediate_resblock_Elastic_ResNet152")
+parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet50")
+parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_from_0_intermediate_resblock_Elastic_ResNet50")
 
 parser.add_argument('--dropout_rate', type=float, help="dropout rate, (default: 0.2)", default=0.2)
 parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 32)", default=16)
@@ -30,5 +30,9 @@ parser.add_argument('--weight-decay', '--wd', default=1e-5, type=float,
 parser.add_argument('--print-freq', '-p', default=10, type=int,
                     metavar='N', help='print frequency (default: 10)')
 parser.add_argument('--gpu', default="0", help='gpu available')
+parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
+                    help='Manual seed (default: 0)')
+parser.add_argument('--no-save-model', dest='no_save_model', action='store_true',
+                    help='Only save best model (default: false)')
 # Init Environment
 args = parser.parse_args()

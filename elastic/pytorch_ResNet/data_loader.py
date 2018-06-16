@@ -12,7 +12,25 @@ from utils import plot_images
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
+import torch.nn as nn
+from keras.applications.inception_v3 import preprocess_input
+import scipy
+# from . import imagenet_utils
+# from .imagenet_utils import decode_predictions
+# from .imagenet_utils import _obtain_input_shape
 
+target_size = (224,224,3)
+
+# def preprocess_input(x):
+#     """Preprocesses a numpy array encoding a batch of images.
+
+#     # Arguments
+#         x: a 4D numpy array consists of RGB values within [0, 255].
+
+#     # Returns
+#         Preprocessed array.
+#     """
+#     return imagenet_utils.preprocess_input(x, mode='torch')
 
 def get_train_valid_loader(data_dir,
                            batch_size,
@@ -60,6 +78,7 @@ def get_train_valid_loader(data_dir,
 
     # define transforms
     valid_transform = transforms.Compose([
+            transforms.Pad(padding=96, padding_mode='reflect'),
             transforms.ToTensor(),
             normalize,
     ])
@@ -72,20 +91,34 @@ def get_train_valid_loader(data_dir,
         ])
     else:
         train_transform = transforms.Compose([
+            transforms.Pad(padding=96, padding_mode='reflect'),
             transforms.ToTensor(),
             normalize,
         ])
-
+    # train_transform_origin = transforms.Compose([
+    #     transforms.ToTensor(),
+    #     normalize,
+    # ])
     # load the dataset
     train_dataset = datasets.CIFAR10(
         root=data_dir, train=True,
         download=True, transform=train_transform,
     )
+    # train_dataset_origin = datasets.CIFAR10(
+    #     root=data_dir, train=True,
+    #     download=True, transform=train_transform_origin,
+    # )
 
     valid_dataset = datasets.CIFAR10(
         root=data_dir, train=True,
         download=True, transform=valid_transform,
     )
+
+    # train_dataset = np.array([scipy.misc.imresize(train_dataset[i], target_size) for i in range(0, len(train_dataset))]).astype('float32')
+    # train_dataset = preprocess_input(big_train_dataset, mode="torch")
+
+
+
 
     num_train = len(train_dataset)
     indices = list(range(num_train))
@@ -153,6 +186,7 @@ def get_test_loader(data_dir,
 
     # define transform
     transform = transforms.Compose([
+        transforms.Pad(padding=96, padding_mode='reflect'),
         transforms.ToTensor(),
         normalize,
     ])

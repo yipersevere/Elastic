@@ -90,7 +90,7 @@ def main(**kwargs):
 
     global logFile
     logFile = path + os.sep + "log.txt"
-
+    X_train, y_train, X_val, y_val, x_test, y_test= load_data(data = args.data, target_size = args.target_size, num_class = args.num_classes, test_percent=0.2)
     LOG("Pre-training " + args.data + " on " + args.model_name+ "...", logFile)
 
     if args.layers_weight_change == 1:

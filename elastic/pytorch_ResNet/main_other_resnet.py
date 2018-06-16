@@ -4,6 +4,7 @@ import torchvision.models as models
 import torch.optim as optim
 import torchvision.models.resnet
 import torchvision.datasets as datasets
+import torch.backends.cudnn as cudnn
 from opts import args
 from helper import load_data, multi_output_generator, LOG, log_summary, log_error, HistoryLogger
 
@@ -12,8 +13,9 @@ import time
 import datetime
 import shutil
 import sys
+from torchsummary import summary
 
-from Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101
+from Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet50, Elastic_ResNet101
 from utils import measure_model
 from data_loader import get_train_valid_loader, get_test_loader
 # Init Torch/Cuda
@@ -36,6 +38,8 @@ def main(**kwargs):
         args.__setattr__(arg, v)
     print(args)
 
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
     if args.data in ['cifar10', 'cifar100']:
         IMAGE_SIZE = 32
     else:
@@ -57,18 +61,20 @@ def main(**kwargs):
     timestamp = datetime.datetime.now()
     ts_str = timestamp.strftime('%Y-%m-%d-%H-%M-%S')
     path = folder_path + os.sep + instanceName + os.sep + args.model_name + os.sep + ts_str
+    
     tensorboard_folder = path + os.sep + "Graph"
     os.makedirs(path)
+    args.savedir = path
 
     global logFile
     logFile = path + os.sep + "log.txt"    
-
+    args.filename = logFile
 
     # Data loading
-    data_folder = "/home/yi/Music/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     train_loader, val_loader = get_train_valid_loader(data_dir=data_folder, batch_size=args.batch_size, augment=False,
-                                                    random_seed=20180614, valid_size=0.1, shuffle=True,show_sample=False,
+                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=True,
                                                     num_workers=1,pin_memory=True)
     test_loader = get_test_loader(data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
                                     num_workers=1,pin_memory=True)
@@ -116,25 +122,33 @@ def main(**kwargs):
         sys.exit()   
     
     if args.model == "Elastic_ResNet18":
-        elasicNN_ResNet18 = Elastic_ResNet18(args)
+        elasicNN_ResNet18 = Elastic_ResNet18()
         model = elasicNN_ResNet18
         print("using Elastic_ResNet18 class")
 
-    elif args.model == "Elastic_ResNet34":
-        elasicNN_ResNet34 = Elastic_ResNet34(args)
-        model = elasicNN_ResNet34
-        print("using Elastic_ResNet34 class")
+    elif args.model == "Elastic_ResNet50":
+        elasicNN_ResNet50 = Elastic_ResNet50()
+        model = elasicNN_ResNet50
+        print("using Elastic_ResNet50 class")
 
-    elif args.model == "Elastic_ResNet101":
-        elasticNN_ResNet101 = Elastic_ResNet101(args)
-        model = elasticNN_ResNet101
-        print("using Elastic_ResNet101 class")
+    # elif args.model == "Elastic_ResNet34":
+    #     elasicNN_ResNet34 = Elastic_ResNet34(args)
+    #     model = elasicNN_ResNet34
+    #     print("using Elastic_ResNet34 class")
+
+    # elif args.model == "Elastic_ResNet101":
+    #     elasticNN_ResNet101 = Elastic_ResNet101(args)
+    #     model = elasticNN_ResNet101
+    #     print("using Elastic_ResNet101 class")
 
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
-
-    model = torch.nn.DataParallel(model).cuda()
+    
+    model = model.to(device)
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True  #这个是干什么的
 
     # Define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
@@ -162,16 +176,19 @@ def main(**kwargs):
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
             'optimizer': optimizer.state_dict(),
-        }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f\n" %
-            (val_prec1, tr_prec1, loss, lr))
+        }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1, loss, lr))
 
     # TestModel and return
     model = model.cpu().module
     model = nn.DataParallel(model).cuda()
     print(model)
+
     validate(test_loader, model, criterion)
-    n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
-    print('Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6))
+    # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
+    # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
+    # LOG(FLOPS_result, logFile)
+    # print(FLOPS_result)
+    print("============Finish============")
     print('Please run again with --resume --evaluate flags,'
           ' to evaluate the best model.')
 
@@ -184,8 +201,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
     ### Switch to train mode
     model.train()
     running_lr = None
-
+    summary(model, (3, 224, 224))
     end = time.time()
+    # LOG("============================================"+epoch+, logFile)
+    LOG("=============================== train ===============================", logFile)
     for i, (input, target) in enumerate(train_loader):
         progress = float(epoch * len(train_loader) + i) / \
             (args.epochs * len(train_loader))
@@ -200,9 +219,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
-
+        
+        
         ### Compute output
-        output = model(input_var, progress)
+        output = model(input_var)
         loss = criterion(output, target_var)
         ### Measure accuracy and record loss
         prec1 = accuracy(output.data, target)
@@ -218,14 +238,17 @@ def train(train_loader, model, criterion, optimizer, epoch):
         batch_time.update(time.time() - end)
         end = time.time()
         if i % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f}\t'  # ({batch_time.avg:.3f}) '
-                  'Data {data_time.val:.3f}\t'  # ({data_time.avg:.3f}) '
-                  'Loss {loss.val:.4f}\t'  # ({loss.avg:.4f}) '
-                  'Prec@1 {top1.val:.3f}\t'  # ({top1.avg:.3f}) '
-                  'lr {lr: .4f}'.format(
-                      epoch, i, len(train_loader), batch_time=batch_time,
-                      data_time=data_time, loss=losses, top1=top1, lr=lr))
+            temp_result = 'Epoch: [{0}][{1}/{2}]\t' \
+            'Time {batch_time.val:.3f}\t' \
+            'Data {data_time.val:.3f}\t'  \
+            'Loss {loss.val:.4f}\t'  \
+            'Prec@1 {top1.val:.3f}\t' \
+            'lr {lr: .4f}'.format(
+                epoch, i, len(train_loader), batch_time=batch_time,
+                data_time=data_time, loss=losses, top1=top1, lr=lr)
+
+            LOG(temp_result, logFile)
+            print(temp_result)
 
     return 100. - top1.avg, losses.avg, running_lr
 
@@ -237,13 +260,14 @@ def validate(val_loader, model, criterion):
     model.eval()
 
     end = time.time()
+    LOG("=============================== validate ===============================", logFile)
     for i, (input, target) in enumerate(val_loader):
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input, volatile=True)
         target_var = torch.autograd.Variable(target, volatile=True)
 
         ### Compute output
-        output = model(input_var, 0.0)
+        output = model(input_var)
         loss = criterion(output, target_var)
 
         ### Measure accuracy and record loss
@@ -257,14 +281,18 @@ def validate(val_loader, model, criterion):
         end = time.time()
 
         if i % args.print_freq == 0:
-            print('Test: [{0}/{1}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+            temp_result = 'Test: [{0}/{1}]\t' \
+                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
+                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
                   'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
                       i, len(val_loader), batch_time=batch_time, loss=losses,
-                      top1=top1))
+                      top1=top1)
+            LOG(temp_result, logFile)
 
-    print(' * Prec@1 {top1.avg:.3f}'.format(top1=top1))
+            print(temp_result)
+    prec1_result = ' * Prec@1 {top1.avg:.3f}'.format(top1=top1)
+    LOG(prec1_result, logFile)
+    print(prec1_result)
 
     return 100. - top1.avg
 
@@ -289,7 +317,7 @@ class AverageMeter(object):
 def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
 
     """Sets the learning rate to the initial LR decayed by 10 every 10 epochs"""
-    lr = args.lr * (0.1 ** (epoch // 10))
+    lr = args.learning_rate * (0.1 ** (epoch // 10))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     return lr
@@ -313,6 +341,8 @@ def save_checkpoint(state, args, is_best, filename, result):
     print(args)
     result_filename = os.path.join(args.savedir, args.filename)
     model_dir = os.path.join(args.savedir, 'save_models')
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
     model_filename = os.path.join(model_dir, filename)
     latest_filename = os.path.join(model_dir, 'latest.txt')
     best_filename = os.path.join(model_dir, 'model_best.pth.tar')
