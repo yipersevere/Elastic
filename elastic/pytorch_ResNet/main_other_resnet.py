@@ -223,7 +223,12 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
         ### Compute output
         output = model(input_var)
-        loss = criterion(output, target_var)
+
+        if args.add_intermediate_layers_number == 2:
+            loss = all_intermediate_layers_losses(output, target_var, criterion)
+        elif args.add_intermediate_layers_number == 0:
+            loss = criterion(output, target_var)
+        
         ### Measure accuracy and record loss
         prec1 = accuracy(output.data, target)
         losses.update(loss.data[0], input.size(0))
@@ -367,6 +372,19 @@ def save_checkpoint(state, args, is_best, filename, result):
 
     print("=> saved checkpoint '{}'".format(model_filename))
     return
+
+def all_intermediate_layers_losses(output, target_var, criterion):
+    losses = []
+    print("all intermediate layers loss---the total number of intermediate layer output : ", len(output))
+    for out in range(0, len(output)):
+        losses.append(criterion(output[out], target_var))
+    print("all losses: ", losses)
+    loss_weight = [1] * len(output)
+    all_loss = sum([a*b for a,b in zip(loss_weight, losses)])
+    print("total loss: ", all_loss)
+    return all_loss
+
+
 
 if __name__ == "__main__":
 

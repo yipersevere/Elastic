@@ -9,7 +9,7 @@ import torch.nn as nn
 import math
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
-from torchvision.models import resnet18, resnet50
+from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 
 __all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101', 'Elastic_ResNet152']
 
@@ -247,6 +247,46 @@ class ResNet(nn.Module):
 
         return x
 
+class CifarClassifier(nn.Module):
+
+    def __init__(self, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+
+        super(CifarClassifier, self).__init__()
+        self.inner_channels = 128
+
+        self.features = nn.Sequential(
+            nn.Conv2d(num_channels, self.inner_channels, kernel_size=3,
+                      stride=2, padding=1),
+            nn.BatchNorm2d(self.inner_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(self.inner_channels, self.inner_channels, kernel_size=3,
+                      stride=2, padding=1),
+            nn.BatchNorm2d(self.inner_channels),
+            nn.ReLU(inplace=True),
+            nn.AvgPool2d(2, 2)
+        )
+
+        self.classifier = nn.Linear(self.inner_channels, num_classes)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+
+        x = self.features(x)
+        x = x.view(x.size(0), self.inner_channels)
+        x = self.classifier(x)
+        return x
 
 
 def Elastic_ResNet18():
@@ -261,17 +301,36 @@ def Elastic_ResNet18():
     #提取fc层中固定的参数
     num_classes = 10
 
-    avg_pooling_features = model.layer4.in_features
+    print("already loaded pretrained imagenet weight")
     fc_features = model.fc.in_features
+    # model.avgpool = nn.AvgPool2d(4, stride=0)
 
-    model.avgpool = F.avg_pool2d(avg_pooling_features, 4)
     model.fc = nn.Linear(fc_features, num_classes)
-
-
     return model
 
 def Elastic_ResNet34():
-    return ResNet(BasicBlock, [3,4,6,3])
+    model = resnet34(pretrained=True)
+
+    for param in model.parameters():
+        param.requires_grad = True
+    
+    #提取fc层中固定的参数
+    num_classes = 10
+
+    print("already loaded pretrained imagenet weight")
+    fc_features = model.fc.in_features
+    # model.avgpool = nn.AvgPool2d(4, stride=0)
+
+    model.fc = nn.Linear(fc_features, num_classes)
+    return model
+
+
+def add_intermediate_layers(flag_num_intermediate_layers, base_model):
+
+    intermediate_outputs = []
+    # Add a classifier that belongs to the i'th block
+    modules[i] = CifarClassifier(channels_in_last_layer, self.num_classes)
+    return intermediate_outputs
 
 def Elastic_ResNet50():
 
@@ -289,21 +348,42 @@ def Elastic_ResNet50():
     # model.avgpool = nn.AvgPool2d(4, stride=0)
 
     model.fc = nn.Linear(fc_features, num_classes)
+
+    add_intermediate_layers_number = 2
+    add_intermediate_layers(add_intermediate_layers_number, model)
+
+
+
     return model
 
-# def Elastic_ResNet50():
-#     """Constructs a ResNet-50 model.
 
-#     Args:
-#         pretrained (bool): If True, returns a model pre-trained on ImageNet
-#     """
-#     model = ResNet(Bottleneck, [3, 4, 6, 3])
-    
-#     model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
-#     return model
 
 def Elastic_ResNet101():
-    return ResNet(Bottleneck, [3,4,23,3])
+    model = resnet101(pretrained=True)
+    for param in model.parameters():
+        param.requires_grad = True
+    #提取fc层中固定的参数
+    num_classes = 10
+
+    print("already loaded pretrained imagenet weight")
+    fc_features = model.fc.in_features
+    # model.avgpool = nn.AvgPool2d(4, stride=0)
+
+    model.fc = nn.Linear(fc_features, num_classes)
+    return model
+
 
 def Elastic_ResNet152():
-    return ResNet(Bottleneck, [3,8,36,3])
+    model = resnet152(pretrained=True)
+    for param in model.parameters():
+        param.requires_grad = True
+    #提取fc层中固定的参数
+    num_classes = 10
+
+    print("already loaded pretrained imagenet weight")
+    fc_features = model.fc.in_features
+    # model.avgpool = nn.AvgPool2d(4, stride=0)
+
+    model.fc = nn.Linear(fc_features, num_classes)
+    return model
+    
