@@ -14,8 +14,8 @@ parser.add_argument('--add_intermediate_layers_number', type=int,
 # parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet")
 # parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_all_intermediate_resblock_Elastic_ResNet50")
 
-parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet152")
-parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_from_0_intermediate_resblock_Elastic_ResNet152")
+parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet101")
+parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_from_0_intermediate_resblock_Elastic_ResNet101")
 
 parser.add_argument('--dropout_rate', type=float, help="dropout rate, (default: 0.2)", default=0.2)
 parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 32)", default=16)

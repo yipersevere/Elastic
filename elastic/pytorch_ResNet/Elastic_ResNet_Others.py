@@ -12,7 +12,7 @@ import torch.utils.model_zoo as model_zoo
 from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 
 __all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101', 'Elastic_ResNet152']
-
+global outputs
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
     'resnet34': 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
@@ -158,6 +158,7 @@ class Bottleneck(nn.Module):
         self.bn3 = nn.BatchNorm2d(planes * 4)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
+        # self.residual_add = 
         self.stride = stride
 
     def forward(self, x):
@@ -178,6 +179,7 @@ class Bottleneck(nn.Module):
             residual = self.downsample(x)
 
         out += residual
+        # out = self.residual_add(out, residual)
         out = self.relu(out)
 
         return out
@@ -222,6 +224,18 @@ class ResNet(nn.Module):
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
+        
+        # 在这添加intermediate layer output classifier
+        for layer in layers:
+            w = layer.output
+            w = torch.nn.AvgPool2d()(w)
+            # nn.Linear(, 10)
+            # w = Dense(self.num_classes, activation='softmax', name='intermediate_' + name)(w)
+            self.fc1 = nn.Linear(w.shape[0], 10)
+            x = F.softmax(self.fc1)
+
+
+
 
         return nn.Sequential(*layers)
 
@@ -247,46 +261,46 @@ class ResNet(nn.Module):
 
         return x
 
-class CifarClassifier(nn.Module):
+# class CifarClassifier(nn.Module):
 
-    def __init__(self, num_channels, num_classes):
-        """
-        Classifier of a cifar10/100 image.
+#     def __init__(self, num_channels, num_classes):
+#         """
+#         Classifier of a cifar10/100 image.
 
-        :param num_channels: Number of input channels to the classifier
-        :param num_classes: Number of classes to classify
-        """
+#         :param num_channels: Number of input channels to the classifier
+#         :param num_classes: Number of classes to classify
+#         """
 
-        super(CifarClassifier, self).__init__()
-        self.inner_channels = 128
+#         super(CifarClassifier, self).__init__()
+#         self.inner_channels = 128
 
-        self.features = nn.Sequential(
-            nn.Conv2d(num_channels, self.inner_channels, kernel_size=3,
-                      stride=2, padding=1),
-            nn.BatchNorm2d(self.inner_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(self.inner_channels, self.inner_channels, kernel_size=3,
-                      stride=2, padding=1),
-            nn.BatchNorm2d(self.inner_channels),
-            nn.ReLU(inplace=True),
-            nn.AvgPool2d(2, 2)
-        )
+#         self.features = nn.Sequential(
+#             nn.Conv2d(num_channels, self.inner_channels, kernel_size=3,
+#                       stride=2, padding=1),
+#             nn.BatchNorm2d(self.inner_channels),
+#             nn.ReLU(inplace=True),
+#             nn.Conv2d(self.inner_channels, self.inner_channels, kernel_size=3,
+#                       stride=2, padding=1),
+#             nn.BatchNorm2d(self.inner_channels),
+#             nn.ReLU(inplace=True),
+#             nn.AvgPool2d(2, 2)
+#         )
 
-        self.classifier = nn.Linear(self.inner_channels, num_classes)
+#         self.classifier = nn.Linear(self.inner_channels, num_classes)
 
-    def forward(self, x):
-        """
-        Drive features to classification.
+#     def forward(self, x):
+#         """
+#         Drive features to classification.
 
-        :param x: Input of the lowest scale of the last layer of
-                  the last block
-        :return: Cifar object classification result
-        """
+#         :param x: Input of the lowest scale of the last layer of
+#                   the last block
+#         :return: Cifar object classification result
+#         """
 
-        x = self.features(x)
-        x = x.view(x.size(0), self.inner_channels)
-        x = self.classifier(x)
-        return x
+#         x = self.features(x)
+#         x = x.view(x.size(0), self.inner_channels)
+#         x = self.classifier(x)
+#         return x
 
 
 def Elastic_ResNet18():
@@ -326,11 +340,40 @@ def Elastic_ResNet34():
 
 
 def add_intermediate_layers(flag_num_intermediate_layers, base_model):
+    intermediate_layers_name = [
+                                'layer1[0]', 'layer1[1]', 'layer1[2]','layer1[3]',
+                                'layer2[0]', 'layer2[1]', 'layer2[2]','layer2[3]',
+                                'layer3[0]', 'layer3[1]', 'layer3[2]','layer3[3]', 'layer3[4]','layer3[5]',
+                                'layer4[0]', 'layer4[1]', 'layer4[2]'
+                                ]
 
     intermediate_outputs = []
+    # add_layers = [layer for layer in base_model.layers if layer.name in intermediate_layers_name]
+    # add_layers = [model.layer for layer in intermediate_layers_name]
     # Add a classifier that belongs to the i'th block
-    modules[i] = CifarClassifier(channels_in_last_layer, self.num_classes)
+    channels_in_last_layer = 0
+    num_classes = 10
+    # modules = CifarClassifier(channels_in_last_layer, num_classes)
     return intermediate_outputs
+
+
+class FeatureExtractor(nn.Module):
+    def __init__(self, submodule, extracted_layers):
+        super(FeatureExtractor,self).__init__()
+        self.submodule = submodule.cuda()
+        self.extracted_layers= extracted_layers
+
+    def forward(self, x):
+        outputs = []
+        for name, module in self.submodule._modules.items():
+            module = module.cuda()
+            x = module(x)
+            print(name)
+            if name in self.extracted_layers:
+                outputs.append(x)
+        return outputs
+
+
 
 def Elastic_ResNet50():
 
@@ -349,12 +392,20 @@ def Elastic_ResNet50():
 
     model.fc = nn.Linear(fc_features, num_classes)
 
-    add_intermediate_layers_number = 2
-    add_intermediate_layers(add_intermediate_layers_number, model)
+    # add_intermediate_layers_number = 2
+    # add_intermediate_layers(add_intermediate_layers_number, model)
+
+    # model.layer4[0] to get (0) bottleneck
+    intermediate_layer_names = ["maxpool", "layer1[0].bn3"]
+    intermediate_outputs = FeatureExtractor(model, intermediate_layer_names)
+    # all_names = FeatureExtractor(model)
 
 
 
-    return model
+
+
+
+    return model, intermediate_outputs
 
 
 

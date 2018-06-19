@@ -111,7 +111,7 @@ def main(**kwargs):
 
 
 
-
+    intermediate_outputs = list()
 
     if args.layers_weight_change == 1:
         LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
@@ -127,7 +127,7 @@ def main(**kwargs):
         print("using Elastic_ResNet18 class")
 
     elif args.model == "Elastic_ResNet50":
-        elasicNN_ResNet50 = Elastic_ResNet50()
+        elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
         model = elasicNN_ResNet50
         print("using Elastic_ResNet50 class")
 
@@ -161,7 +161,7 @@ def main(**kwargs):
     for epoch in range(0, args.epochs):
 
         # Train for one epoch
-        tr_prec1, loss, lr = train(train_loader, model, criterion, optimizer, epoch)
+        tr_prec1, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
 
         # Evaluate on validation set
         val_prec1 = validate(val_loader, model, criterion)
@@ -170,13 +170,13 @@ def main(**kwargs):
         is_best = val_prec1 < best_prec1
         best_prec1 = max(val_prec1, best_prec1)
         model_filename = 'checkpoint_%03d.pth.tar' % epoch
-        save_checkpoint({
-            'epoch': epoch,
-            'model': args.model,
-            'state_dict': model.state_dict(),
-            'best_prec1': best_prec1,
-            'optimizer': optimizer.state_dict(),
-        }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1, loss, lr))
+        # save_checkpoint({
+        #     'epoch': epoch,
+        #     'model': args.model,
+        #     'state_dict': model.state_dict(),
+        #     'best_prec1': best_prec1,
+        #     'optimizer': optimizer.state_dict(),
+        # }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1, loss, lr))
 
     # TestModel and return
     model = model.cpu().module
@@ -192,12 +192,12 @@ def main(**kwargs):
     print('Please run again with --resume --evaluate flags,'
           ' to evaluate the best model.')
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
-
+    model = model.cuda()
     ### Switch to train mode
     model.train()
     running_lr = None
@@ -223,6 +223,9 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
         ### Compute output
         output = model(input_var)
+        inter_outputs = intermediate_outputs(input_var)
+        # for layer in intermediate_outputs:
+        # inter_outputs.(layer(input_var))
 
         if args.add_intermediate_layers_number == 2:
             loss = all_intermediate_layers_losses(output, target_var, criterion)

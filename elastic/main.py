@@ -47,16 +47,16 @@ import math
 
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
-#config = tf.ConfigProto()
-#config.gpu_options.per_process_gpu_memory_fraction = 0.3
-#config.gpu_options.allow_growth = True
-#set_session(tf.Session(config=config))
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.3
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
 
 
 from helper import load_data, multi_output_generator, LOG, log_summary, log_error, HistoryLogger
 from opts import args
 from ElasticNN import ElasicNN_ResNet50, ElasicNN_Inception, ElasticNN_MobileNets_alpha_0_75
-from ElasticNN_Others_ResNet import ElasicNN_ResNet152
+from ElasticNN_Others_ResNet import ElasicNN_ResNet152, ElasicNN_ResNet101
 
 # import tensorflow as tf
 # from keras.backend.tensorflow_backend import set_session
@@ -90,7 +90,6 @@ def main(**kwargs):
 
     global logFile
     logFile = path + os.sep + "log.txt"
-    X_train, y_train, X_val, y_val, x_test, y_test= load_data(data = args.data, target_size = args.target_size, num_class = args.num_classes, test_percent=0.2)
     LOG("Pre-training " + args.data + " on " + args.model_name+ "...", logFile)
 
     if args.layers_weight_change == 1:
@@ -107,7 +106,7 @@ def main(**kwargs):
         num_outputs = elasicNN_inceptionV3.num_outputs
         print("using inceptionv3 class")
 
-    elif args.model == "Elastic_ResNet":
+    elif args.model == "Elastic_ResNet":#default ResNet50
         elasicNN_resnet50 = ElasicNN_ResNet50(args)
         model = elasicNN_resnet50.model
         num_outputs = elasicNN_resnet50.num_outputs
@@ -119,6 +118,12 @@ def main(**kwargs):
         num_outputs = elasicNN_mobileNets_alpha_0_75.num_outputs
         print("using mobilenets class")
     
+    elif args.model == "Elastic_ResNet101":
+        elasicNN_resnet101 = ElasicNN_ResNet101(args)
+        model = elasicNN_resnet101.model
+        num_outputs = elasicNN_resnet101.num_outputs
+        print("using resnet 101 class")
+
     elif args.model == "Elastic_ResNet152":
         elasicNN_resnet152 = ElasicNN_ResNet152(args)
         model = elasicNN_resnet152.model
@@ -148,11 +153,16 @@ def main(**kwargs):
     csv_logger = CSVLogger(path + os.sep + 'log.csv', append=True, separator=';')
 
     X_train, y_train, X_val, y_val, x_test, y_test= load_data(data = args.data, target_size = args.target_size, num_class = args.num_classes, test_percent=0.2)
+    steps = math.ceil(len(X_train) / args.batch_size)
     
     train_generator = datagen.flow(X_train, y_train, batch_size=args.batch_size)
     multi_generator = multi_output_generator(train_generator, num_outputs)
     
-    steps = math.ceil(len(X_train) / args.batch_size)
+    # save memory
+    del X_train
+    del y_train
+
+    
     # train ElasticNN-ResNet50
     model = train(model, X_val, y_val, multi_generator, args.batch_size, num_outputs, args.epoch, steps)
 
