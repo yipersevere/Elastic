@@ -1,7 +1,0 @@
-model,error,total floating point operations,total params
-MobileNets-alpha-0.75,38.6,315356160,5596276
-Elastic-MobileNets,27.82,315802560,6043976
-InceptionV3,24.98,2840993120,26922884
-Elastic-InceptionV3,22.34,2841997920,27928784
-ResNet50,21.96,3832487936,23792612
-Elastic-ResNet50,24.2,3833998336,25304612
