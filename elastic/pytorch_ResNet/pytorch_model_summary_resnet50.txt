@@ -12,6 +12,9 @@ DataParallel(
         (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
         (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
         (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        
+        
+===============================================================================================get relu activation function input as input for intermediate layer output     
         (relu): ReLU(inplace)
         (downsample): Sequential(
           (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
