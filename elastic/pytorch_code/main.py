@@ -70,14 +70,7 @@ def main(**kwargs):
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
 
-    # Data loading
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
-    train_loader, val_loader = get_train_valid_loader(data_dir=data_folder, batch_size=args.batch_size, augment=False,
-                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=True,
-                                                    num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
-                                    num_workers=1,pin_memory=True)
     # if args.data == "cifar10":
     #     train_val_set = datasets.CIFAR10(data_folder, train=True, download=False,
     #                                  transform=None)
@@ -109,6 +102,8 @@ def main(**kwargs):
     #     batch_size=args.batch_size, shuffle=False, pin_memory=True)
 
 
+    # save input parameters into log file
+    args_str = str(args)
 
 
     intermediate_outputs = list()
@@ -127,7 +122,8 @@ def main(**kwargs):
         print("using Elastic_ResNet18 class")
 
     elif args.model == "Elastic_ResNet50":
-        elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
+        # elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
+        elasicNN_ResNet50 = Elastic_ResNet50()
         model = elasicNN_ResNet50
         print("using Elastic_ResNet50 class")
 
@@ -156,6 +152,21 @@ def main(**kwargs):
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
+
+
+    # Data loading
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+
+    train_loader, val_loader = get_train_valid_loader(data_dir=data_folder, batch_size=args.batch_size, augment=False,
+                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=True,
+                                                    num_workers=1,pin_memory=True)
+    test_loader = get_test_loader(data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+                                    num_workers=1,pin_memory=True)
+
+
+
+
+
 
     
     for epoch in range(0, args.epochs):
@@ -223,7 +234,7 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         
         ### Compute output
         output = model(input_var)
-        inter_outputs = intermediate_outputs(input_var)
+        # inter_outputs = intermediate_outputs(input_var)
         # for layer in intermediate_outputs:
         # inter_outputs.(layer(input_var))
 
