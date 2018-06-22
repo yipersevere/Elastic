@@ -145,16 +145,18 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+        x1 = self.layer1(x)
+        # x1_out = nn.AvgPool2d(56)(x1)
+        # x1_out = nn.Linear(256, 10)(x1_out)
+        x2 = self.layer2(x1)
+        x3 = self.layer3(x2)
+        x4 = self.layer4(x3)
 
-        x = self.avgpool(x)
+        x = self.avgpool(x4)
         x = x.view(x.size(0), -1)
         x = self.fc(x)
 
-        return x
+        return x, x1, x2, x3, x4
 # ========================================================================================end of source code======================
 
 # class CifarClassifier(nn.Module):
@@ -296,8 +298,10 @@ def Elastic_ResNet50():
     # intermediate_outputs = FeatureExtractor(model, intermediate_layer_names)
     # # all_names = FeatureExtractor(model)
 
-
+    # origin_model = ResNet(Bottleneck, [3, 4, 6, 3])
+    # model, inter_clf_x1, inter_clf_x2, inter_clf_x3, inter_clf_x4 = origin_model.forward()
     model = ResNet(Bottleneck, [3, 4, 6, 3])
+
     pretrained = True
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))    

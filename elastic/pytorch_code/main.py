@@ -38,7 +38,9 @@ def main(**kwargs):
         args.__setattr__(arg, v)
     print(args)
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    global device
+    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cpu'
 
     if args.data in ['cifar10', 'cifar100']:
         IMAGE_SIZE = 32
@@ -147,7 +149,8 @@ def main(**kwargs):
         cudnn.benchmark = True  #这个是干什么的
 
     # Define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
+    # criterion = nn.CrossEntropyLoss().cuda()
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
@@ -208,11 +211,13 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
     data_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
-    model = model.cuda()
+    top1_x1_out = AverageMeter()
+    # model = model.cuda()
+    model = model.cpu()
     ### Switch to train mode
     model.train()
     running_lr = None
-    summary(model, (3, 224, 224))
+    # summary(model, (3, 224, 224))
     end = time.time()
     # LOG("============================================"+epoch+, logFile)
     LOG("=============================== train ===============================", logFile)
@@ -227,24 +232,54 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         ### Measure data loading time
         data_time.update(time.time() - end)
 
-        target = target.cuda(async=True)
+        # target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
         
         ### Compute output
-        output = model(input_var)
+        output, inter_clf_x1, inter_clf_x2, inter_clf_x3, inter_clf_x4 = model.forward(input_var)
+
+        # model_inter_clf_x1 = torch.nn.Sequential(
+        #         torch.nn.AvgPool2d(kernel_size=(56,56)),
+        #         torch.nn.Linear(256, 10)
+        #         ).to(device)
+        # x1_out = model_inter_clf_x1(inter_clf_x1)
+        # inter_clf_x1 = inter_clf_x1.cuda()
+        # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
+        x1_out = torch.autograd.Variable(inter_clf_x1)
+        x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
+        x1_out = x1_out.view(16,256)
+        # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
+        
+        # x1_out = x1_out.cuda()
+        print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
+        print("1st element: ", x1_out[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
+        # x1_out = x1_out.cuda()
+        x1_out = nn.Linear(256, 10)(x1_out)
+        print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
+        prec1_x1_out = accuracy(x1_out, target)
+        print("top 1 precision, x1_out: ", prec1_x1_out)
+        top1_x1_out.update(prec1_x1_out[0], input.size(0))
+        # print("inter_clf_x1", inter_clf_x1)
+        # print("inter_clf_x1_shape: ", type(inter_clf_x1), inter_clf_x1.shape) # <class 'torch.Tensor'> torch.Size([16, 256, 56, 56])
+        # print("inter_clf_x1", inter_clf_x1)
         # inter_outputs = intermediate_outputs(input_var)
         # for layer in intermediate_outputs:
         # inter_outputs.(layer(input_var))
-
+        print("original final layer classifier: type, shape ", type(output), output.shape)
+        print("1st element in final layer clf: ", output[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
         if args.add_intermediate_layers_number == 2:
-            loss = all_intermediate_layers_losses(output, target_var, criterion)
+            # loss = all_intermediate_layers_losses(output, target_var, criterion)
+            loss_final_clf = criterion(x1_out, target_var)
+            loss_x1_out = criterion(output, target_var)
+            loss = loss_final_clf + loss_x1_out
         elif args.add_intermediate_layers_number == 0:
             loss = criterion(output, target_var)
         
         ### Measure accuracy and record loss
         prec1 = accuracy(output.data, target)
+        print("top 1 precision, final output classification: ", prec1)
         losses.update(loss.data[0], input.size(0))
         top1.update(prec1[0], input.size(0))
 
@@ -262,9 +297,10 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
             'Data {data_time.val:.3f}\t'  \
             'Loss {loss.val:.4f}\t'  \
             'Prec@1 {top1.val:.3f}\t' \
+            'Prec_x1_out@1 {top1_x1_out.val:.3f}\t' \
             'lr {lr: .4f}'.format(
                 epoch, i, len(train_loader), batch_time=batch_time,
-                data_time=data_time, loss=losses, top1=top1, lr=lr)
+                data_time=data_time, loss=losses, top1=top1, top1_x1_out=top1_x1_out, lr=lr)
 
             LOG(temp_result, logFile)
             print(temp_result)
@@ -387,7 +423,7 @@ def save_checkpoint(state, args, is_best, filename, result):
     print("=> saved checkpoint '{}'".format(model_filename))
     return
 
-def all_intermediate_layers_losses(output, target_var, criterion):
+def all_intermediate_layers_losses(intermediate_layers_loss, final_output_loss, target_var, criterion):
     losses = []
     print("all intermediate layers loss---the total number of intermediate layer output : ", len(output))
     for out in range(0, len(output)):
