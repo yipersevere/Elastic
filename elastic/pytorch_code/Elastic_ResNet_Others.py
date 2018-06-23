@@ -98,6 +98,8 @@ class Bottleneck(nn.Module):
         return out
 
 
+
+
 class ResNet(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000):
@@ -113,6 +115,8 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AvgPool2d(7, stride=1)
+        # self.x1_out_avgpool = nn.AvgPool2d(kernel_size=(56,56))
+        # self.x1_out_linear = nn.Linear(256, 10)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
@@ -146,7 +150,9 @@ class ResNet(nn.Module):
         x = self.maxpool(x)
 
         x1 = self.layer1(x)
-        # x1_out = nn.AvgPool2d(56)(x1)
+        # x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1)
+        # x1_out = Reshape(256).forward(x1_out)
+        # x1_out = self.x1_out_linear(x1_out)
         # x1_out = nn.Linear(256, 10)(x1_out)
         x2 = self.layer2(x1)
         x3 = self.layer3(x2)

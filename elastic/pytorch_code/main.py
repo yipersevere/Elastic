@@ -23,7 +23,7 @@ torch.manual_seed(args.manual_seed)
 torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 best_prec1 = 0
-
+# torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 def get_train_valid_set(data):
     train_set = 0
@@ -39,8 +39,8 @@ def main(**kwargs):
     print(args)
 
     global device
-    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    device = 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    # device = 'cpu'
 
     if args.data in ['cifar10', 'cifar100']:
         IMAGE_SIZE = 32
@@ -106,7 +106,7 @@ def main(**kwargs):
 
     # save input parameters into log file
     args_str = str(args)
-
+    LOG(args_str, logFile)
 
     intermediate_outputs = list()
 
@@ -149,8 +149,8 @@ def main(**kwargs):
         cudnn.benchmark = True  #这个是干什么的
 
     # Define loss function (criterion) and optimizer
-    # criterion = nn.CrossEntropyLoss().cuda()
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss().cuda()
+    # criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
@@ -175,11 +175,19 @@ def main(**kwargs):
     for epoch in range(0, args.epochs):
 
         # Train for one epoch
-        tr_prec1, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
-
+        tr_prec1, tr_prec1_x1_out, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
+        epoch_str = "==================================== epoch %d ==============================" % epoch
+        print(epoch_str)
+        epoch_result = "accuracy " + str(tr_prec1) + ", x1_out accuracy " + str(tr_prec1_x1_out) + ", loss " + str(loss) + ", learning rate " + str(lr) 
+        print(epoch_result)
+        LOG(epoch_str, logFile)
+        LOG(epoch_result, logFile)
+        
         # Evaluate on validation set
-        val_prec1 = validate(val_loader, model, criterion)
-
+        val_prec1, test_x1_out_prec1 = validate(val_loader, model, criterion)
+        val_str = "validation accuracy: " + str(val_prec1)
+        print(val_str)
+        LOG(val_str, logFile)
         # Remember best prec@1 and save checkpoint
         is_best = val_prec1 < best_prec1
         best_prec1 = max(val_prec1, best_prec1)
@@ -197,7 +205,10 @@ def main(**kwargs):
     model = nn.DataParallel(model).cuda()
     print(model)
 
-    validate(test_loader, model, criterion)
+    test_prec1, test_x1_out_prec1 = validate(test_loader, model, criterion)
+    test_str = "test accuracy: " + str(test_prec1) + ", test x1_out_accuracy: " + str(test_x1_out_prec1)
+    print(test_str)
+    LOG(test_str, logFile)
     # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
     # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
     # LOG(FLOPS_result, logFile)
@@ -206,14 +217,15 @@ def main(**kwargs):
     print('Please run again with --resume --evaluate flags,'
           ' to evaluate the best model.')
 
+
 def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
     top1_x1_out = AverageMeter()
-    # model = model.cuda()
-    model = model.cpu()
+    model = model.cuda()
+    # model = model.cpu()
     ### Switch to train mode
     model.train()
     running_lr = None
@@ -232,22 +244,21 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         ### Measure data loading time
         data_time.update(time.time() - end)
 
-        # target = target.cuda(async=True)
+        target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
         
         ### Compute output
-        output, inter_clf_x1, inter_clf_x2, inter_clf_x3, inter_clf_x4 = model.forward(input_var)
+        output, x1_out, inter_clf_x2, inter_clf_x3, inter_clf_x4 = model.forward(input_var)
 
-        # model_inter_clf_x1 = torch.nn.Sequential(
-        #         torch.nn.AvgPool2d(kernel_size=(56,56)),
-        #         torch.nn.Linear(256, 10)
-        #         ).to(device)
-        # x1_out = model_inter_clf_x1(inter_clf_x1)
+        model_inter_clf_x1 = torch.nn.Sequential(
+                torch.nn.Linear(256, 10)
+                ).to(device)
+        
         # inter_clf_x1 = inter_clf_x1.cuda()
         # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
-        x1_out = torch.autograd.Variable(inter_clf_x1)
+        # x1_out = torch.autograd.Variable(inter_clf_x1)
         x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
         x1_out = x1_out.view(16,256)
         # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
@@ -256,7 +267,8 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
         print("1st element: ", x1_out[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
         # x1_out = x1_out.cuda()
-        x1_out = nn.Linear(256, 10)(x1_out)
+        # x1_out = nn.Linear(256, 10)(x1_out)
+        x1_out = model_inter_clf_x1(x1_out)
         print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
         prec1_x1_out = accuracy(x1_out, target)
         print("top 1 precision, x1_out: ", prec1_x1_out)
@@ -305,12 +317,14 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
             LOG(temp_result, logFile)
             print(temp_result)
 
-    return 100. - top1.avg, losses.avg, running_lr
+    return 100. - top1.avg, 100. - top1_x1_out.avg, losses.avg, running_lr
 
 def validate(val_loader, model, criterion):
     batch_time = AverageMeter()
     losses = AverageMeter()
+    x1_out_losses = AverageMeter()
     top1 = AverageMeter()
+    x1_out_top1 = AverageMeter()
     ### Switch to evaluate mode
     model.eval()
 
@@ -322,12 +336,42 @@ def validate(val_loader, model, criterion):
         target_var = torch.autograd.Variable(target, volatile=True)
 
         ### Compute output
-        output = model(input_var)
+        # output = model(input_var)
+
+        output, x1_out, inter_clf_x2, inter_clf_x3, inter_clf_x4 = model.forward(input_var)
+
+        model_inter_clf_x1 = torch.nn.Sequential(
+                torch.nn.Linear(256, 10)
+                ).to(device)
+        
+        # inter_clf_x1 = inter_clf_x1.cuda()
+        # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
+        # x1_out = torch.autograd.Variable(inter_clf_x1)
+        x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
+        x1_out = x1_out.view(16,256)
+        # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
+        
+        # x1_out = x1_out.cuda()
+        # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
+        # print("1st element: ", x1_out[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
+        # x1_out = x1_out.cuda()
+        # x1_out = nn.Linear(256, 10)(x1_out)
+        x1_out = model_inter_clf_x1(x1_out)
+        # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
+        
+        test_loss_x1_out = criterion(x1_out, target_var)
+        test_prec1_x1_out = accuracy(x1_out.data, target)
+
+        x1_out_losses.update(test_loss_x1_out.data[0], input.size(0))
+        x1_out_top1.update(test_prec1_x1_out[0], input.size(0))
+
+
         loss = criterion(output, target_var)
+        
 
         ### Measure accuracy and record loss
         prec1 = accuracy(output.data, target)
-
+        
         losses.update(loss.data[0], input.size(0))
         top1.update(prec1[0], input.size(0))
 
@@ -339,17 +383,23 @@ def validate(val_loader, model, criterion):
             temp_result = 'Test: [{0}/{1}]\t' \
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                      i, len(val_loader), batch_time=batch_time, loss=losses,
-                      top1=top1)
+                  'x1_out Loss {x1_out_losses.val:.4f} ({x1_out_losses.avg:.4f})\t' \
+                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
+                  'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
+                      i, len(val_loader), batch_time=batch_time, loss=losses, x1_out_losses=x1_out_losses,
+                      top1=top1, x1_out_top1=x1_out_top1)
             LOG(temp_result, logFile)
 
             print(temp_result)
     prec1_result = ' * Prec@1 {top1.avg:.3f}'.format(top1=top1)
+    x1_out_prec1_result = ' * x1_out_Prec@1 {x1_out_top1.avg:.3f}'.format(x1_out_top1=x1_out_top1)
     LOG(prec1_result, logFile)
+    LOG(x1_out_prec1_result, logFile)
     print(prec1_result)
+    print(x1_out_prec1_result)
 
-    return 100. - top1.avg
+
+    return 100. - top1.avg, x1_out_top1.avg
 
 
 class AverageMeter(object):
