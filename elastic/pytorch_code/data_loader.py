@@ -102,7 +102,7 @@ def get_train_valid_loader(data,data_dir,
     #     normalize,
     # ])
     # load the dataset
-    if data == "CIFAR10" or "cifar10":
+    if data == "CIFAR10" or data == "cifar10":
         train_dataset = datasets.CIFAR10(
             root=data_dir, train=True,
             download=True, transform=train_transform,
@@ -116,7 +116,8 @@ def get_train_valid_loader(data,data_dir,
             root=data_dir, train=True,
             download=True, transform=valid_transform,
         )
-    elif data == "cifar100" or "CIFAR100":
+        print("===========================use CIFAR10 dataset===========================")
+    elif data == "cifar100" or data == "CIFAR100":
         train_dataset = datasets.CIFAR100(
             root=data_dir, train=True,
             download=True, transform=train_transform,
@@ -130,6 +131,7 @@ def get_train_valid_loader(data,data_dir,
             root=data_dir, train=True,
             download=True, transform=valid_transform,
         )
+        print("===========================use CIFAR100 dataset===========================")
     else:
         print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
         NotImplementedError
