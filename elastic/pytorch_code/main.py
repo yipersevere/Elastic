@@ -160,10 +160,10 @@ def main(**kwargs):
     # Data loading
     data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
-    train_loader, val_loader = get_train_valid_loader(data_dir=data_folder, batch_size=args.batch_size, augment=False,
+    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=True,
                                                     num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
                                     num_workers=1,pin_memory=True)
 
 
