@@ -154,7 +154,7 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
         # x1_out = x1_out.view(16,256)
         # when set batch_size = 1
-        x1_out = x1_out.view(1,256)
+        x1_out = x1_out.view(args.batch_size, 256)
         # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
         
         # x1_out = x1_out.cuda()
@@ -242,7 +242,7 @@ def validate(val_loader, model, criterion):
         # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
         # x1_out = torch.autograd.Variable(inter_clf_x1)
         x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
-        x1_out = x1_out.view(16,256)
+        x1_out = x1_out.view(args.batch_size, 256)
         # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
         
         # x1_out = x1_out.cuda()
@@ -388,22 +388,15 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
 
-
     # Data loading
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
-    data_folder = "D:\Elastic\data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    # data_folder = "D:\Elastic\data"
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
                                                     num_workers=1,pin_memory=True)
     test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
                                     num_workers=1,pin_memory=True)
-
-
-
-
-
-
     
     for epoch in range(0, args.epochs):
 
@@ -430,7 +423,7 @@ def main(**kwargs):
             'model': args.model_name,
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
-            'intermediate_layer_classifier': val_x1_out_prec1
+            'intermediate_layer_classifier': val_x1_out_prec1,
             'optimizer': optimizer.state_dict(),
         }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1_x1_out, tr_prec1, val_x1_out_prec1, loss, lr))
 

@@ -1,1 +1,0 @@
-/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_ResNet/Elastic_ResNet50/Classification_Accuracy/CIFAR10_from_0_intermediate_resblock_Elastic_ResNet50/2018-06-16-21-54-14/save_models/checkpoint_000.pth.tar
