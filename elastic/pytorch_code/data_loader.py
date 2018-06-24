@@ -32,7 +32,7 @@ target_size = (224,224,3)
 #     """
 #     return imagenet_utils.preprocess_input(x, mode='torch')
 
-def get_train_valid_loader(data_dir,
+def get_train_valid_loader(data,data_dir,
                            batch_size,
                            augment,
                            random_seed,
@@ -78,7 +78,8 @@ def get_train_valid_loader(data_dir,
 
     # define transforms
     valid_transform = transforms.Compose([
-            transforms.Pad(padding=96, padding_mode='reflect'),
+            # transforms.Pad(padding=96, padding_mode='reflect'),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             normalize,
     ])
@@ -91,7 +92,8 @@ def get_train_valid_loader(data_dir,
         ])
     else:
         train_transform = transforms.Compose([
-            transforms.Pad(padding=96, padding_mode='reflect'),
+            # transforms.Pad(padding=96, padding_mode='reflect'),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             normalize,
         ])
@@ -100,20 +102,37 @@ def get_train_valid_loader(data_dir,
     #     normalize,
     # ])
     # load the dataset
-    train_dataset = datasets.CIFAR10(
-        root=data_dir, train=True,
-        download=True, transform=train_transform,
-    )
-    # train_dataset_origin = datasets.CIFAR10(
-    #     root=data_dir, train=True,
-    #     download=True, transform=train_transform_origin,
-    # )
+    if data == "CIFAR10" or "cifar10":
+        train_dataset = datasets.CIFAR10(
+            root=data_dir, train=True,
+            download=True, transform=train_transform,
+        )
+        # train_dataset_origin = datasets.CIFAR10(
+        #     root=data_dir, train=True,
+        #     download=True, transform=train_transform_origin,
+        # )
 
-    valid_dataset = datasets.CIFAR10(
-        root=data_dir, train=True,
-        download=True, transform=valid_transform,
-    )
+        valid_dataset = datasets.CIFAR10(
+            root=data_dir, train=True,
+            download=True, transform=valid_transform,
+        )
+    elif data == "cifar100" or "CIFAR100":
+        train_dataset = datasets.CIFAR100(
+            root=data_dir, train=True,
+            download=True, transform=train_transform,
+        )
+        # train_dataset_origin = datasets.CIFAR10(
+        #     root=data_dir, train=True,
+        #     download=True, transform=train_transform_origin,
+        # )
 
+        valid_dataset = datasets.CIFAR100(
+            root=data_dir, train=True,
+            download=True, transform=valid_transform,
+        )
+    else:
+        print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
+        NotImplementedError
     # train_dataset = np.array([scipy.misc.imresize(train_dataset[i], target_size) for i in range(0, len(train_dataset))]).astype('float32')
     # train_dataset = preprocess_input(big_train_dataset, mode="torch")
 
@@ -155,7 +174,8 @@ def get_train_valid_loader(data_dir,
     return (train_loader, valid_loader)
 
 
-def get_test_loader(data_dir,
+def get_test_loader(data,
+                    data_dir,
                     batch_size,
                     shuffle=True,
                     num_workers=4,
@@ -186,19 +206,29 @@ def get_test_loader(data_dir,
 
     # define transform
     transform = transforms.Compose([
-        transforms.Pad(padding=96, padding_mode='reflect'),
+        # transforms.Pad(padding=96, padding_mode='reflect'),
+        transforms.Resize((224, 224)),
         transforms.ToTensor(),
         normalize,
     ])
 
-    dataset = datasets.CIFAR10(
-        root=data_dir, train=False,
-        download=True, transform=transform,
-    )
+    if data == "CIFAR10" or "cifar10":
+        dataset = datasets.CIFAR10(
+            root=data_dir, train=False,
+            download=True, transform=transform,
+        )
+    elif data == "CIFAR100" or "cifar100":
+        dataset = datasets.CIFAR100(
+            root=data_dir, train=False,
+            download=True, transform=transform,
+        )
+    else:
+        print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
+        NotImplementedError        
 
     data_loader = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, shuffle=shuffle,
         num_workers=num_workers, pin_memory=pin_memory,
-    )
+    )        
 
     return data_loader
