@@ -25,198 +25,90 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 best_prec1 = 0
 # torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
-def get_train_valid_set(data):
-    train_set = 0
-    valid_set = 0
 
-    return train_set, valid_set
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+    def __init__(self):
+        self.reset()
 
-def main(**kwargs):
-    global args, best_prec1
-    # Override if needed
-    for arg, v in kwargs.items():
-        args.__setattr__(arg, v)
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
+
+def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
+
+    """Sets the learning rate to the initial LR decayed by 10 every 10 epochs"""
+    lr = args.learning_rate * (0.1 ** (epoch // 10))
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+    return lr
+
+def accuracy(output, target, topk=(1,)):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = target.size(0)
+
+    _, pred = output.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+    return res
+
+def save_checkpoint(state, args, is_best, filename, result):
     print(args)
+    result_filename = os.path.join(args.savedir, args.filename)
+    model_dir = os.path.join(args.savedir, 'save_models')
 
-    global device
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    # device = 'cpu'
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    model_filename = os.path.join(model_dir, filename)
+    latest_filename = os.path.join(model_dir, 'latest.txt')
+    best_filename = os.path.join(model_dir, 'model_best.pth.tar')
 
-    if args.data in ['cifar10', 'cifar100']:
-        IMAGE_SIZE = 32
-    else:
-        IMAGE_SIZE = 224
+    if not os.path.isdir(args.savedir):
+        os.makedirs(args.savedir)
+        os.makedirs(model_dir)
 
-    program_start_time = time.time()
-    instanceName = "Classification_Accuracy"
-    folder_path = os.path.dirname(os.path.abspath(__file__)) + os.sep + args.model
+    # For mkdir -p when using python3
+    # os.makedirs(args.savedir, exist_ok=True)
+    # os.makedirs(model_dir, exist_ok=True)
 
-    imageStr = {
-        "ax0_set_ylabel": "error rate on " + args.data,
-        "ax0_title": args.model_name + " test on " + args.data,
-        "ax1_set_ylabel": "f1 score on " + args.data,
-        "ax1_title": "f1 score " + args.model_name+ " test on" + args.data,
-        "save_fig" : args.model_name + "_" + args.data + ".png"
-    }
+    print("=> saving checkpoint '{}'".format(model_filename))
+    with open(result_filename, 'a') as fout:
+        fout.write(result)
+    torch.save(state, model_filename)
+    with open(latest_filename, 'w') as fout:
+        fout.write(model_filename)
+    if args.no_save_model:
+        shutil.move(model_filename, best_filename)
+    elif is_best:
+        shutil.copyfile(model_filename, best_filename)
 
+    print("=> saved checkpoint '{}'".format(model_filename))
+    return
 
-    timestamp = datetime.datetime.now()
-    ts_str = timestamp.strftime('%Y-%m-%d-%H-%M-%S')
-    path = folder_path + os.sep + instanceName + os.sep + args.model_name + os.sep + ts_str
-    
-    tensorboard_folder = path + os.sep + "Graph"
-    os.makedirs(path)
-    args.savedir = path
-
-    global logFile
-    logFile = path + os.sep + "log.txt"    
-    args.filename = logFile
-
-
-    # if args.data == "cifar10":
-    #     train_val_set = datasets.CIFAR10(data_folder, train=True, download=False,
-    #                                  transform=None)
-    #     train_set, val_set = get_train_valid_set(train_val_set)
-
-    #     test_set = datasets.CIFAR10(data_folder, train=False, download=False,
-    #                                transform=None)
-    # elif args.data == "cifar100":
-    #     train_val_set = datasets.CIFAR100(data_folder, train=True, download=False,
-    #                                  transform=None)
-    #     train_set, val_set = get_train_valid_set(train_val_set)
-
-    #     test_set = datasets.CIFAR100(data_folder, train=False, download=False,
-    #                                transform=None)
-    # else:
-    #     print("dataset is CIFAR10, or CIFAR100")
-    #     raise NotImplementedError
-
-    # train_loader = torch.utils.data.DataLoader(
-    #     train_set,
-    #     batch_size=args.batch_size, shuffle=True, pin_memory=True)
-    
-    # val_loader = torch.utils.data.DataLoader(
-    #     val_set,
-    #     batch_size=args.batch_size, shuffle=True, pin_memory=True)  
-
-    # test_loader = torch.utils.data.DataLoader(
-    #     test_set,
-    #     batch_size=args.batch_size, shuffle=False, pin_memory=True)
-
-
-    # save input parameters into log file
-    args_str = str(args)
-    LOG(args_str, logFile)
-
-    intermediate_outputs = list()
-
-    if args.layers_weight_change == 1:
-        LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
-    elif args.layers_weight_change == 0:
-        LOG("weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1", logFile)
-    else:
-        print("Parameter --layers_weight_change, Error")
-        sys.exit()   
-    
-    if args.model == "Elastic_ResNet18":
-        elasicNN_ResNet18 = Elastic_ResNet18()
-        model = elasicNN_ResNet18
-        print("using Elastic_ResNet18 class")
-
-    elif args.model == "Elastic_ResNet50":
-        # elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
-        elasicNN_ResNet50 = Elastic_ResNet50()
-        model = elasicNN_ResNet50
-        print("using Elastic_ResNet50 class")
-
-    # elif args.model == "Elastic_ResNet34":
-    #     elasicNN_ResNet34 = Elastic_ResNet34(args)
-    #     model = elasicNN_ResNet34
-    #     print("using Elastic_ResNet34 class")
-
-    # elif args.model == "Elastic_ResNet101":
-    #     elasticNN_ResNet101 = Elastic_ResNet101(args)
-    #     model = elasticNN_ResNet101
-    #     print("using Elastic_ResNet101 class")
-
-    else:
-        print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
-        exit()    
-    
-    model = model.to(device)
-    if device == 'cuda':
-        model = torch.nn.DataParallel(model).cuda()
-        cudnn.benchmark = True  #这个是干什么的
-
-    # Define loss function (criterion) and optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
-    # criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay,
-                                nesterov=False)# nesterov set False to keep align with keras default settting
-
-
-    # Data loading
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
-
-    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
-                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=True,
-                                                    num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
-                                    num_workers=1,pin_memory=True)
-
-
-
-
-
-
-    
-    for epoch in range(0, args.epochs):
-
-        # Train for one epoch
-        tr_prec1, tr_prec1_x1_out, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
-        epoch_str = "==================================== epoch %d ==============================" % epoch
-        print(epoch_str)
-        epoch_result = "accuracy " + str(tr_prec1) + ", x1_out accuracy " + str(tr_prec1_x1_out) + ", loss " + str(loss) + ", learning rate " + str(lr) 
-        print(epoch_result)
-        LOG(epoch_str, logFile)
-        LOG(epoch_result, logFile)
-        
-        # Evaluate on validation set
-        val_prec1, test_x1_out_prec1 = validate(val_loader, model, criterion)
-        val_str = "validation accuracy: " + str(val_prec1)
-        print(val_str)
-        LOG(val_str, logFile)
-        # Remember best prec@1 and save checkpoint
-        is_best = val_prec1 < best_prec1
-        best_prec1 = max(val_prec1, best_prec1)
-        model_filename = 'checkpoint_%03d.pth.tar' % epoch
-        # save_checkpoint({
-        #     'epoch': epoch,
-        #     'model': args.model,
-        #     'state_dict': model.state_dict(),
-        #     'best_prec1': best_prec1,
-        #     'optimizer': optimizer.state_dict(),
-        # }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1, loss, lr))
-
-    # TestModel and return
-    model = model.cpu().module
-    model = nn.DataParallel(model).cuda()
-    print(model)
-
-    test_prec1, test_x1_out_prec1 = validate(test_loader, model, criterion)
-    test_str = "test accuracy: " + str(test_prec1) + ", test x1_out_accuracy: " + str(test_x1_out_prec1)
-    print(test_str)
-    LOG(test_str, logFile)
-    # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
-    # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
-    # LOG(FLOPS_result, logFile)
-    # print(FLOPS_result)
-    print("============Finish============")
-    print('Please run again with --resume --evaluate flags,'
-          ' to evaluate the best model.')
-
+def all_intermediate_layers_losses(intermediate_layers_loss, final_output_loss, target_var, criterion):
+    losses = []
+    print("all intermediate layers loss---the total number of intermediate layer output : ", len(output))
+    for out in range(0, len(output)):
+        losses.append(criterion(output[out], target_var))
+    print("all losses: ", losses)
+    loss_weight = [1] * len(output)
+    all_loss = sum([a*b for a,b in zip(loss_weight, losses)])
+    print("total loss: ", all_loss)
+    return all_loss
 
 def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
@@ -260,7 +152,9 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
         # x1_out = torch.autograd.Variable(inter_clf_x1)
         x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1_out)
-        x1_out = x1_out.view(16,256)
+        # x1_out = x1_out.view(16,256)
+        # when set batch_size = 1
+        x1_out = x1_out.view(1,256)
         # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
         
         # x1_out = x1_out.cuda()
@@ -401,90 +295,161 @@ def validate(val_loader, model, criterion):
 
     return 100. - top1.avg, x1_out_top1.avg
 
-
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
-
-def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
-
-    """Sets the learning rate to the initial LR decayed by 10 every 10 epochs"""
-    lr = args.learning_rate * (0.1 ** (epoch // 10))
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-    return lr
-
-def accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
-    maxk = max(topk)
-    batch_size = target.size(0)
-
-    _, pred = output.topk(maxk, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        res.append(correct_k.mul_(100.0 / batch_size))
-    return res
-
-def save_checkpoint(state, args, is_best, filename, result):
+def main(**kwargs):
+    global args, best_prec1
+    # Override if needed
+    for arg, v in kwargs.items():
+        args.__setattr__(arg, v)
     print(args)
-    result_filename = os.path.join(args.savedir, args.filename)
-    model_dir = os.path.join(args.savedir, 'save_models')
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
-    model_filename = os.path.join(model_dir, filename)
-    latest_filename = os.path.join(model_dir, 'latest.txt')
-    best_filename = os.path.join(model_dir, 'model_best.pth.tar')
-    if not os.path.isdir(args.savedir):
-        os.makedirs(args.savedir)
-        os.makedirs(model_dir)
 
-    # For mkdir -p when using python3
-    # os.makedirs(args.savedir, exist_ok=True)
-    # os.makedirs(model_dir, exist_ok=True)
+    global device
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    # device = 'cpu'
 
-    print("=> saving checkpoint '{}'".format(model_filename))
-    with open(result_filename, 'a') as fout:
-        fout.write(result)
-    torch.save(state, model_filename)
-    with open(latest_filename, 'w') as fout:
-        fout.write(model_filename)
-    if args.no_save_model:
-        shutil.move(model_filename, best_filename)
-    elif is_best:
-        shutil.copyfile(model_filename, best_filename)
+    if args.data in ['cifar10', 'cifar100']:
+        IMAGE_SIZE = 32
+    else:
+        IMAGE_SIZE = 224
 
-    print("=> saved checkpoint '{}'".format(model_filename))
-    return
+    program_start_time = time.time()
+    instanceName = "Classification_Accuracy"
+    folder_path = os.path.dirname(os.path.abspath(__file__)) + os.sep + args.model
 
-def all_intermediate_layers_losses(intermediate_layers_loss, final_output_loss, target_var, criterion):
-    losses = []
-    print("all intermediate layers loss---the total number of intermediate layer output : ", len(output))
-    for out in range(0, len(output)):
-        losses.append(criterion(output[out], target_var))
-    print("all losses: ", losses)
-    loss_weight = [1] * len(output)
-    all_loss = sum([a*b for a,b in zip(loss_weight, losses)])
-    print("total loss: ", all_loss)
-    return all_loss
+    imageStr = {
+        "ax0_set_ylabel": "error rate on " + args.data,
+        "ax0_title": args.model_name + " test on " + args.data,
+        "ax1_set_ylabel": "f1 score on " + args.data,
+        "ax1_title": "f1 score " + args.model_name+ " test on" + args.data,
+        "save_fig" : args.model_name + "_" + args.data + ".png"
+    }
 
 
+    timestamp = datetime.datetime.now()
+    ts_str = timestamp.strftime('%Y-%m-%d-%H-%M-%S')
+    path = folder_path + os.sep + instanceName + os.sep + args.model_name + os.sep + ts_str
+    
+    tensorboard_folder = path + os.sep + "Graph"
+    os.makedirs(path)
+    args.savedir = path
+
+    global logFile
+    logFile = path + os.sep + "log.txt"    
+    args.filename = logFile
+
+    # save input parameters into log file
+    args_str = str(args)
+    LOG(args_str, logFile)
+
+    intermediate_outputs = list()
+
+    if args.layers_weight_change == 1:
+        LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
+    elif args.layers_weight_change == 0:
+        LOG("weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1", logFile)
+    else:
+        print("Parameter --layers_weight_change, Error")
+        sys.exit()   
+    
+    if args.model == "Elastic_ResNet18":
+        elasicNN_ResNet18 = Elastic_ResNet18()
+        model = elasicNN_ResNet18
+        print("using Elastic_ResNet18 class")
+
+    elif args.model == "Elastic_ResNet50":
+        # elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
+        elasicNN_ResNet50 = Elastic_ResNet50()
+        model = elasicNN_ResNet50
+        print("using Elastic_ResNet50 class")
+
+    # elif args.model == "Elastic_ResNet34":
+    #     elasicNN_ResNet34 = Elastic_ResNet34(args)
+    #     model = elasicNN_ResNet34
+    #     print("using Elastic_ResNet34 class")
+
+    # elif args.model == "Elastic_ResNet101":
+    #     elasticNN_ResNet101 = Elastic_ResNet101(args)
+    #     model = elasticNN_ResNet101
+    #     print("using Elastic_ResNet101 class")
+
+    else:
+        print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
+        exit()    
+    
+    model = model.to(device)
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True  #这个是干什么的
+
+    # Define loss function (criterion) and optimizer
+    criterion = nn.CrossEntropyLoss().cuda()
+    # criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay,
+                                nesterov=False)# nesterov set False to keep align with keras default settting
+
+
+    # Data loading
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "D:\Elastic\data"
+
+    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
+                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
+                                                    num_workers=1,pin_memory=True)
+    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+                                    num_workers=1,pin_memory=True)
+
+
+
+
+
+
+    
+    for epoch in range(0, args.epochs):
+
+        # Train for one epoch
+        tr_prec1, tr_prec1_x1_out, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
+        epoch_str = "==================================== epoch %d ==============================" % epoch
+        print(epoch_str)
+        epoch_result = "accuracy " + str(tr_prec1) + ", x1_out accuracy " + str(tr_prec1_x1_out) + ", loss " + str(loss) + ", learning rate " + str(lr) 
+        print(epoch_result)
+        LOG(epoch_str, logFile)
+        LOG(epoch_result, logFile)
+        
+        # Evaluate on validation set
+        val_prec1, val_x1_out_prec1 = validate(val_loader, model, criterion)
+        val_str = "validation accuracy: " + str(val_prec1)
+        print(val_str)
+        LOG(val_str, logFile)
+        # Remember best prec@1 and save checkpoint
+        is_best = val_prec1 < best_prec1
+        best_prec1 = max(val_prec1, best_prec1)
+        model_filename = 'checkpoint_%03d.pth.tar' % epoch
+        save_checkpoint({
+            'epoch': epoch,
+            'model': args.model_name,
+            'state_dict': model.state_dict(),
+            'best_prec1': best_prec1,
+            'intermediate_layer_classifier': val_x1_out_prec1
+            'optimizer': optimizer.state_dict(),
+        }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1_x1_out, tr_prec1, val_x1_out_prec1, loss, lr))
+
+    # TestModel and return
+    model = model.cpu().module
+    model = nn.DataParallel(model).cuda()
+    print(model)
+
+    test_prec1, test_x1_out_prec1 = validate(test_loader, model, criterion)
+    test_str = "test accuracy: " + str(test_prec1) + ", test x1_out_accuracy: " + str(test_x1_out_prec1)
+    print(test_str)
+    LOG(test_str, logFile)
+    # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
+    # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
+    # LOG(FLOPS_result, logFile)
+    # print(FLOPS_result)
+    print("============Finish============")
+    print('Please run again with --resume --evaluate flags,'
+          ' to evaluate the best model.')
 
 if __name__ == "__main__":
 
