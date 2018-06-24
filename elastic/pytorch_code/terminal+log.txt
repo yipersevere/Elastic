@@ -1,3 +1,1022 @@
+========================================================================添加了一个中间层的classifier，并且把中间层的loss加到总的loss中去======================
+
+
+yi@yi:/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code$ python main.py --model Elastic_ResNet50 --data cifar10 --num_classes 10 --batch_size 16 --epochs 1 --add_intermediate_layers_number 2 --layers_weight_change 0 --model_name pytorch_CIFAR10_1_intermediate_classifiers_Elastic_ResNet50
+/home/yi/anaconda3/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Namespace(add_intermediate_layers_number=2, batch_size=16, data='cifar10', dropout_rate=0.2, epochs=1, gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_ResNet50', model_name='pytorch_CIFAR10_1_intermediate_classifiers_Elastic_ResNet50', momentum=0.9, no_save_model=False, num_classes=10, print_freq=10, target_size=(224, 224, 3), weight_decay=1e-05)
+[22.06.2018 17:07:27] weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1
+already loaded pretrained imagenet weight
+using Elastic_ResNet50 class
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+[22.06.2018 17:07:35] =============================== train ===============================
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.20580245554447174
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.26156970858573914
+top 1 precision, final output classification:  [tensor(6.2500)]
+main.py:283: UserWarning: invalid index of a 0-dim tensor. This will be an error in PyTorch 0.5. Use tensor.item() to convert a 0-dim tensor to a Python number
+  losses.update(loss.data[0], input.size(0))
+[22.06.2018 17:07:44] Epoch: [0][0/2500]	Time 9.718	Data 0.101	Loss 4.7293	Prec@1 6.250	Prec_x1_out@1 18.750	lr  0.0010
+Epoch: [0][0/2500]	Time 9.718	Data 0.101	Loss 4.7293	Prec@1 6.250	Prec_x1_out@1 18.750	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09894594550132751
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.4373832941055298
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10789935290813446
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.5392495393753052
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.026275191456079483
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.16033467650413513
+top 1 precision, final output classification:  [tensor(0.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.006597844418138266
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.2617828845977783
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06781880557537079
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.4456746280193329
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.009125832468271255
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.4944222867488861
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.049847446382045746
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.42969849705696106
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1173010766506195
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.3663635551929474
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.057078197598457336
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.19635987281799316
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.19661465287208557
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.41559866070747375
+top 1 precision, final output classification:  [tensor(25.)]
+[22.06.2018 17:09:20] Epoch: [0][10/2500]	Time 9.429	Data 0.015	Loss 4.5546	Prec@1 25.000	Prec_x1_out@1 6.250	lr  0.0010
+Epoch: [0][10/2500]	Time 9.429	Data 0.015	Loss 4.5546	Prec@1 25.000	Prec_x1_out@1 6.250	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12005843967199326
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.23079106211662292
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0109701594337821
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.04451173543930054
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04781369864940643
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.09904699772596359
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.01496586948633194
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.2015691101551056
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12971119582653046
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.22916242480278015
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06315378099679947
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.1069805771112442
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.030558381229639053
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.084080271422863
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04978913813829422
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.02267874777317047
+top 1 precision, final output classification:  [tensor(0.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.20523032546043396
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.04735465347766876
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.23683542013168335
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.10717085003852844
+top 1 precision, final output classification:  [tensor(18.7500)]
+[22.06.2018 17:10:57] Epoch: [0][20/2500]	Time 9.566	Data 0.017	Loss 4.6932	Prec@1 18.750	Prec_x1_out@1 0.000	lr  0.0010
+Epoch: [0][20/2500]	Time 9.566	Data 0.017	Loss 4.6932	Prec@1 18.750	Prec_x1_out@1 0.000	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1168602928519249
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.11173862218856812
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1254892349243164
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.4737075865268707
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.013902466744184494
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.3594173192977905
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.009143996052443981
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.11345911026000977
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04936189576983452
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.15401814877986908
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.014027949422597885
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.21131771802902222
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.008072479628026485
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.49983227252960205
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16849663853645325
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.7590798735618591
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16928699612617493
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.4436936676502228
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0663335770368576
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.579217791557312
+top 1 precision, final output classification:  [tensor(18.7500)]
+[22.06.2018 17:12:34] Epoch: [0][30/2500]	Time 9.678	Data 0.015	Loss 4.4677	Prec@1 18.750	Prec_x1_out@1 0.000	lr  0.0010
+Epoch: [0][30/2500]	Time 9.678	Data 0.015	Loss 4.4677	Prec@1 18.750	Prec_x1_out@1 0.000	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10973125696182251
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.13556987047195435
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.005798714701086283
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.06895490735769272
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.15304133296012878
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.23344330489635468
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.012340466491878033
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.05967293679714203
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.02270716056227684
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.10956153273582458
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.027503760531544685
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.37790367007255554
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10695609450340271
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.04888206720352173
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.14664795994758606
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.4848429560661316
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09453725069761276
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.21345391869544983
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1558765023946762
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.14639267325401306
+top 1 precision, final output classification:  [tensor(50.)]
+[22.06.2018 17:14:11] Epoch: [0][40/2500]	Time 9.550	Data 0.013	Loss 4.1320	Prec@1 50.000	Prec_x1_out@1 6.250	lr  0.0010
+Epoch: [0][40/2500]	Time 9.550	Data 0.013	Loss 4.1320	Prec@1 50.000	Prec_x1_out@1 6.250	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09984617680311203
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.5520756244659424
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0537889190018177
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(31.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.09480322897434235
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1376274824142456
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.04879205673933029
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.2079116702079773
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.1962149739265442
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0734076052904129
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.666983962059021
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12910746037960052
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.6129352450370789
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.2557832896709442
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  1.2254080772399902
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.08515141904354095
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.32627996802330017
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.03363322094082832
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -1.1544243097305298
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.24246624112129211
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.9063068628311157
+top 1 precision, final output classification:  [tensor(25.)]
+[22.06.2018 17:15:49] Epoch: [0][50/2500]	Time 9.766	Data 0.015	Loss 4.2097	Prec@1 25.000	Prec_x1_out@1 6.250	lr  0.0010
+Epoch: [0][50/2500]	Time 9.766	Data 0.015	Loss 4.2097	Prec@1 25.000	Prec_x1_out@1 6.250	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.3649485111236572
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  1.4273130893707275
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.051592033356428146
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.3657420873641968
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.048077985644340515
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.42410004138946533
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16615869104862213
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(31.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.08817435801029205
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06348098814487457
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -1.6305434703826904
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0745377317070961
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.37838947772979736
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12990975379943848
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  2.57887601852417
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.005683597177267075
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.03541992977261543
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.19248276948928833
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.057086825370788574
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.053904976695775986
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.7662022113800049
+top 1 precision, final output classification:  [tensor(56.2500)]
+[22.06.2018 17:17:26] Epoch: [0][60/2500]	Time 9.571	Data 0.020	Loss 3.7119	Prec@1 56.250	Prec_x1_out@1 12.500	lr  0.0010
+Epoch: [0][60/2500]	Time 9.571	Data 0.020	Loss 3.7119	Prec@1 56.250	Prec_x1_out@1 12.500	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.017423640936613083
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  3.9689316749572754
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0878615602850914
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.3651059865951538
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.17849189043045044
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.002770155668258667
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.05998964235186577
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  1.6455565690994263
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04629112780094147
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.40308454632759094
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12867222726345062
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.6674625873565674
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04192682355642319
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  1.7357637882232666
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1526213139295578
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.713451623916626
+top 1 precision, final output classification:  [tensor(75.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.13007058203220367
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -1.0051993131637573
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09773524850606918
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.7785887122154236
+top 1 precision, final output classification:  [tensor(62.5000)]
+[22.06.2018 17:19:03] Epoch: [0][70/2500]	Time 9.798	Data 0.019	Loss 3.7586	Prec@1 62.500	Prec_x1_out@1 6.250	lr  0.0010
+Epoch: [0][70/2500]	Time 9.798	Data 0.019	Loss 3.7586	Prec@1 62.500	Prec_x1_out@1 6.250	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.22657911479473114
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -1.3974026441574097
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0706823393702507
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  3.1881470680236816
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09783438593149185
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  -0.3062882721424103
+top 1 precision, final output classification:  [tensor(62.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.03364897891879082
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+original final layer classifier: type, shape  <class 'torch.Tensor'> torch.Size([16, 10])
+1st element in final layer clf:  0.49383923411369324
+top 1 precision, final output classification:  [tensor(18.7500)]
+
+
+
+
+
+
+
+
+===========================================================训练时，添加了一个中间层，但是没有把中间层的loss加到总的loss中去，=================================
+
+
+yi@yi:/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code$ python main.py --model Elastic_ResNet50 --data cifar10 --num_classes 10 --batch_size 16 --epochs 1 --add_intermediate_layers_number 0 --layers_weight_change 0 --model_name pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet50
+/home/yi/anaconda3/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Namespace(add_intermediate_layers_number=0, batch_size=16, data='cifar10', dropout_rate=0.2, epochs=1, gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_ResNet50', model_name='pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet50', momentum=0.9, no_save_model=False, num_classes=10, print_freq=10, target_size=(224, 224, 3), weight_decay=1e-05)
+[22.06.2018 16:39:51] weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1
+already loaded pretrained imagenet weight
+using Elastic_ResNet50 class
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+[22.06.2018 16:39:58] =============================== train ===============================
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.20580245554447174
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(6.2500)]
+main.py:278: UserWarning: invalid index of a 0-dim tensor. This will be an error in PyTorch 0.5. Use tensor.item() to convert a 0-dim tensor to a Python number
+  losses.update(loss.data[0], input.size(0))
+[22.06.2018 16:40:08] Epoch: [0][0/2500]	Time 9.952	Data 0.105	Loss 2.4361	Prec@1 6.250	lr  0.0010
+Epoch: [0][0/2500]	Time 9.952	Data 0.105	Loss 2.4361	Prec@1 6.250lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09894594550132751
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10789935290813446
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.026275191456079483
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(0.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.006597844418138266
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06781880557537079
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.009125832468271255
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.049847446382045746
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1173010766506195
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.057078197598457336
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.19661465287208557
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(25.)]
+[22.06.2018 16:41:44] Epoch: [0][10/2500]	Time 9.578	Data 0.028	Loss 2.2314	Prec@1 25.000	lr  0.0010
+Epoch: [0][10/2500]	Time 9.578	Data 0.028	Loss 2.2314	Prec@1 25.000	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12005843967199326
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0109701594337821
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(6.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04781369864940643
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.01496586948633194
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(12.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12971119582653046
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06315378099679947
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.030558381229639053
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04978913813829422
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(0.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.20523032546043396
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.23683542013168335
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+[22.06.2018 16:43:20] Epoch: [0][20/2500]	Time 9.659	Data 0.021	Loss 2.3328	Prec@1 18.750	lr  0.0010
+Epoch: [0][20/2500]	Time 9.659	Data 0.021	Loss 2.3328	Prec@1 18.750	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1168602928519249
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1254892349243164
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.013902466744184494
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.009143996052443981
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04936189576983452
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.014027949422597885
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.008072479628026485
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16849663853645325
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16928699612617493
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0663335770368576
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+[22.06.2018 16:44:57] Epoch: [0][30/2500]	Time 9.891	Data 0.013	Loss 2.1637	Prec@1 18.750	lr  0.0010
+Epoch: [0][30/2500]	Time 9.891	Data 0.013	Loss 2.1637	Prec@1 18.750	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10973125696182251
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.005798714701086283
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.15304133296012878
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.012340466491878033
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.02270716056227684
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.027503760531544685
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.10695609450340271
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.14664795994758606
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09453725069761276
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1558765023946762
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(50.)]
+[22.06.2018 16:46:33] Epoch: [0][40/2500]	Time 9.519	Data 0.020	Loss 1.8269	Prec@1 50.000	lr  0.0010
+Epoch: [0][40/2500]	Time 9.519	Data 0.020	Loss 1.8269	Prec@1 50.000	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09984617680311203
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0537889190018177
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(31.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1376274824142456
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.2079116702079773
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0734076052904129
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12910746037960052
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.2557832896709442
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.08515141904354095
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.03363322094082832
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.24246624112129211
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(25.)]
+[22.06.2018 16:48:10] Epoch: [0][50/2500]	Time 9.446	Data 0.026	Loss 1.8903	Prec@1 25.000	lr  0.0010
+Epoch: [0][50/2500]	Time 9.446	Data 0.026	Loss 1.8903	Prec@1 25.000	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.3649485111236572
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.051592033356428146
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.048077985644340515
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.16615869104862213
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(31.2500)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.06348098814487457
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0745377317070961
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(25.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12990975379943848
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.005683597177267075
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.19248276948928833
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.053904976695775986
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+[22.06.2018 16:49:45] Epoch: [0][60/2500]	Time 9.770	Data 0.023	Loss 1.4316	Prec@1 56.250	lr  0.0010
+Epoch: [0][60/2500]	Time 9.770	Data 0.023	Loss 1.4316	Prec@1 56.250	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.017423640936613083
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0878615602850914
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.17849189043045044
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.05998964235186577
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04629112780094147
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.12867222726345062
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.04192682355642319
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.1526213139295578
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(75.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.13007058203220367
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(31.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09773524850606918
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(62.5000)]
+[22.06.2018 16:51:23] Epoch: [0][70/2500]	Time 9.892	Data 0.020	Loss 1.4042	Prec@1 62.500	lr  0.0010
+Epoch: [0][70/2500]	Time 9.892	Data 0.020	Loss 1.4042	Prec@1 62.500	lr  0.0010
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.22657911479473114
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(43.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.0706823393702507
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(56.2500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.09783438593149185
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(62.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.03364897891879082
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(6.2500)]
+top 1 precision, final output classification:  [tensor(18.7500)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.05473373830318451
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(37.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.13351812958717346
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(12.5000)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.009052954614162445
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(31.2500)]
+top 1 precision, final output classification:  [tensor(50.)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.07193181663751602
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(18.7500)]
+top 1 precision, final output classification:  [tensor(62.5000)]
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256])
+1st element:  0.015030558221042156
+x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 10])
+top 1 precision, x1_out:  [tensor(0.)]
+top 1 precision, final output classification:  [tensor(62.5000)]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 yi@yi:/media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/pytorch_resnet$ python main.py 
 torch.Size([1, 10])
 ==> Preparing data..
