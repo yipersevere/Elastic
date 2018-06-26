@@ -34,5 +34,9 @@ parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')
 parser.add_argument('--no-save-model', dest='no_save_model', action='store_true',
                     help='Only save best model (default: false)')
+parser.add_argument('--print_freq', dest='print_freq',
+                    help='Only save best model (default: false)', type=int, default=1000)
+                    
+
 # Init Environment
 args = parser.parse_args()

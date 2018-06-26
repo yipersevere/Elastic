@@ -162,7 +162,7 @@ class ResNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
 
-        return x, x1, x2, x3, x4
+        return x, [x1, x2, x3]
 # ========================================================================================end of source code======================
 
 # class CifarClassifier(nn.Module):
@@ -279,7 +279,7 @@ class FeatureExtractor(nn.Module):
 
 
 
-def Elastic_ResNet50():
+def Elastic_ResNet50(args):
 
     # model = resnet50(pretrained=True)
     
@@ -306,30 +306,38 @@ def Elastic_ResNet50():
 
     # origin_model = ResNet(Bottleneck, [3, 4, 6, 3])
     # model, inter_clf_x1, inter_clf_x2, inter_clf_x3, inter_clf_x4 = origin_model.forward()
-    model = ResNet(Bottleneck, [3, 4, 6, 3])
+    if args.add_intermediate_layers_number == 2:
+        model = ResNet(Bottleneck, [3, 4, 6, 3])
 
-    pretrained = True
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))    
+        pretrained = True
+        if pretrained:
+            model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))    
 
-    for param in model.parameters():
-        param.requires_grad = True
-    #提取fc层中固定的参数
-    num_classes = 10
+        for param in model.parameters():
+            param.requires_grad = True
+        #提取fc层中固定的参数
+        num_classes = 10
 
-    print("already loaded pretrained imagenet weight")
-    fc_features = model.fc.in_features
-    # model.avgpool = nn.AvgPool2d(4, stride=0)
+        print("already loaded pretrained imagenet weight")
+        fc_features = model.fc.in_features
+        # model.avgpool = nn.AvgPool2d(4, stride=0)
 
-    model.fc = nn.Linear(fc_features, num_classes)
+        model.fc = nn.Linear(fc_features, num_classes)
+    elif args.add_intermediate_layers_number == 0:
+        model = resnet50(pretrained=True)
+        for param in model.parameters():
+            param.requires_grad = True
+        #提取fc层中固定的参数
+        num_classes = 10
+
+        print("already loaded pretrained imagenet weight")
+        fc_features = model.fc.in_features
+        model.fc = nn.Linear(fc_features, num_classes)
+    else:
+        print("Error, args.add_intermediate_layers_number should be 0 or 2")
+        NotImplementedError
 
     return model
-
-    # intermediate_outputs = None
-
-
-    # return model, intermediate_outputs
-
 
 
 def Elastic_ResNet101():
