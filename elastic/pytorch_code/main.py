@@ -439,7 +439,13 @@ def main(**kwargs):
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
 
     # Data loading
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    # TUT thinkstation data folder path
+#   data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+
+    # narvi data folder path
+    data_folder = "/home/zhouy/Elastic/data"
+
+    # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
