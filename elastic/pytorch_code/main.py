@@ -519,7 +519,7 @@ def main(**kwargs):
         else:
             if val_loss >= prev_val_loss:
                 EarlyStopping_epoch_count += 1
-        if EarlyStopping_epoch_count >= 15:
+        if EarlyStopping_epoch_count > 10:
             print("it doesn't improve val_loss for 15 epochs, stop running model")
             break
     # save stats into file
