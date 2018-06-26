@@ -38,7 +38,7 @@ import sys
 import traceback
 import time
 import sys
-
+import csv
 
 
 def load_data(data = "cifar100", target_size = (224,224,3), num_class = 100, test_percent=0.2, shuffle=True):
