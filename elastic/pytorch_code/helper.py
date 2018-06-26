@@ -304,10 +304,9 @@ def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss
             fp.write("%.4f " % a)
         fp.write("\n")
 
-    with open(path + os.sep + "test_intermediate_accuracies.txt", "a") as fp:
-        for a in epochs_intermediate_acc_test:
-            fp.write("%.4f " % a)
-        fp.write("\n")    
+    with open(path + os.sep + "test_intermediate_accuracies.csv", "a") as fp:
+        wr = csv.writer(fp)
+        wr.writerows(epochs_intermediate_acc_test)
     
     with open(path + os.sep + "test_losses.txt", "a") as fp:
         for loss in epochs_loss_test:
