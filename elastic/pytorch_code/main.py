@@ -3,10 +3,13 @@ import torch.nn as nn
 import torchvision.models as models
 import torch.optim as optim
 import torchvision.models.resnet
-import torchvision.datasets as datasets
 import torch.backends.cudnn as cudnn
 from opts import args
-from helper import load_data, multi_output_generator, LOG, log_summary, log_error, HistoryLogger, log_stats, Plot
+<<<<<<< HEAD
+from helper import LOG, log_summary, log_error, log_stats, Plot, AverageMeter, accuracy
+=======
+from helper import LOG, log_summary, log_error, log_stats, Plot, measure_model
+>>>>>>> 266c3b739b926b22c45d0d05c7489bc0e76ca1de
 
 import os
 import time
@@ -16,7 +19,6 @@ import sys
 from torchsummary import summary
 
 from Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet50, Elastic_ResNet101
-from utils import measure_model
 from data_loader import get_train_valid_loader, get_test_loader
 from ignite.handlers import EarlyStopping
 
@@ -29,22 +31,7 @@ best_prec1 = 0
 # torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-    def __init__(self):
-        self.reset()
 
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
 
 def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
 
@@ -54,20 +41,7 @@ def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
         param_group['lr'] = lr
     return lr
 
-def accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
-    maxk = max(topk)
-    batch_size = target.size(0)
 
-    _, pred = output.topk(maxk, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        res.append(correct_k.mul_(100.0 / batch_size))
-    return res
 
 def save_checkpoint(state, args, is_best, filename, result):
     print(args)

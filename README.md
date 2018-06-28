@@ -1,4 +1,4 @@
-# TUT-lab computer environment
+# TUT-lab ThinkStation computer environment
 ubuntu 16.04
 anaconda with python 3.6.4  
 
@@ -29,6 +29,8 @@ cudatoolkit  9.0  -- install with conda-forge community version
 cudnn 7.1.2
 tensorflow-gpu 1.5.0
 tensorflow 1.8.0
+
+* even though tensorflow is 1.5 or pillow, or opencv but when I change my python from 3.6 to 3.5, then in conda env, all my third packages need to be reinstalled with -pyt35, since before it is with -py36
 keras 2.1.5 with modify version to display # of ops in terminal
 
 # mount remote folder into local folder
