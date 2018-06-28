@@ -4,16 +4,12 @@ from __future__ import print_function
 from __future__ import division
 
 import matplotlib
-
 matplotlib.use("PDF")
 import matplotlib.pyplot as plt
 
 import os
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 import scipy
-
 import datetime
 from io import StringIO
 import shutil
@@ -29,6 +25,8 @@ import torch.nn as nn
 from torch.autograd import Variable
 from functools import reduce
 import operator
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 count_ops = 0
@@ -111,42 +109,30 @@ def log_summary(model, logFile):
         LOG(line, logFile) 
 
 
-def log_error(labels, predictions):
-    total = 0
-    # print(predictions[0])
-    # print(labels[0])
-    for i in range(len(predictions)):
-        if list(predictions[i]).index(max(list(predictions[i]))) ==  list(labels[i]).index(1):
-            total += 1
-    error = (1- total/len(labels)) * 100
-    return error
-
-
 def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_intermediate_acc_test, epochs_loss_test):
 
     with open(path + os.sep + "train_accuracies.txt", "a") as fp:
         for a in epochs_acc_train:
-            fp.write("%.4f " % a)
+            fp.write("%.4f\n" % a)
         fp.write("\n")
 
     with open(path + os.sep + "train_intermediate_accuracies.txt", "a") as fp:
-        for a in epochs_intermediate_acc_train:
-            fp.write("%.4f " % a)
-        fp.write("\n")    
+        wr = csv.writer(fp)
+        wr.writerows(epochs_intermediate_acc_train)
 
     with open(path + os.sep + "train_losses.txt", "a") as fp:
         for loss in epochs_loss_train:
-            fp.write("%.4f " % loss)
+            fp.write("%.4f\n" % loss)
         fp.write("\n")
 
     with open(path + os.sep + "epochs_lr.txt", "a") as fp:
         for a in epochs_lr:
-            fp.write("%.4f " % a)
+            fp.write("%.7f\n" % a)
         fp.write("\n")    
 
     with open(path + os.sep + "test_accuracies.txt", "a") as fp:
         for a in epochs_acc_test:
-            fp.write("%.4f " % a)
+            fp.write("%.4f\n" % a)
         fp.write("\n")
 
     with open(path + os.sep + "test_intermediate_accuracies.csv", "a") as fp:
@@ -155,9 +141,29 @@ def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss
     
     with open(path + os.sep + "test_losses.txt", "a") as fp:
         for loss in epochs_loss_test:
-            fp.write("%.4f " % loss)
-        fp.write("\n")    
+            fp.write("%.4f\n" % loss)
+        fp.write("\n")
+    
 
+
+
+# def plot_acc():
+#     origin_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/temp/narvi-ResNet50-pytorch-CIFAR10-log-temp/test_accuracies.txt"
+#     elastic_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/temp/narvi-ResNet50-pytorch-CIFAR10-log-temp/train_accuracies.txt"
+#     error_origin = pd.read_table(origin_file, sep=" ", header=None)
+#     error_elastic = pd.read_table(elastic_file, sep=" ", header=None) 
+#     layer_plot_index = [0] 
+#     folder = plot_save_folder
+#     captionStrDict = {
+#         "save_file_name" : folder + os.sep + "Pytorch_CIFAR_10_train_test_epoch_accuracy_Original_ResNet50.pdf",
+#         "fig_title" : "Pytorch_CIFAR_10_Original_ResNet50",
+#         "x_label" : "epochs",
+#         "y_label" : "accuracy (%)",
+#         'elastic_final_layer_label': "train_accuracy",
+#         "elastic_intermediate_layer_label" : "Elastic_ResNet-152_Intermediate_Layer_Classifier_",
+#         "original_layer_label" : "test_accuracy"
+#     }
+#     return error_origin, error_elastic, layer_plot_index, captionStrDict
 
 
 class Plot():
@@ -389,3 +395,44 @@ def measure_model(model, H, W, debug=False):
     if to_print:
         print("modules flops sum: ", sum(modules_flops[0:2]))
     return count_ops, count_params
+
+def save_checkpoint(state, args, is_best, filename, result):
+    print(args)
+    result_filename = os.path.join(args.savedir, args.filename)
+    model_dir = os.path.join(args.savedir, 'save_models')
+
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    model_filename = os.path.join(model_dir, filename)
+    latest_filename = os.path.join(model_dir, 'latest.txt')
+    best_filename = os.path.join(model_dir, 'model_best.pth.tar')
+
+    if not os.path.isdir(args.savedir):
+        os.makedirs(args.savedir)
+        os.makedirs(model_dir)
+
+    # For mkdir -p when using python3
+    # os.makedirs(args.savedir, exist_ok=True)
+    # os.makedirs(model_dir, exist_ok=True)
+
+    print("=> saving checkpoint '{}'".format(model_filename))
+    with open(result_filename, 'a') as fout:
+        fout.write(result)
+    torch.save(state, model_filename)
+    with open(latest_filename, 'w') as fout:
+        fout.write(model_filename)
+    if args.no_save_model:
+        shutil.move(model_filename, best_filename)
+    elif is_best:
+        shutil.copyfile(model_filename, best_filename)
+
+    print("=> saved checkpoint '{}'".format(model_filename))
+    return
+
+def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
+
+    """Sets the learning rate to the initial LR decayed by 10 every 5 epochs"""
+    lr = args.learning_rate * (0.1 ** (epoch // 5))
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+    return lr

@@ -1,26 +1,22 @@
 import torch
 import torch.nn as nn
-import torchvision.models as models
 import torch.optim as optim
 import torchvision.models.resnet
 import torch.backends.cudnn as cudnn
-from opts import args
-<<<<<<< HEAD
-from helper import LOG, log_summary, log_error, log_stats, Plot, AverageMeter, accuracy
-=======
-from helper import LOG, log_summary, log_error, log_stats, Plot, measure_model
->>>>>>> 266c3b739b926b22c45d0d05c7489bc0e76ca1de
+from ignite.handlers import EarlyStopping
+from torchsummary import summary
 
 import os
 import time
 import datetime
 import shutil
 import sys
-from torchsummary import summary
 
-from Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet50, Elastic_ResNet101
+from opts import args
+from helper import LOG, log_summary, log_stats, Plot, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
 from data_loader import get_train_valid_loader, get_test_loader
-from ignite.handlers import EarlyStopping
+import models
+
 
 
 # Init Torch/Cuda
@@ -31,56 +27,13 @@ best_prec1 = 0
 # torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
-
-
-def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
-
-    """Sets the learning rate to the initial LR decayed by 10 every 5 epochs"""
-    lr = args.learning_rate * (0.1 ** (epoch // 5))
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-    return lr
-
-
-
-def save_checkpoint(state, args, is_best, filename, result):
-    print(args)
-    result_filename = os.path.join(args.savedir, args.filename)
-    model_dir = os.path.join(args.savedir, 'save_models')
-
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
-    model_filename = os.path.join(model_dir, filename)
-    latest_filename = os.path.join(model_dir, 'latest.txt')
-    best_filename = os.path.join(model_dir, 'model_best.pth.tar')
-
-    if not os.path.isdir(args.savedir):
-        os.makedirs(args.savedir)
-        os.makedirs(model_dir)
-
-    # For mkdir -p when using python3
-    # os.makedirs(args.savedir, exist_ok=True)
-    # os.makedirs(model_dir, exist_ok=True)
-
-    print("=> saving checkpoint '{}'".format(model_filename))
-    with open(result_filename, 'a') as fout:
-        fout.write(result)
-    torch.save(state, model_filename)
-    with open(latest_filename, 'w') as fout:
-        fout.write(model_filename)
-    if args.no_save_model:
-        shutil.move(model_filename, best_filename)
-    elif is_best:
-        shutil.copyfile(model_filename, best_filename)
-
-    print("=> saved checkpoint '{}'".format(model_filename))
-    return
-
 def all_intermediate_layers_clf():
     losses = []
 
-
     return 0
+
+
+
 
 def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
@@ -91,7 +44,6 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
     top1_x2_out = AverageMeter()
     top1_x3_out = AverageMeter()
     model = model.cuda()
-    # model = model.cpu()
     ### Switch to train mode
     model.train()
     running_lr = None
@@ -117,42 +69,16 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         
         ### Compute output
         if args.add_intermediate_layers_number == 2:
-            output, intermediate_layer_outputs = model.forward(input_var)
+            outputs = model.(input_var)
 
 
-            inter_clf_block_1 = torch.nn.Sequential(torch.nn.Linear(256, 10)).to(device)
-            inter_clf_block_2 = torch.nn.Sequential(torch.nn.Linear(512, 10)).to(device)
-            inter_clf_block_3 = torch.nn.Sequential(torch.nn.Linear(1024, 10)).to(device)
-            
-            # inter_clf_x1 = inter_clf_x1.cuda()
-            # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
-            # x1_out = torch.autograd.Variable(inter_clf_x1)
-            block_out_1 = nn.AvgPool2d(kernel_size=(56,56))(intermediate_layer_outputs[0])
-            block_out_2 = nn.AvgPool2d(kernel_size=(28,28))(intermediate_layer_outputs[1])
-            block_out_3 = nn.AvgPool2d(kernel_size=(14,14))(intermediate_layer_outputs[2])
-
-            # x1_out = x1_out.view(16,256)
-            # when set batch_size = 1
-            block_out_1 = block_out_1.view(args.batch_size, 256)
-            block_out_2 = block_out_2.view(args.batch_size, 512)
-            block_out_3 = block_out_3.view(args.batch_size, 1024)
-            # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
-            
-            # x1_out = x1_out.cuda()
-            # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
-            # print("1st element: ", x1_out[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
-            # x1_out = x1_out.cuda()
-            # x1_out = nn.Linear(256, 10)(x1_out)
-            block_out_1 = inter_clf_block_1(block_out_1)
-            block_out_2 = inter_clf_block_2(block_out_2)
-            block_out_3 = inter_clf_block_3(block_out_3)
             # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
             prec1_x1_out = accuracy(block_out_1, target)
             prec1_x2_out = accuracy(block_out_2, target)
             prec1_x3_out = accuracy(block_out_3, target)
             # print("top 1 precision, x1_out: ", prec1_x1_out)
             top1_x1_out.update(prec1_x1_out[0], input.size(0))
-            top1_x2_out.update(prec1_x2_out[0], input.size(0))
+            top1_x2_out.update(prec1_x2_out[0], input.size(0))Elastic_ResNet50
             top1_x3_out.update(prec1_x3_out[0], input.size(0))
 
             loss_final_clf = criterion(output, target_var)
@@ -306,10 +232,6 @@ def validate(val_loader, model, criterion):
 
     return top1.avg, top1_x1_out.avg, top1_x2_out.avg, top1_x3_out.avg, losses.avg
 
-def score_function(cifar_val_loss):
-    val_loss = cifar_val_loss
-    return -val_loss
-
 
 
 def main(**kwargs):
@@ -375,7 +297,7 @@ def main(**kwargs):
     elif args.model == "Elastic_ResNet50":
         # elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
         elasicNN_ResNet50 = Elastic_ResNet50(args)
-        model = elasicNN_ResNet50
+        model = elasicNN_ResNet50.model
         print("using Elastic_ResNet50 class")
 
     # elif args.model == "Elastic_ResNet34":
@@ -402,9 +324,7 @@ def main(**kwargs):
     EarlyStopping_epoch_count = 0
     prev_val_loss = 100000
 
-    # Define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
-    # criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
@@ -452,7 +372,7 @@ def main(**kwargs):
         print(epoch_result)
         
         epochs_acc_train.append(tr_prec1)
-        epochs_intermediate_acc_train.append(tr_prec1_x1_out)
+        epochs_intermediate_acc_train.append([tr_prec1_x1_out, tr_prec1_x2_out, tr_prec1_x3_out])
         epochs_loss_train.append(loss)
         epochs_lr.append(lr)
 
@@ -524,6 +444,8 @@ def main(**kwargs):
     # LOG(FLOPS_result, logFile)
     # print(FLOPS_result)
     print("============Finish============")
+
+
 
 if __name__ == "__main__":
 

@@ -8,29 +8,14 @@ Easily extended to MNIST, CIFAR-100 and Imagenet.
 import torch
 import numpy as np
 
-from utils import plot_images
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
-import torch.nn as nn
-from keras.applications.inception_v3 import preprocess_input
 import scipy
-# from . import imagenet_utils
-# from .imagenet_utils import decode_predictions
-# from .imagenet_utils import _obtain_input_shape
+
 
 target_size = (224,224,3)
 
-# def preprocess_input(x):
-#     """Preprocesses a numpy array encoding a batch of images.
-
-#     # Arguments
-#         x: a 4D numpy array consists of RGB values within [0, 255].
-
-#     # Returns
-#         Preprocessed array.
-#     """
-#     return imagenet_utils.preprocess_input(x, mode='torch')
 
 def get_train_valid_loader(data,data_dir,
                            batch_size,
@@ -135,10 +120,6 @@ def get_train_valid_loader(data,data_dir,
     else:
         print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
         NotImplementedError
-    # train_dataset = np.array([scipy.misc.imresize(train_dataset[i], target_size) for i in range(0, len(train_dataset))]).astype('float32')
-    # train_dataset = preprocess_input(big_train_dataset, mode="torch")
-
-
 
 
     num_train = len(train_dataset)
@@ -162,16 +143,6 @@ def get_train_valid_loader(data,data_dir,
         num_workers=num_workers, pin_memory=pin_memory,
     )
 
-    # visualize some images
-    if show_sample:
-        sample_loader = torch.utils.data.DataLoader(
-            train_dataset, batch_size=9, shuffle=shuffle,
-            num_workers=num_workers, pin_memory=pin_memory,
-        )
-        data_iter = iter(sample_loader)
-        images, labels = data_iter.next()
-        X = images.numpy().transpose([0, 2, 3, 1])
-        plot_images(X, labels)
 
     return (train_loader, valid_loader)
 
