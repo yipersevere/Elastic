@@ -3,10 +3,9 @@ import torch.nn as nn
 import torchvision.models as models
 import torch.optim as optim
 import torchvision.models.resnet
-import torchvision.datasets as datasets
 import torch.backends.cudnn as cudnn
 from opts import args
-from helper import LOG, log_summary, log_error, log_stats, Plot
+from helper import LOG, log_summary, log_error, log_stats, Plot, measure_model
 
 import os
 import time
@@ -16,7 +15,6 @@ import sys
 from torchsummary import summary
 
 from Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet50, Elastic_ResNet101
-from utils import measure_model
 from data_loader import get_train_valid_loader, get_test_loader
 from ignite.handlers import EarlyStopping
 
