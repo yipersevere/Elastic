@@ -13,7 +13,7 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, Plot, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
+from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
 from data_loader import get_train_valid_loader, get_test_loader
 import models
 
@@ -25,13 +25,6 @@ torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 best_prec1 = 0
 # torch.set_default_tensor_type('torch.cuda.FloatTensor')
-
-
-def all_intermediate_layers_clf():
-    losses = []
-
-    return 0
-
 
 
 

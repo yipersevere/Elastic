@@ -134,6 +134,8 @@ def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss
         for a in epochs_acc_test:
             fp.write("%.4f\n" % a)
         fp.write("\n")
+    
+    plot_error_fig(epochs_acc_test, args=None, imageStr=None)
 
     with open(path + os.sep + "test_intermediate_accuracies.csv", "a") as fp:
         wr = csv.writer(fp)
@@ -145,100 +147,42 @@ def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss
         fp.write("\n")
     
 
+def plot_error_fig(errors, args, imageStr):
+    """
+    plot epoch test error after model testing is finished
+    """
+    folder = args.savedir
+    fig, (ax0, ax1) = plt.subplots(1, 1, sharey=True)
+    colormap = plt.cm.tab20
+
+    plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, args.num_outputs)])
+
+    for k in range(len(errors[0])):
+        # Plots
+        x = np.arange(len(errors)) + 1
+        y = np.array(errors)[:, k]
+        c_label = 'Layer ' + str(k)
+        ax0.plot(x, y, label=c_label)
+
+        # Legends
+        y = errors[-1][k]
+        x = len(errors)
+        ax0.text(x, y, "%d" % k)
+    
+    ax0.set_ylabel(imageStr["ax0_set_ylabel"])
+    ax0.set_xlabel('epoch')
+
+    ax0.set_title(imageStr["ax0_title"])
+    ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+    fig_size = plt.rcParams["figure.figsize"]
+
+    plt.rcParams["figure.figsize"] = fig_size
+
+    plt.savefig(args.path + os.sep + imageStr["save_fig"], bbox_inches="tight")
+    plt.close("all")    
 
 
-# def plot_acc():
-#     origin_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/temp/narvi-ResNet50-pytorch-CIFAR10-log-temp/test_accuracies.txt"
-#     elastic_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/temp/narvi-ResNet50-pytorch-CIFAR10-log-temp/train_accuracies.txt"
-#     error_origin = pd.read_table(origin_file, sep=" ", header=None)
-#     error_elastic = pd.read_table(elastic_file, sep=" ", header=None) 
-#     layer_plot_index = [0] 
-#     folder = plot_save_folder
-#     captionStrDict = {
-#         "save_file_name" : folder + os.sep + "Pytorch_CIFAR_10_train_test_epoch_accuracy_Original_ResNet50.pdf",
-#         "fig_title" : "Pytorch_CIFAR_10_Original_ResNet50",
-#         "x_label" : "epochs",
-#         "y_label" : "accuracy (%)",
-#         'elastic_final_layer_label': "train_accuracy",
-#         "elastic_intermediate_layer_label" : "Elastic_ResNet-152_Intermediate_Layer_Classifier_",
-#         "original_layer_label" : "test_accuracy"
-#     }
-#     return error_origin, error_elastic, layer_plot_index, captionStrDict
-
-
-class Plot():
-
-    def __init__(self, args):
-        self.imageStr = args.imageStr
-        self.errors = args.errors
-
-
-    def plot(self):
-        """
-        plot test
-        """
-        # fig, ax = plt.subplots(1, sharex=True)
-        fig, (ax0, ax1) = plt.subplots(1, 1, sharey=True)
-        colormap = plt.cm.tab20
-
-    # plot f1-score
-        plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, self.num_outputs)])
-
-        for k in range(len(self.errors[0])):
-            # Plots
-            x = np.arange(len(self.errors)) + 1
-            y = np.array(self.errors)[:, k]
-            c_label = 'Layer ' + str(k)
-            ax0.plot(x, y, label=c_label)
-
-            # Legends
-            y = self.errors[-1][k]
-            x = len(self.errors)
-            ax0.text(x, y, "%d" % k)
-        
-        ax0.set_ylabel(self.imageStr["ax0_set_ylabel"])
-        ax0.set_xlabel('epoch')
-        # title = "InceptionV3 test on CIFAR 100"
-        # title2 = "ElasticNN-InceptionV3 test on CIFAR 100"
-        ax0.set_title(self.imageStr["ax0_title"])
-        ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-
-    # plot f1-score
-        # fig_f_score, ax_f_score = plt.subplots(1, sharex=True)
-        # plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, self.num_outputs)])
-
-        # for k in range(len(self.f_score[0])):
-        #     # Plots
-        #     x = np.arange(len(self.f_score)) + 1
-        #     y = np.array(self.f_score)[:, k]
-        #     c_label = 'Layer ' + str(k)
-        #     ax1.plot(x, y, label=c_label)
-
-        #     # Legends
-        #     y = self.f_score[-1][k]
-        #     x = len(self.f_score)
-        #     ax1.text(x, y, "%d" % k)
-        
-        # ax1.set_ylabel(self.imageStr["ax1_set_ylabel"])
-        # ax1.set_xlabel('epoch')
-        # # title = "InceptionV3 test on CIFAR 100"
-        # # title2 = "f1-score ElasticNN-InceptionV3 test on CIFAR 100"
-        # ax1.set_title(self.imageStr["ax1_title"])
-        # ax1.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-
-        fig_size = plt.rcParams["figure.figsize"]
-
-        fig_size[0] = 6.4
-        # fig_size[1] = 6.4
-
-        plt.rcParams["figure.figsize"] = fig_size
-
-        #plt.tight_layout()
-
-        # imagecaption = "accuracy_InceptionV3_CIFAR_100.pdf"
-        # imagecaption2 = "accuracy_Elastic_InceptionV3_CIFAR_100.pdf"
-        plt.savefig(path + os.sep + self.imageStr["save_fig"], bbox_inches="tight")
-        plt.close("all")
 
 def get_num_gen(gen):
     return sum(1 for x in gen)
