@@ -1,28 +1,65 @@
 import torch
 import torch.nn as nn
+import torch.optim as optim
+import torchvision.models.resnet
+import torch.backends.cudnn as cudnn
+from ignite.handlers import EarlyStopping
+from torchsummary import summary
 
-import  csv
-import pandas as pd
 import os
-# checkpoint = torch.load("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet50/2018-06-24-20-56-30/save_models/model_best.pth.tar")
+import time
+import datetime
+import shutil
+import sys
 
-# model = checkpoint["model"]
+from opts import args
+from helper import LOG, log_summary, log_stats, Plot, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
+from data_loader import get_train_valid_loader, get_test_loader
+import models
+from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 
-# epochs_intermediate_acc_test = [[1,2,3],[4,5,6]]
+# data_folder = "/home/zhouy/Elastic/data"
+
+# XPS 15 laptop data folder path
+data_folder = "D:\Elastic\data"
+
+train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
+                                                random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
+                                                num_workers=1,pin_memory=True)
+# test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+#                                 num_workers=1,pin_memory=True)
 
 
 
-# with open("./test_intermediate_accuracies.csv", "a") as fp:
-#     wr = csv.writer(fp)
-#     wr.writerows(epochs_intermediate_acc_test)
+model = resnet50(pretrained=True)
+fc_features = model.fc.in_features
+model.fc = nn.Linear(fc_features, 10)
+
+criterion = nn.CrossEntropyLoss().cuda()
+optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+                            momentum=args.momentum,
+                            weight_decay=args.weight_decay,
+                            nesterov=False)# nesterov set False to keep align with keras default settting
+
+model.train()
+for i, (input, target) in enumerate(train_loader):
+    
+    optimizer.zero_grad()
+    x1_out = model.layer1.data
+    
+
+    target = target.cuda(async=True)
+    input_var = torch.autograd.Variable(input)
+    target_var = torch.autograd.Variable(target)
+    
+    output = model(input_var)
+    loss = criterion(output, target_var)
+    loss.backward()
+    optimizer.step()
 
 
-origin_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/pytorch_CIFAR10_3_intermediate_classifiers_Elastic_ResNet50/2018-06-27-00-35-10/epochs_lr.txt"
-elastic_file = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/pytorch_CIFAR10_3_intermediate_classifiers_Elastic_ResNet50/2018-06-27-00-35-10/train_intermediate_accuracies.txt"
-error_origin = pd.read_table(origin_file, sep=" ", header=None)
-error_elastic = pd.read_table(elastic_file, sep=" ", header=None) 
+print("Done")
 
-folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/temp"
 
-error_origin.to_csv(folder + os.sep + 'epochs_lr.txt', header=None, index=None, sep='\n', mode='a')
-error_elastic.to_csv(folder + os.sep + 'train_intermediate_accuracies.txt', header=None, index=None, sep='\n', mode='a')
+        
+
