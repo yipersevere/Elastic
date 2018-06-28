@@ -245,10 +245,7 @@ def main(**kwargs):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # device = 'cpu'
 
-    if args.data in ['cifar10', 'cifar100']:
-        IMAGE_SIZE = 32
-    else:
-        IMAGE_SIZE = 224
+
 
     program_start_time = time.time()
     instanceName = "Classification_Accuracy"

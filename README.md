@@ -17,13 +17,19 @@ gfortran-6 (6.4.0-17ubuntu1~16.04)
 
 GPU Nvidia TITAN Xp 12GB  
 
+
+## conda virtual envs
+caffe  
+source activate caffe  
+
+
 # Narvi zhouy computer environment
 user name: zhouy  
 ssh narvi.tut.fi  
 
 module load CUDA or module use CUDA  
 
-source activate lerning  
+source activate dl  
 Python 3.6.5  
 cudatoolkit  9.0  -- install with conda-forge community version
 cudnn 7.1.2

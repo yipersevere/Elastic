@@ -20,7 +20,7 @@ parser.add_argument('--model_name', type=str, help="exact model name", default="
 parser.add_argument('--dropout_rate', type=float, help="dropout rate, (default: 0.2)", default=0.2)
 parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 32)", default=16)
 
-parser.add_argument('--learning_rate', type=float, help="initial learning rate (default: 1e-3)", default=1e-3)
+parser.add_argument('--learning_rate', type=float, help="initial learning rate (default: 1e-3)", default=1e-2)
 parser.add_argument('--layers_weight_change', type=int, default=0, 
                     help="1 for giving different weights for different intermediate layers output classifiers, 0 for setting all weights are 1")
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',

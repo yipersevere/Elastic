@@ -18,22 +18,37 @@ from data_loader import get_train_valid_loader, get_test_loader
 import models
 from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    # TUT thinkstation data folder path
+data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+
 # data_folder = "/home/zhouy/Elastic/data"
 
 # XPS 15 laptop data folder path
-data_folder = "D:\Elastic\data"
+# data_folder = "D:\Elastic\data"
 
-train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
-                                                random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
-                                                num_workers=1,pin_memory=True)
-# test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
-#                                 num_workers=1,pin_memory=True)
+# train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
+#                                                 random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
+#                                                 num_workers=1,pin_memory=True)
+test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+                                num_workers=1,pin_memory=True)
 
 
 
 model = resnet50(pretrained=True)
 fc_features = model.fc.in_features
 model.fc = nn.Linear(fc_features, 10)
+
+x1_out = model.layer1[0].relu
+x2_out = model.layer1[1].relu
+
+model = model.to(device)
+# model.cuda()
+if device == 'cuda':
+    model = torch.nn.DataParallel(model).cuda()
+    cudnn.benchmark = True
+
 
 criterion = nn.CrossEntropyLoss().cuda()
 optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
@@ -42,10 +57,10 @@ optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                             nesterov=False)# nesterov set False to keep align with keras default settting
 
 model.train()
-for i, (input, target) in enumerate(train_loader):
+for i, (input, target) in enumerate(test_loader):
     
-    optimizer.zero_grad()
-    x1_out = model.layer1.data
+    
+
     
 
     target = target.cuda(async=True)
@@ -54,6 +69,15 @@ for i, (input, target) in enumerate(train_loader):
     
     output = model(input_var)
     loss = criterion(output, target_var)
+    
+
+    x1_out_1 = x1_out(input_var)
+    block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
+    block_out_1_1 = block_out_1.view(16, 3)
+    inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
+
+
+    optimizer.zero_grad()
     loss.backward()
     optimizer.step()
 
