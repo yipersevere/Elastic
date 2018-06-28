@@ -21,6 +21,39 @@ import csv
 
 
 
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
+
+
+def accuracy(output, target, topk=(1,)):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = target.size(0)
+
+    _, pred = output.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+    return res
+
 def LOG(message, logFile):
     ts = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     msg = "[%s] %s" % (ts, message)
@@ -167,3 +200,6 @@ class Plot():
         # imagecaption2 = "accuracy_Elastic_InceptionV3_CIFAR_100.pdf"
         plt.savefig(path + os.sep + self.imageStr["save_fig"], bbox_inches="tight")
         plt.close("all")
+
+
+
