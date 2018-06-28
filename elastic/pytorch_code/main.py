@@ -27,13 +27,6 @@ best_prec1 = 0
 # torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
-def all_intermediate_layers_clf():
-    losses = []
-
-    return 0
-
-
-
 
 def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
@@ -256,7 +249,7 @@ def main(**kwargs):
         "ax0_title": args.model_name + " test on " + args.data,
         "ax1_set_ylabel": "f1 score on " + args.data,
         "ax1_title": "f1 score " + args.model_name+ " test on" + args.data,
-        "save_fig" : args.model_name + "_" + args.data + ".png"
+        "save_fig" : args.model_name + "_" + args.data + ".pdf"
     }
 
 
