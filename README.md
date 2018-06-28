@@ -1,4 +1,4 @@
-# TUT-lab computer environment
+# TUT-lab ThinkStation computer environment
 ubuntu 16.04
 anaconda with python 3.6.4  
 
