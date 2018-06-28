@@ -6,7 +6,7 @@ import torchvision.models.resnet
 import torchvision.datasets as datasets
 import torch.backends.cudnn as cudnn
 from opts import args
-from helper import load_data, multi_output_generator, LOG, log_summary, log_error, HistoryLogger, log_stats, Plot
+from helper import LOG, log_summary, log_error, log_stats, Plot
 
 import os
 import time
