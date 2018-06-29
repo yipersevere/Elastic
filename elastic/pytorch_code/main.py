@@ -15,7 +15,7 @@ import sys
 from opts import args
 from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
 from data_loader import get_train_valid_loader, get_test_loader
-import models
+from models import *
 
 
 
@@ -30,7 +30,7 @@ best_prec1 = 0
 
 def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
     batch_time = AverageMeter()
-    data_time = AverageMeter()
+    # data_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
     top1_x1_out = AverageMeter()
@@ -49,12 +49,13 @@ def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs
         lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
 
         ### Measure data loading time
-        data_time.update(time.time() - end)
+        # data_time.update(time.time() - end)
 
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
+        # 在这之前都是使用cpu来计算，下面这步是使用gpu计算
         outputs = model(input_var)
         if len(outputs) > 1:
             # sum all losses 
@@ -190,8 +191,8 @@ def validate(val_loader, model, criterion):
 
     # print(prec1_result)
     # print(x1_out_prec1_result)
-
-    return top1.avg, top1_x1_out.avg, top1_x2_out.avg, top1_x3_out.avg, losses.avg
+    intermediate_acc = [top1_x1_out.avg, top1_x2_out.avg, top1_x3_out.avg]
+    return top1.avg, intermediate_acc, losses.avg
 
 
 
@@ -217,23 +218,16 @@ def main(**kwargs):
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
 
-    
     print(args)
-
     global device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # device = 'cpu'
-
-
 
     imageStr = {
         "ax0_set_ylabel": "error rate on " + args.data,
         "ax0_title": args.model_name + " test on " + args.data,
         "save_fig" : args.model_name + "_" + args.data + ".png"
     }
-
-
-
     # save input parameters into log file
     args_str = str(args)
     LOG(args_str, logFile)
@@ -296,10 +290,11 @@ def main(**kwargs):
 #   data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
-    data_folder = "/home/zhouy/Elastic/data"
+    # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    # data_folder = "D:\Elastic\data"
+    data_folder = "D:\Elastic\data"
+    args.batch_size = 1
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
@@ -339,9 +334,9 @@ def main(**kwargs):
         LOG(epoch_result, logFile)
         
         # Evaluate on validation set
-        val_prec1, val_x1_out_prec1, val_x2_out_prec1, val_x3_out_prec1, val_loss = validate(val_loader, model, criterion)
+        val_prec1, val_pre1_x_out, val_loss = validate(val_loader, model, criterion)
         
-        val_str = "validation accuracy: " + str(val_prec1) + ", val_x1_out_prec1: " + str(val_x1_out_prec1) +", val_x2_out_prec1: " + str(val_x2_out_prec1) +", val_x3_out_prec1: " + str(val_x3_out_prec1) + ", val_loss" + str(val_loss)
+        val_str = "validation accuracy: " + str(val_prec1) + ", val_x1_out_prec1: " + str(val_pre1_x_out) + ", val_loss" + str(val_loss)
         print(val_str)
         LOG(val_str, logFile)
         
@@ -362,12 +357,12 @@ def main(**kwargs):
 
         # run on test dataset
 
-        test_acc, test_x1_out_acc, test_x2_out_acc, test_x3_out_acc, test_loss = validate(test_loader, model, criterion)
-        test_result_str = "=============> Test epoch, final output classifier acc: " + str(test_acc) + ", x1 out classifier acc: " + str(test_x1_out_acc) +", x1 out classifier acc: " + str(test_x2_out_acc) +", x3 out classifier acc: " + str(test_x3_out_acc) + ", test_loss" +str(test_loss)
+        test_acc, test_pre1_x_out, test_loss = validate(test_loader, model, criterion)
+        test_result_str = "=============> Test epoch, final output classifier acc: " + str(test_acc) + ", x1 out classifier acc: " + str(test_pre1_x_out) + ", test_loss" +str(test_loss)
         
         epochs_loss_test.append(test_loss)
         epochs_acc_test.append(test_acc)
-        epochs_intermediate_acc_test.append([test_x1_out_acc, test_x2_out_acc, test_x3_out_acc])
+        epochs_intermediate_acc_test.append(test_pre1_x_out)
 
         print(test_result_str)
         LOG(test_result_str, logFile)
