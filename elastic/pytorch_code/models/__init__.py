@@ -1,2 +1,3 @@
 from .Elastic_ResNet_Others import Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101
 from .Elastic_ResNet import Elastic_ResNet50
+from .Elastic_inception import Elastic_InceptionV3

@@ -143,6 +143,15 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
+    def add_intermediate_layers(base_model):
+        x1 = base_model.layer1[0].relu
+        
+        block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1)
+        # block_out_1_1 = block_out_1.view(16, 3)
+        inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1)
+        
+        return inter_clf_block_1
+        
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
@@ -161,8 +170,10 @@ class ResNet(nn.Module):
         x = self.avgpool(x4)
         x = x.view(x.size(0), -1)
         x = self.fc(x)
+        
+        intermediate_outputs = add_intermediate_layers(x)
 
-        return x, [x1, x2, x3]
+        return x, intermediate_outputs
 # ========================================================================================end of source code======================
 
 
