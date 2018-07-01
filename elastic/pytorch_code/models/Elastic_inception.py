@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
-
+from torchvision.models import inception_v3
 
 __all__ = ['Inception3', 'inception_v3']
 
@@ -325,3 +325,23 @@ class BasicConv2d(nn.Module):
         x = self.conv(x)
         x = self.bn(x)
         return F.relu(x, inplace=True)
+
+class Elastic_InceptionV3():
+    def __init__(self, args):
+        self.num_classes = args.num_classes
+        self.add_intermediate_layers = args.add_intermediate_layers
+        self.batch_size = args.batch_size
+        self.model = self.build_model()
+    
+    def build_model(self):
+        model = inception_v3(pretrained=True)
+        
+        for param in model.parameters():
+            param.requires_grad = True
+        fc_features = model.fc.in_features
+        model.fc = nn.Linear(fc_features, self.num_classes)
+        print("=====> InceptionV3, successfully load pretrained imagenet weight")
+
+        return model
+
+    

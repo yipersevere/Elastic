@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision.models.resnet
 import torch.backends.cudnn as cudnn
-from ignite.handlers import EarlyStopping
-from torchsummary import summary
 
 import os
 import time
@@ -13,16 +11,17 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, Plot, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
+
 from data_loader import get_train_valid_loader, get_test_loader
-import models
-from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
+# from models import *
+from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152, inception_v3, densenet121
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    # TUT thinkstation data folder path
+# TUT thinkstation data folder path
 data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
+# narvi data folder path
 # data_folder = "/home/zhouy/Elastic/data"
 
 # XPS 15 laptop data folder path
@@ -36,12 +35,15 @@ test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.b
 
 
 
-model = resnet50(pretrained=True)
+# model = resnet50(pretrained=True)
+# model = inception_v3(pretrained=True)
+
+model = densenet121(pretrained=True)
 fc_features = model.fc.in_features
 model.fc = nn.Linear(fc_features, 10)
 
-x1_out = model.layer1[0].relu
-x2_out = model.layer1[1].relu
+# x1_out = model.layer1[0].relu
+# x2_out = model.layer1[1].relu
 
 model = model.to(device)
 # model.cuda()
@@ -71,10 +73,10 @@ for i, (input, target) in enumerate(test_loader):
     loss = criterion(output, target_var)
     
 
-    x1_out_1 = x1_out(input_var)
-    block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
-    block_out_1_1 = block_out_1.view(16, 3)
-    inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
+    # x1_out_1 = x1_out(input_var)
+    # block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
+    # block_out_1_1 = block_out_1.view(16, 3)
+    # inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
 
 
     optimizer.zero_grad()

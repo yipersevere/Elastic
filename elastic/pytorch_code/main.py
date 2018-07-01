@@ -262,7 +262,9 @@ def main(**kwargs):
     #     elasticNN_ResNet101 = Elastic_ResNet101(args)
     #     model = elasticNN_ResNet101
     #     print("using Elastic_ResNet101 class")
-
+    elif args.model == "Elastic_InceptionV3":
+        elasticNN_inceptionV3 = Elastic_InceptionV3(args)
+        model = elasticNN_inceptionV3.model
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
