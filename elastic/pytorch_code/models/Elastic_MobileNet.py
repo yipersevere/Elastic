@@ -58,7 +58,8 @@ class Net(nn.Module):
 
 class Elastic_MobileNet():
     """
-    based on MobileNet Version1
+    based on MobileNet Version1 and ImageNet pretrained weight, https://github.com/marvis/pytorch-mobilenet
+    但是这里并没有实现 alpha 乘子和width 乘子
     """
     def __init__(self, args):
         self.num_classes = args.num_classes

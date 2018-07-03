@@ -15,6 +15,55 @@ from opts import args
 from data_loader import get_train_valid_loader, get_test_loader
 # from models import *
 from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152, inception_v3, densenet121
+from collections import OrderedDict
+from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+
+        def conv_bn(inp, oup, stride):
+            return nn.Sequential(
+                nn.Conv2d(inp, oup, 3, stride, 1, bias=False),
+                nn.BatchNorm2d(oup),
+                nn.ReLU(inplace=True)
+            )
+
+        def conv_dw(inp, oup, stride):
+            return nn.Sequential(
+                nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False),
+                nn.BatchNorm2d(inp),
+                nn.ReLU(inplace=True),
+    
+                nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
+                nn.BatchNorm2d(oup),
+                nn.ReLU(inplace=True),
+            )
+
+        self.model = nn.Sequential(
+            conv_bn(  3,  32, 2), 
+            conv_dw( 32,  64, 1),
+            conv_dw( 64, 128, 2),
+            conv_dw(128, 128, 1),
+            conv_dw(128, 256, 2),
+            conv_dw(256, 256, 1),
+            conv_dw(256, 512, 2),
+            conv_dw(512, 512, 1),
+            conv_dw(512, 512, 1),
+            conv_dw(512, 512, 1),
+            conv_dw(512, 512, 1),
+            conv_dw(512, 512, 1),
+            conv_dw(512, 1024, 2),
+            conv_dw(1024, 1024, 1),
+            nn.AvgPool2d(7),
+        )
+        self.fc = nn.Linear(1024, 1000)
+
+    def forward(self, x):
+        x = self.model(x)
+        x = x.view(-1, 1024)
+        x = self.fc(x)
+        return x
 
 if __name__ == "__main__":
         
@@ -42,8 +91,18 @@ if __name__ == "__main__":
     # model = resnet50(pretrained=True)
     # model = inception_v3(pretrained=True)
 
-    model = inception_v3(pretrained=True)
+    # model = inception_v3(pretrained=True)
+    model = Net()
+    tar = torch.load('D:\Elastic\elastic\pytorch_code\models\pytorch-mobilenet\mobilenet_sgd_68.848.pth.tar')
+    state_dict = tar["state_dict"]
+    
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+        name = k[7:] # remove `module.`
+        new_state_dict[name] = v
+    model.load_state_dict(new_state_dict)
 
+    
     fc_features = model.fc.in_features
 
     model.fc = nn.Linear(fc_features, 10)
@@ -51,14 +110,14 @@ if __name__ == "__main__":
     # x1_out = model.layer1[0].relu
     # x2_out = model.layer1[1].relu
 
-    # model = model.to(device)
-    # model.cuda()
-    # if device == 'cuda':
-    #     model = torch.nn.DataParallel(model).cuda()
-    #     cudnn.benchmark = True
+    model = model.to(device)
+    model.cuda()
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True
 
 
-    criterion = nn.CrossEntropyLoss()#.cuda()
+    criterion = nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
@@ -66,13 +125,15 @@ if __name__ == "__main__":
 
     model.train()
     for i, (input, target) in enumerate(test_loader):
-        #target = target.cuda(async=True)
+        target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
         output = model(input_var)
         loss = criterion(output, target_var)
-        
+        print("loss: ", loss.item())
+        prec1 = accuracy(output.data, target)
+        print("precision: ", prec1[0].data[0].item())
 
         # x1_out_1 = x1_out(input_var)
         # block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
@@ -83,11 +144,12 @@ if __name__ == "__main__":
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        summary(model, (3, 224, 224))
+        # summary(model, (3, 229, 229))
 
 
 print("Done")
 
 
         
+
 
