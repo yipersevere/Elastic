@@ -217,7 +217,7 @@ def main(**kwargs):
     global logFile
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
-
+    
     print(args)
     global device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -263,6 +263,7 @@ def main(**kwargs):
     #     model = elasticNN_ResNet101
     #     print("using Elastic_ResNet101 class")
     elif args.model == "Elastic_InceptionV3":
+        args.target_size = (229, 229, 3) # since pytorch inceptionv3 pretrained accepts image size (229, 229, 3) instead of (224, 224, 3)
         elasticNN_inceptionV3 = Elastic_InceptionV3(args)
         model = elasticNN_inceptionV3.model
     else:
@@ -298,10 +299,10 @@ def main(**kwargs):
     data_folder = "D:\Elastic\data"
     args.batch_size = 1
 
-    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
+    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
                                                     num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True,
+    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
                                     num_workers=1,pin_memory=True)
     
     # EarlyStopping(patience=15, )

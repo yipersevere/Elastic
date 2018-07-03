@@ -14,18 +14,10 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import scipy
 
 
-target_size = (224,224,3)
 
 
-def get_train_valid_loader(data,data_dir,
-                           batch_size,
-                           augment,
-                           random_seed,
-                           valid_size=0.1,
-                           shuffle=True,
-                           show_sample=False,
-                           num_workers=4,
-                           pin_memory=False):
+def get_train_valid_loader(data, data_dir, batch_size, augment, random_seed, target_size,
+                           valid_size=0.1, shuffle=True, show_sample=False, num_workers=4, pin_memory=False):
     """
     Utility function for loading and returning train and valid
     multi-process iterators over the CIFAR-10 dataset. A sample
@@ -56,6 +48,13 @@ def get_train_valid_loader(data,data_dir,
     error_msg = "[!] valid_size should be in the range [0, 1]."
     assert ((valid_size >= 0) and (valid_size <= 1)), error_msg
 
+    # define transforms
+    if target_size == (229,229,3):
+        print("=====> resize CIFAR image to 229*229*3")
+        target_resize = (229, 229)
+    else:
+        target_resize = (224, 224)
+
     normalize = transforms.Normalize(
         mean=[0.4914, 0.4822, 0.4465],
         std=[0.2023, 0.1994, 0.2010],
@@ -64,7 +63,7 @@ def get_train_valid_loader(data,data_dir,
     # define transforms
     valid_transform = transforms.Compose([
             # transforms.Pad(padding=96, padding_mode='reflect'),
-            transforms.Resize((224, 224)),
+            transforms.Resize(target_resize),
             transforms.ToTensor(),
             normalize,
     ])
@@ -78,7 +77,7 @@ def get_train_valid_loader(data,data_dir,
     else:
         train_transform = transforms.Compose([
             # transforms.Pad(padding=96, padding_mode='reflect'),
-            transforms.Resize((224, 224)),
+            transforms.Resize(target_resize),
             transforms.ToTensor(),
             normalize,
         ])
@@ -150,6 +149,7 @@ def get_train_valid_loader(data,data_dir,
 def get_test_loader(data,
                     data_dir,
                     batch_size,
+                    target_size,
                     shuffle=True,
                     num_workers=4,
                     pin_memory=False):
@@ -172,6 +172,12 @@ def get_test_loader(data,
     -------
     - data_loader: test set iterator.
     """
+    if target_size == (229,229,3):
+        print("=====> resize CIFAR image to 229*229*3")
+        target_resize = (229, 229)
+    else:
+        target_resize = (224, 224)
+
     normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
         std=[0.229, 0.224, 0.225],
@@ -180,7 +186,7 @@ def get_test_loader(data,
     # define transform
     transform = transforms.Compose([
         # transforms.Pad(padding=96, padding_mode='reflect'),
-        transforms.Resize((224, 224)),
+        transforms.Resize(target_resize),
         transforms.ToTensor(),
         normalize,
     ])

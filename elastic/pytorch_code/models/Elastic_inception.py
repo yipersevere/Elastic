@@ -334,10 +334,11 @@ class Elastic_InceptionV3():
         self.model = self.build_model()
     
     def build_model(self):
+        if 
         model = inception_v3(pretrained=True)
         
         for param in model.parameters():
-            param.requires_grad = True
+            param.requires_grad = False
         fc_features = model.fc.in_features
         model.fc = nn.Linear(fc_features, self.num_classes)
         print("=====> InceptionV3, successfully load pretrained imagenet weight")
