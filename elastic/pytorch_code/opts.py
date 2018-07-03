@@ -17,7 +17,7 @@ parser.add_argument('--weight-decay', '--wd', default=1e-5, type=float,
 parser.add_argument('--gpu', default="0", help='gpu available')
 
 
-parser.add_argument('--add_intermediate_layers_number', type=int, 
+parser.add_argument('--add_intermediate_layers', type=int, 
                     help="add intermediate layers, 2: all intermediate layers; "
                                                     "1: skip early intermediate layers output;"
                                                     "0 : not any intermediate layers. (default: 0)", default=0)

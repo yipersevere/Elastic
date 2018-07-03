@@ -223,3 +223,24 @@ class DenseNet(nn.Module):
         out = F.avg_pool2d(out, kernel_size=7, stride=1).view(features.size(0), -1)
         out = self.classifier(out)
         return out
+
+class Elastic_DenseNet121():
+    def __init__(self, args):
+        self.num_classes = args.num_classes
+        self.add_intermediate_layers = args.add_intermediate_layers
+        self.batch_size = args.batch_size
+        self.model = self.build_model()
+
+    def build_model(self):
+        model = densenet121(pretrained=True)
+        
+
+        for param in model.parameters():
+            param.requires_grad = True
+        print("=====> successfully load pretrained imagenet weight")
+        
+        fc_features = model.classifier.in_features
+        model.classifier = nn.Linear(fc_features, self.num_classes)
+
+        
+        return model
