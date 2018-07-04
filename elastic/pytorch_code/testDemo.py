@@ -166,25 +166,21 @@ class IntermediateClassifier(nn.Module):
         :param num_channels: Number of input channels to the classifier
         :param num_classes: Number of classes to classify
         """
-        kernel_size = 56
-        if num_channels == 64:
-            kernel_size = 56
-        elif num_channels == 128:
-            kernel_size = 28
-        elif num_channels == 256:
-            kernel_size = 14
-        elif num_channels == 512:
-            kernel_size = 7
-        else:
-            NotImplementedError
-
         super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        self.device = 'cuda'
+        kernel_size = int(14336/self.num_channels)
+        print("kernel_size for global pooling: " ,kernel_size)
+
+
+
+
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size))
-        )
-        print("add 1 inter_CLF")
-
-        self.classifier = nn.Linear(num_channels, 10)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
 
     def forward(self, x):
         """
@@ -194,8 +190,17 @@ class IntermediateClassifier(nn.Module):
                   the last block
         :return: Cifar object classification result
         """
+        # get the width or heigh on that feaure map
+        # kernel_size = x.size()[-1]
+        # get the number of feature maps
+        # num_channels = x.size()[-3]
+        
+        # print("kernel_size for global pooling: " ,kernel_size)
+        
 
+        # do global average pooling
         x = self.features(x)
+
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
@@ -238,13 +243,13 @@ class ResNet(nn.Module):
         # layers = [None] * (1+(blocks-1)*2) #自己添加的
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
-        print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
         self.inplanes = planes * block.expansion
+        self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
+        # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
-            print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-            # layers[i+blocks] = IntermediateClassifier(planes, 10)
-            self.intermediate_CLF = IntermediateClassifier(planes, 10)
+            # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
 
         return nn.Sequential(*layers)
 
@@ -254,30 +259,37 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-# layer1 的3个intermediate classifiers
-        layer1_0 = self.layer1[0]
-        x1_layer1_0 = layer1_0(x)
+        i = 0
+        intermediate_outputs = []
+        print("=====> # of intermediate classifiers: ", len(self.intermediate_CLF), ", total classifiers: ", len(self.intermediate_CLF)+1)
+        # make sure insert an intermediate classifier after each residul block 
+        assert len(self.intermediate_CLF) == len(self.layer1)+len(self.layer2)+len(self.layer3)+len(self.layer4)
 
-        layer1_1 = self.layer1[1]
-        x1_layer1_1 = layer1_1(x1_layer1_0)
-        
-        layer1_2 = self.layer1[2]
-        x1_layer1_2 = layer1_2(x1_layer1_1)
+        for res_layer in self.layer1:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
 
-        x2 = self.layer2(x1_layer1_2)
-        
-        # x1 = self.layer1(x)
-        # x2 = self.layer2(x1)
-        
-        x3 = self.layer3(x2)
-        x4 = self.layer4(x3)
+        for res_layer in self.layer2:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
 
-        x5 = self.avgpool(x4)
-        x6 = x.view(x5.size(0), -1)
-        x7 = self.fc(x6)
+        for res_layer in self.layer3:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1                    
         
-        x7 = [x7] + [x1_layer1_0, x1_layer1_1, x1_layer1_2]
-        return x7
+        for res_layer in self.layer4:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
+
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+
+        return [x]+intermediate_outputs
 
 
 def Elastic_ResNet50(args):
@@ -291,7 +303,7 @@ def Elastic_ResNet50(args):
 
     for param in model.parameters():
         param.requires_grad = True
-    print("=====> successfully load pretrained imagenet weight")
+    # print("=====> successfully load pretrained imagenet weight")
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
     
@@ -300,23 +312,23 @@ def Elastic_ResNet50(args):
 
 if __name__ == "__main__":
         
-    args.batch_size = 2
+    args.batch_size = 16
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    data_folder = "D:\Elastic\data"
+    # data_folder = "D:\Elastic\data"
 
     # train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
     #                                                 random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
     #                                                 num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = (229,229,3),
+    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = (224,224,3),
                                     num_workers=1,pin_memory=True)
 
 
@@ -335,7 +347,7 @@ if __name__ == "__main__":
     #     name = k[7:] # remove `module.`
     #     new_state_dict[name] = v
     # model.load_state_dict(new_state_dict)
-    print("not with loading pretraining weights")
+    # print("not with loading pretraining weights")
     model = Elastic_ResNet50(args)
 
     
@@ -351,14 +363,14 @@ if __name__ == "__main__":
     # x1_out = model.layer1[0].relu
     # x2_out = model.layer1[1].relu
 
-    # model = model.to(device)
-    # model.cuda()
-    # if device == 'cuda':
-    #     model = torch.nn.DataParallel(model).cuda()
-    #     cudnn.benchmark = True
+    model = model.to(device)
+    model.cuda()
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True
 
 
-    criterion = nn.CrossEntropyLoss()#.cuda()
+    criterion = nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay,
@@ -367,15 +379,39 @@ if __name__ == "__main__":
     model.train()
     output = None
     for i, (input, target) in enumerate(test_loader):
-        # target = target.cuda(async=True)
+        target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
-        output = model(input_var)
+
+        # output = model(input_var)
         # loss = criterion(output, target_var)
-        # print("loss: ", loss.item())
+      
+        # print("loss: ", loss)
         # prec1 = accuracy(output.data, target)
-        # print("precision: ", prec1[0].data[0].item())
+        # print("precision: ", prec1)
+
+
+        outputs = model(input_var)
+
+        losses = 0
+        for i in range(len(outputs)):
+            loss = criterion(outputs[i], target_var)
+            losses += loss
+            print("loss: ", i, ": ", loss.item())
+            prec1 = accuracy(outputs[i].data, target)
+            print("precision_", i, ": ", prec1[0].data[0].item())
+        
+        
+
+        # loss_1 = criterion(output[1], target_var)
+        # loss_2 = criterion(output[2], target_var)
+        # loss = loss_0 + loss_1 + loss_2
+        # print("loss_0: ", loss_0,", loss_1: ", loss_1, ", loss_2: ", loss_2, ", loss: ", loss)
+        # prec0 = accuracy(output[0].data, target)
+        # prec1 = accuracy(output[1].data, target)
+        # prec2 = accuracy(output[2].data, target)
+        # print("precision_0: ", prec0, ", precision_1: ", prec1, ", precision_2: ", prec2)
 
         # # x1_out_1 = x1_out(input_var)
         # # block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
@@ -383,9 +419,9 @@ if __name__ == "__main__":
         # # inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
 
 
-        # optimizer.zero_grad()
-        # loss.backward()
-        # optimizer.step()
+        optimizer.zero_grad()
+        losses.backward()
+        optimizer.step()
         # summary(model, (3, 229, 229))
 
 
