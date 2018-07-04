@@ -74,8 +74,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
     accs = []
     ls = []
     for i, j in zip(all_acc, all_loss):
-        accs.append(i.avg)
-        ls.append(j.avg)
+        accs.append(float(100-i.avg))
+        ls.append(float(100-j.avg))
     # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
     return accs, ls, lr
 
@@ -137,8 +137,8 @@ def validate(val_loader, model, criterion):
     accs = []
     ls = []
     for i, j in zip(all_acc, all_loss):
-        accs.append(i.avg)
-        ls.append(j.avg)
+        accs.append(float(100-i.avg))
+        ls.append(float(100-j.avg))
         
     return accs, ls
 
