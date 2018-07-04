@@ -139,6 +139,10 @@ def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss
 
     with open(path + os.sep + "test_intermediate_accuracies.csv", "a") as fp:
         wr = csv.writer(fp)
+        # convert to numpy from torch cuda tensor float
+        for row in epochs_intermediate_acc_test:
+            for elem in row:
+                elem = loss.item()
         wr.writerows(epochs_intermediate_acc_test)
     
     with open(path + os.sep + "test_losses.txt", "a") as fp:

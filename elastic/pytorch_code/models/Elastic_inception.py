@@ -334,7 +334,6 @@ class Elastic_InceptionV3():
         self.model = self.build_model()
     
     def build_model(self):
-        if 
         model = inception_v3(pretrained=True)
         
         for param in model.parameters():
