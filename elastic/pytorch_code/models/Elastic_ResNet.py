@@ -2,7 +2,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
-
+import sys
+sys.path.append("../")
 
 import torch
 import torch.nn as nn
@@ -10,6 +11,7 @@ import math
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
 from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
+from helper import LOG
 
 __all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101', 'Elastic_ResNet152']
 global outputs
@@ -148,8 +150,10 @@ class IntermediateClassifier(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=1000):
+    def __init__(self, block, layers, cifar_classes, add_intermediate_layers, num_classes=1000):
         self.intermediate_CLF = []
+        self.add_intermediate_layers = add_intermediate_layers
+        self.cifar_classes = cifar_classes
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -184,12 +188,16 @@ class ResNet(nn.Module):
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
-        self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
+        
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.cifar_classes))
+
         # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
             # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
+            if self.add_intermediate_layers == 2:
+                self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.cifar_classes))
 
         return nn.Sequential(*layers)
 
@@ -202,27 +210,32 @@ class ResNet(nn.Module):
         i = 0
         intermediate_outputs = []
         # print("=====> # of intermediate classifiers: ", len(self.intermediate_CLF), ", total classifiers: ", len(self.intermediate_CLF)+1)
+        
         # make sure insert an intermediate classifier after each residul block 
-        assert len(self.intermediate_CLF) == len(self.layer1)+len(self.layer2)+len(self.layer3)+len(self.layer4)
+        # assert len(self.intermediate_CLF) == len(self.layer1)+len(self.layer2)+len(self.layer3)+len(self.layer4)
 
         for res_layer in self.layer1:
             x = res_layer(x)
-            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            if self.add_intermediate_layers == 2:
+                intermediate_outputs.append(self.intermediate_CLF[i](x))
             i += 1
 
         for res_layer in self.layer2:
             x = res_layer(x)
-            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            if self.add_intermediate_layers == 2:
+                intermediate_outputs.append(self.intermediate_CLF[i](x))
             i += 1
 
         for res_layer in self.layer3:
             x = res_layer(x)
-            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            if self.add_intermediate_layers == 2:
+                intermediate_outputs.append(self.intermediate_CLF[i](x))
             i += 1                    
         
         for res_layer in self.layer4:
             x = res_layer(x)
-            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            if self.add_intermediate_layers == 2:
+                intermediate_outputs.append(self.intermediate_CLF[i](x))
             i += 1
 
         x = self.avgpool(x)
@@ -232,14 +245,37 @@ class ResNet(nn.Module):
         return intermediate_outputs+[x]
 
 
-def Elastic_ResNet50(args):
+def Elastic_ResNet50(args, logfile):
     
     num_classes = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
-    batch_size = args.batch_size
-    
-    model = ResNet(Bottleneck, [3, 4, 6, 3])
-    model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+    pretrained_weight = args.pretrained_weight
+
+    if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+    elif add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add any intermediate layer classifiers", logfile)
+    else:
+        NotImplementedError
+
+    model = ResNet(Bottleneck, [3, 4, 6, 3], num_classes, add_intermediate_layers)
+
+
+
+    if pretrained_weight == 1:
+        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+        print("loaded ImageNet pretrained weights")
+        LOG("loaded ImageNet pretrained weights", logfile)
+        
+    elif pretrained_weight == 0:
+        print("not loading ImageNet pretrained weights")
+        LOG("not loading ImageNet pretrained weights", logfile)
+    else:
+        print("parameter--pretrained_weight, should be 0 or 1")
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
 
     for param in model.parameters():
         param.requires_grad = True

@@ -207,7 +207,7 @@ def main(**kwargs):
 
     elif args.model == "Elastic_ResNet50":
 
-        model = Elastic_ResNet50(args)
+        model = Elastic_ResNet50(args, logFile)
         print("using Elastic_ResNet50 class")
 
     # elif args.model == "Elastic_ResNet34":
@@ -233,7 +233,6 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # implement early stop by own
-    EarlyStopping_flag = False
     EarlyStopping_epoch_count = 0
     prev_val_loss = 100000
 
@@ -243,7 +242,8 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
     
-    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
+    # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
     data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
@@ -257,9 +257,9 @@ def main(**kwargs):
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
-                                                    num_workers=1,pin_memory=True)
+                                                    num_workers=4,pin_memory=True)
     test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
-                                    num_workers=1,pin_memory=True)
+                                    num_workers=4,pin_memory=True)
     
     # EarlyStopping(patience=15, )
 
@@ -297,7 +297,7 @@ def main(**kwargs):
         print(val_str)
         LOG(val_str, logFile)
         
-        # scheduler.step(val_losses)
+        
 
         # Remember best prec@1 and save checkpoint
         # is_best = val_accs < best_prec1
@@ -315,6 +315,9 @@ def main(**kwargs):
         # run on test dataset
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
+        
+        scheduler.step(test_losses[-1])
+        
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
 
@@ -326,12 +329,12 @@ def main(**kwargs):
         # apply early_stop with monitoring val_loss
         # EarlyStopping(patience=15, score_function=score_function(val_loss), trainer=model)
         if epoch == 0:
-            prev_val_loss = val_losses
+            prev_test_loss = test_losses[-1]
         else:
-            if val_losses >= prev_val_loss:
+            if test_losses[-1] >= prev_test_loss:
                 EarlyStopping_epoch_count += 1
         if EarlyStopping_epoch_count > 10:
-            print("it doesn't improve val_loss for 15 epochs, stop running model")
+            print("No improving test_loss for more than 10 epochs, stop running model")
             break
 
     # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
