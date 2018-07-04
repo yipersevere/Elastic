@@ -109,82 +109,77 @@ def log_summary(model, logFile):
         LOG(line, logFile) 
 
 
-def log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_intermediate_acc_test, epochs_loss_test):
+def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_loss_test):
 
     with open(path + os.sep + "train_accuracies.txt", "a") as fp:
         for a in epochs_acc_train:
-            fp.write("%.4f\n" % a)
+            fp.write("%.4f " % a)
         fp.write("\n")
-
-    with open(path + os.sep + "train_intermediate_accuracies.txt", "a") as fp:
-        wr = csv.writer(fp)
-        wr.writerows(epochs_intermediate_acc_train)
 
     with open(path + os.sep + "train_losses.txt", "a") as fp:
         for loss in epochs_loss_train:
-            fp.write("%.4f\n" % loss)
+            fp.write("%.4f " % loss)
         fp.write("\n")
 
     with open(path + os.sep + "epochs_lr.txt", "a") as fp:
-        for a in epochs_lr:
-            fp.write("%.7f\n" % a)
+        fp.write("%.7f " % epochs_lr)
         fp.write("\n")    
 
     with open(path + os.sep + "test_accuracies.txt", "a") as fp:
         for a in epochs_acc_test:
-            fp.write("%.4f\n" % a)
+            fp.write("%.4f " % a)
         fp.write("\n")
-    
-    plot_error_fig(epochs_acc_test, args=None, imageStr=None)
-
-    with open(path + os.sep + "test_intermediate_accuracies.csv", "a") as fp:
-        wr = csv.writer(fp)
-        # convert to numpy from torch cuda tensor float
-        for row in epochs_intermediate_acc_test:
-            for elem in row:
-                elem = loss.item()
-        wr.writerows(epochs_intermediate_acc_test)
     
     with open(path + os.sep + "test_losses.txt", "a") as fp:
         for loss in epochs_loss_test:
-            fp.write("%.4f\n" % loss)
+            fp.write("%.4f " % loss)
         fp.write("\n")
     
-
-def plot_error_fig(errors, args, imageStr):
+    
+def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses, args, captionStrDict):
     """
     plot epoch test error after model testing is finished
     """
-    folder = args.savedir
-    fig, (ax0, ax1) = plt.subplots(1, 1, sharey=True)
-    colormap = plt.cm.tab20
 
-    plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, args.num_outputs)])
+    all_y_labels = ["train error (%)", "train loss", "test error (%)", "test loss"]
+    save_file_names = ["train_accuracy.png","train_loss.png","test_accuracy.png","test_loss.png"]
+    all_stats = [epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses]
+    for y_label, file_name, data in zip(all_y_labels, save_file_names, all_stats):
 
-    for k in range(len(errors[0])):
-        # Plots
-        x = np.arange(len(errors)) + 1
-        y = np.array(errors)[:, k]
-        c_label = 'Layer ' + str(k)
-        ax0.plot(x, y, label=c_label)
+        fig, ax0 = plt.subplots(1, sharex=True)
+        colormap = plt.cm.tab20
 
-        # Legends
-        y = errors[-1][k]
-        x = len(errors)
-        ax0.text(x, y, "%d" % k)
-    
-    ax0.set_ylabel(imageStr["ax0_set_ylabel"])
-    ax0.set_xlabel('epoch')
+        plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, len(data[0]))])
 
-    ax0.set_title(imageStr["ax0_title"])
-    ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        last = len(data[0])-1
 
-    fig_size = plt.rcParams["figure.figsize"]
+        for k in range(len(data[0])):
+            # Plots
+            x = np.arange(len(data)) + 1
+            y = np.array(data)[:, k]
 
-    plt.rcParams["figure.figsize"] = fig_size
+            if k == last:
+                c_label = captionStrDict["elastic_final_layer_label"]
+            else:
+                c_label = captionStrDict["elastic_intermediate_layer_label"] + str(k)
 
-    plt.savefig(args.path + os.sep + imageStr["save_fig"], bbox_inches="tight")
-    plt.close("all")    
+            ax0.plot(x, y, label=c_label)
+        
+        ax0.set_ylabel(y_label)
+        ax0.set_xlabel(captionStrDict["x_label"])
+        ax0.set_title(captionStrDict["fig_title"])
+
+        ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+        fig_size = plt.rcParams["figure.figsize"]
+
+        plt.rcParams["figure.figsize"] = fig_size
+        plt.tight_layout()
+
+        plt.savefig(args.savedir + os.sep + file_name)
+        plt.close("all")  
+
+
 
 
 

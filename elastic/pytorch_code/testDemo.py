@@ -1,3 +1,10 @@
+import matplotlib
+matplotlib.use("PDF")
+import matplotlib.pyplot as plt
+import scipy
+from keras.datasets import cifar10
+import numpy as np
+from PIL import Image
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -299,7 +306,7 @@ def Elastic_ResNet50(args):
     batch_size = args.batch_size
     
     model = ResNet(Bottleneck, [3, 4, 6, 3])
-        # model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+    model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
 
     for param in model.parameters():
         param.requires_grad = True
@@ -310,14 +317,82 @@ def Elastic_ResNet50(args):
     return model
 
 
+def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses, args, captionStrDict):
+    """
+    plot epoch test error after model testing is finished
+    """
+    #folder = args.savedir
+    #fig, (ax0, ax1, ax2, ax3) = plt.subplots(2, 2, sharey=True)
+    fig, ax0 = plt.subplots(1, sharex=True)
+    colormap = plt.cm.tab20
+
+    plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 1, len(test_accs[0]))])
+
+    last = len(test_accs[0])-1
+    # elastic_last = len(test_accs[0])-2
+
+    for k in range(len(test_accs[0])):
+        # Plots
+        x = np.arange(len(test_accs)) + 1
+        y = np.array(test_accs)[:, k]
+
+        if k == last:
+            c_label = captionStrDict["elastic_final_layer_label"]
+        else:
+            c_label = captionStrDict["elastic_intermediate_layer_label"] + str(k)
+
+        ax0.plot(x, y, label=c_label)
+
+        # Legends
+        # y = test_accs[-1][k]
+        # x = len(test_accs)
+        # ax0.text(x, y, "%d" % k)
+    
+    ax0.set_ylabel(captionStrDict["y_label"])
+    ax0.set_xlabel(captionStrDict["x_label"])
+    ax0.set_title(captionStrDict["fig_title"])
+
+    ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+    fig_size = plt.rcParams["figure.figsize"]
+
+    plt.rcParams["figure.figsize"] = fig_size
+    plt.tight_layout()
+
+    plt.savefig("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/test.png")
+    plt.close("all")    
+
+
+
+
+
 if __name__ == "__main__":
         
-    args.batch_size = 16
+    test_accs = [[23.3050, 25.8475, 26.5575,26.6150,27.7475,29.8550,32.8700,40.0975,44.1325,46.9125,48.8200,49.7600,51.7275,56.4175,57.3300,57.2550,51.0400], [23.3050, 25.8475, 26.5575,26.6150,27.7475,29.8550,32.8700,40.0975,44.1325,46.9125,48.8200,49.7600,51.7275,56.4175,57.3300,57.2550,51.0400]]
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    captionStrDict = {
+        "save_file_name" : "Pytorch_CIFAR_10_train_test_epoch_Loss_Original_ResNet50.pdf",
+        "fig_title" : "Pytorch_CIFAR_10_Original_ResNet50",
+        "x_label" : "epochs",
+        "y_label" : "sum loss",
+        'elastic_final_layer_label': "train_loss",
+        "elastic_intermediate_layer_label" : "Elastic_ResNet-152_Intermediate_Layer_Classifier_",
+        "original_layer_label" : "test_loss"
+    }
+    
+    plot_figs(None, None, test_accs, None, args, captionStrDict)
 
-    # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+
+
+
+    # args.batch_size = 16
+
+    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    # # TUT thinkstation data folder path
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+
+
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
@@ -328,101 +403,101 @@ if __name__ == "__main__":
     # train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False,
     #                                                 random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
     #                                                 num_workers=1,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = (224,224,3),
-                                    num_workers=1,pin_memory=True)
+    # test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = (224,224,3),
+    #                                 num_workers=1,pin_memory=True)
 
 
 
-    # model = resnet50(pretrained=True)
-    # model = inception_v3(pretrained=True)
+    # # model = resnet50(pretrained=True)
+    # # model = inception_v3(pretrained=True)
 
-    # model = inception_v3(pretrained=True)
+    # # model = inception_v3(pretrained=True)
 
-    # model = Net()
-    # tar = torch.load('D:\Elastic\elastic\pytorch_code\models\pytorch-mobilenet\mobilenet_sgd_68.848.pth.tar')
-    # state_dict = tar["state_dict"]
+    # # model = Net()
+    # # tar = torch.load('D:\Elastic\elastic\pytorch_code\models\pytorch-mobilenet\mobilenet_sgd_68.848.pth.tar')
+    # # state_dict = tar["state_dict"]
     
-    # new_state_dict = OrderedDict()
-    # for k, v in state_dict.items():
-    #     name = k[7:] # remove `module.`
-    #     new_state_dict[name] = v
-    # model.load_state_dict(new_state_dict)
-    # print("not with loading pretraining weights")
-    model = Elastic_ResNet50(args)
+    # # new_state_dict = OrderedDict()
+    # # for k, v in state_dict.items():
+    # #     name = k[7:] # remove `module.`
+    # #     new_state_dict[name] = v
+    # # model.load_state_dict(new_state_dict)
+    # # print("not with loading pretraining weights")
+    # model = Elastic_ResNet50(args)
 
     
-    # fc_features = model.fc.in_features
+    # # fc_features = model.fc.in_features
 
-    # model.fc = nn.Linear(fc_features, 10)
-
-
+    # # model.fc = nn.Linear(fc_features, 10)
 
 
 
 
-    # x1_out = model.layer1[0].relu
-    # x2_out = model.layer1[1].relu
-
-    model = model.to(device)
-    model.cuda()
-    if device == 'cuda':
-        model = torch.nn.DataParallel(model).cuda()
-        cudnn.benchmark = True
 
 
-    criterion = nn.CrossEntropyLoss().cuda()
-    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay,
-                                nesterov=False)# nesterov set False to keep align with keras default settting
+    # # x1_out = model.layer1[0].relu
+    # # x2_out = model.layer1[1].relu
 
-    model.train()
-    output = None
-    for i, (input, target) in enumerate(test_loader):
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
+    # model = model.to(device)
+    # model.cuda()
+    # if device == 'cuda':
+    #     model = torch.nn.DataParallel(model).cuda()
+    #     cudnn.benchmark = True
+
+
+    # criterion = nn.CrossEntropyLoss().cuda()
+    # optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+    #                             momentum=args.momentum,
+    #                             weight_decay=args.weight_decay,
+    #                             nesterov=False)# nesterov set False to keep align with keras default settting
+
+    # model.train()
+    # output = None
+    # for i, (input, target) in enumerate(test_loader):
+    #     target = target.cuda(async=True)
+    #     input_var = torch.autograd.Variable(input)
+    #     target_var = torch.autograd.Variable(target)
         
 
-        # output = model(input_var)
-        # loss = criterion(output, target_var)
+    #     # output = model(input_var)
+    #     # loss = criterion(output, target_var)
       
-        # print("loss: ", loss)
-        # prec1 = accuracy(output.data, target)
-        # print("precision: ", prec1)
+    #     # print("loss: ", loss)
+    #     # prec1 = accuracy(output.data, target)
+    #     # print("precision: ", prec1)
 
 
-        outputs = model(input_var)
+    #     outputs = model(input_var)
 
-        losses = 0
-        for i in range(len(outputs)):
-            loss = criterion(outputs[i], target_var)
-            losses += loss
-            print("loss: ", i, ": ", loss.item())
-            prec1 = accuracy(outputs[i].data, target)
-            print("precision_", i, ": ", prec1[0].data[0].item())
+    #     losses = 0
+    #     for i in range(len(outputs)):
+    #         loss = criterion(outputs[i], target_var)
+    #         losses += loss
+    #         print("loss: ", i, ": ", loss.item())
+    #         prec1 = accuracy(outputs[i].data, target)
+    #         print("precision_", i, ": ", prec1[0].data[0].item())
         
         
 
-        # loss_1 = criterion(output[1], target_var)
-        # loss_2 = criterion(output[2], target_var)
-        # loss = loss_0 + loss_1 + loss_2
-        # print("loss_0: ", loss_0,", loss_1: ", loss_1, ", loss_2: ", loss_2, ", loss: ", loss)
-        # prec0 = accuracy(output[0].data, target)
-        # prec1 = accuracy(output[1].data, target)
-        # prec2 = accuracy(output[2].data, target)
-        # print("precision_0: ", prec0, ", precision_1: ", prec1, ", precision_2: ", prec2)
+    #     # loss_1 = criterion(output[1], target_var)
+    #     # loss_2 = criterion(output[2], target_var)
+    #     # loss = loss_0 + loss_1 + loss_2
+    #     # print("loss_0: ", loss_0,", loss_1: ", loss_1, ", loss_2: ", loss_2, ", loss: ", loss)
+    #     # prec0 = accuracy(output[0].data, target)
+    #     # prec1 = accuracy(output[1].data, target)
+    #     # prec2 = accuracy(output[2].data, target)
+    #     # print("precision_0: ", prec0, ", precision_1: ", prec1, ", precision_2: ", prec2)
 
-        # # x1_out_1 = x1_out(input_var)
-        # # block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
-        # # block_out_1_1 = block_out_1.view(16, 3)
-        # # inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
+    #     # # x1_out_1 = x1_out(input_var)
+    #     # # block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(x1_out_1)
+    #     # # block_out_1_1 = block_out_1.view(16, 3)
+    #     # # inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1_1)
 
 
-        optimizer.zero_grad()
-        losses.backward()
-        optimizer.step()
-        # summary(model, (3, 229, 229))
+    #     optimizer.zero_grad()
+    #     losses.backward()
+    #     optimizer.step()
+    #     # summary(model, (3, 229, 229))
 
 
 print("Done")

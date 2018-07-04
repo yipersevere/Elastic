@@ -12,9 +12,9 @@ DataParallel(
         (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
         (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
         (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        
-        
-===============================================================================================get relu activation function input as input for intermediate layer output     
+
+
+===============================================================================================get relu activation function input as input for intermediate layer output
         (relu): ReLU(inplace)
         (downsample): Sequential(
           (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
@@ -205,6 +205,7 @@ DataParallel(
       BatchNorm2d-14          [-1, 256, 56, 56]             512
              ReLU-15          [-1, 256, 56, 56]               0
        Bottleneck-16          [-1, 256, 56, 56]               0
+这上面的这个block估计就是residual block
 
 1**2
            Conv2d-17           [-1, 64, 56, 56]          16,384
@@ -254,13 +255,13 @@ DataParallel(
            Conv2d-52          [-1, 128, 28, 28]         147,456
       BatchNorm2d-53          [-1, 128, 28, 28]             256
              ReLU-54          [-1, 128, 28, 28]               0
-      
+
            Conv2d-55          [-1, 512, 28, 28]          65,536
       BatchNorm2d-56          [-1, 512, 28, 28]           1,024
              ReLU-57          [-1, 512, 28, 28]               0
        Bottleneck-58          [-1, 512, 28, 28]               0
 
-2**3      
+2**3
            Conv2d-59          [-1, 128, 28, 28]          65,536
       BatchNorm2d-60          [-1, 128, 28, 28]             256
              ReLU-61          [-1, 128, 28, 28]               0
@@ -381,22 +382,28 @@ DataParallel(
      BatchNorm2d-150           [-1, 2048, 7, 7]           4,096
             ReLU-151           [-1, 2048, 7, 7]               0
       Bottleneck-152           [-1, 2048, 7, 7]               0
+
+4**2
           Conv2d-153            [-1, 512, 7, 7]       1,048,576
      BatchNorm2d-154            [-1, 512, 7, 7]           1,024
             ReLU-155            [-1, 512, 7, 7]               0
           Conv2d-156            [-1, 512, 7, 7]       2,359,296
      BatchNorm2d-157            [-1, 512, 7, 7]           1,024
             ReLU-158            [-1, 512, 7, 7]               0
+
           Conv2d-159           [-1, 2048, 7, 7]       1,048,576
      BatchNorm2d-160           [-1, 2048, 7, 7]           4,096
             ReLU-161           [-1, 2048, 7, 7]               0
       Bottleneck-162           [-1, 2048, 7, 7]               0
+
+4**3
           Conv2d-163            [-1, 512, 7, 7]       1,048,576
      BatchNorm2d-164            [-1, 512, 7, 7]           1,024
             ReLU-165            [-1, 512, 7, 7]               0
           Conv2d-166            [-1, 512, 7, 7]       2,359,296
      BatchNorm2d-167            [-1, 512, 7, 7]           1,024
             ReLU-168            [-1, 512, 7, 7]               0
+
           Conv2d-169           [-1, 2048, 7, 7]       1,048,576
      BatchNorm2d-170           [-1, 2048, 7, 7]           4,096
             ReLU-171           [-1, 2048, 7, 7]               0

@@ -13,186 +13,134 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate
+from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate, plot_figs
 from data_loader import get_train_valid_loader, get_test_loader
 from models import *
-
-
 
 # Init Torch/Cuda
 torch.manual_seed(args.manual_seed)
 torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 best_prec1 = 0
-# torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
-
-def train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs):
-    batch_time = AverageMeter()
+def train(train_loader, model, criterion, optimizer, epoch):
+    # batch_time = AverageMeter()
     # data_time = AverageMeter()
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top1_x1_out = AverageMeter()
-    top1_x2_out = AverageMeter()
-    top1_x3_out = AverageMeter()
-    model = model.cuda()
+
     model.train()
 
-    # summary(model, (3, 224, 224))
-    end = time.time()
+    # end = time.time()
+    lr = None
+    all_acc = []
+    all_loss = []
 
-    LOG("=============================== train ===============================", logFile)
+    for ix in range(17):
+        all_loss.append(AverageMeter())
+        all_acc.append(AverageMeter())
+    
+    LOG("==> train ", logFile)
     for i, (input, target) in enumerate(train_loader):
-
-        ### Adjust learning rate
         lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
 
-        ### Measure data loading time
         # data_time.update(time.time() - end)
 
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
-        # 在这之前都是使用cpu来计算，下面这步是使用gpu计算
         outputs = model(input_var)
-        if len(outputs) > 1:
-            # sum all losses 
-            loss_final_clf = criterion(outputs[0], target_var)
-            loss_x1_out = criterion(outputs[1], target_var)
-            loss_x2_out = criterion(outputs[2], target_var)
-            loss_x3_out = criterion(outputs[3], target_var)
-            loss = loss_final_clf + loss_x1_out + loss_x2_out + loss_x3_out
-        elif len(outputs) == 1:
-            loss = criterion(outputs, target_var)
-        else:
-            print("Error, args.add_intermediate_layers_number should be 0 or 2")
-            NotImplementedError
-            
-        ### Measure accuracy and record loss
-        prec1 = accuracy(outputs.data, target)
-        # print("top 1 precision, final output classification: ", prec1)
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
 
-        ### Compute gradient and do SGD step
+        losses = 0
+# 这里应该要再封装一下， 变成只有一个变量loss
+        for ix in range(len(outputs)):
+            loss = criterion(outputs[ix], target_var)
+            all_loss[ix].update(loss.item(), input.size(0))
+
+            losses += loss
+            # print("loss: ", i, ": ", loss.item())
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+            # print("precision_", i, ": ", prec1[0].data[0].item())
+        
         optimizer.zero_grad()
-        loss.backward()
+        losses.backward()
         optimizer.step()
 
         ### Measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
-    intermediate_acc = [top1_x1_out.avg, top1_x2_out.avg, top1_x3_out.avg]
-    return top1.avg, intermediate_acc, losses.avg, lr
+        # batch_time.update(time.time() - end)
+        # end = time.time()
+        
+    accs = []
+    ls = []
+    for i, j in zip(all_acc, all_loss):
+        accs.append(i.avg)
+        ls.append(j.avg)
+    # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
+    return accs, ls, lr
+
 
 def validate(val_loader, model, criterion):
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    # x1_out_losses = AverageMeter()
-    top1 = AverageMeter()
-    top1_x1_out = AverageMeter()
-    top1_x2_out = AverageMeter()
-    top1_x3_out = AverageMeter()
-    ### Switch to evaluate mode
+    # batch_time = AverageMeter()
     model.eval()
-
-    end = time.time()
-    LOG("=============================== validate ===============================", logFile)
+    all_acc = []
+    all_loss = []
+    for ix in range(17):
+        all_loss.append(AverageMeter())
+        all_acc.append(AverageMeter())
+    # end = time.time()
+    
     for i, (input, target) in enumerate(val_loader):
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input, volatile=True)
         target_var = torch.autograd.Variable(target, volatile=True)     
         
-        ### Compute output
-        if args.add_intermediate_layers_number == 2:
-            output, intermediate_layer_outputs = model.forward(input_var)
+        outputs = model(input_var)
 
+        losses = 0
 
-            inter_clf_block_1 = torch.nn.Sequential(torch.nn.Linear(256, 10)).to(device)
-            inter_clf_block_2 = torch.nn.Sequential(torch.nn.Linear(512, 10)).to(device)
-            inter_clf_block_3 = torch.nn.Sequential(torch.nn.Linear(1024, 10)).to(device)
-            
-            # inter_clf_x1 = inter_clf_x1.cuda()
-            # inter_clf_x1 = torch.autograd.Variable(inter_clf_x1)
-            # x1_out = torch.autograd.Variable(inter_clf_x1)
-            block_out_1 = nn.AvgPool2d(kernel_size=(56,56))(intermediate_layer_outputs[0])
-            block_out_2 = nn.AvgPool2d(kernel_size=(28,28))(intermediate_layer_outputs[1])
-            block_out_3 = nn.AvgPool2d(kernel_size=(14,14))(intermediate_layer_outputs[2])
+        for ix in range(len(outputs)):
+            loss = criterion(outputs[ix], target_var)
+            all_loss[ix].update(loss.item(), input.size(0))
 
-            # x1_out = x1_out.view(16,256)
-            # when set batch_size = 1
-            block_out_1 = block_out_1.view(args.batch_size, 256)
-            block_out_2 = block_out_2.view(args.batch_size, 512)
-            block_out_3 = block_out_3.view(args.batch_size, 1024)
-            # x1_out = nn.AdaptiveAvgPool2d((16,256))(inter_clf_x1)
-            
-            # x1_out = x1_out.cuda()
-            # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
-            # print("1st element: ", x1_out[0][0].item()) #tensor([[ 0.2058]], device='cuda:0')
-            # x1_out = x1_out.cuda()
-            # x1_out = nn.Linear(256, 10)(x1_out)
-            block_out_1 = inter_clf_block_1(block_out_1)
-            block_out_2 = inter_clf_block_2(block_out_2)
-            block_out_3 = inter_clf_block_3(block_out_3)
-            # print("x1_out_shape: ", type(x1_out), x1_out.shape)# x1_out_shape:  <class 'torch.Tensor'> torch.Size([16, 256, 1, 1])
-            prec1_x1_out = accuracy(block_out_1, target)
-            prec1_x2_out = accuracy(block_out_2, target)
-            prec1_x3_out = accuracy(block_out_3, target)
-            # print("top 1 precision, x1_out: ", prec1_x1_out)
-            top1_x1_out.update(prec1_x1_out[0], input.size(0))
-            top1_x2_out.update(prec1_x2_out[0], input.size(0))
-            top1_x3_out.update(prec1_x3_out[0], input.size(0))
+            losses += loss
+            # print("loss: ", i, ": ", loss.item())
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+            # print("precision_", i, ": ", prec1[0].data[0].item())
+    
+        # if args.add_intermediate_layers_number == 2:
 
-            loss_final_clf = criterion(output, target_var)
-            loss_x1_out = criterion(block_out_1, target_var)
-            loss_x2_out = criterion(block_out_2, target_var)
-            loss_x3_out = criterion(block_out_3, target_var)
-            loss = loss_final_clf + loss_x1_out + loss_x2_out + loss_x3_out
+        # elif args.add_intermediate_layers_number == 0:
+        #     output = model.forward(input_var)
+        #     loss = criterion(output, target_var)
+        # else:
+        #     print("Error, args.add_intermediate_layers_number should be 0 or 2")
+        #     NotImplementedError
 
-        elif args.add_intermediate_layers_number == 0:
-            output = model.forward(input_var)
-            loss = criterion(output, target_var)
-        else:
-            print("Error, args.add_intermediate_layers_number should be 0 or 2")
-            NotImplementedError
+    #     ### Measure elapsed time
+    #     batch_time.update(time.time() - end)
+    #     end = time.time()
 
+    #     # if i % args.print_freq == 0:
+    #     #     temp_result = 'Test: [{0}/{1}]\t' \
+    #     #           'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
+    #     #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
+    #     #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
+    #     #           'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
+    #     #               i, len(val_loader), batch_time=batch_time, loss=losses,
+    #     #               top1=top1, x1_out_top1=x1_out_top1)
+    #     #     LOG(temp_result, logFile)
 
-        ### Measure accuracy and record loss
-        prec1 = accuracy(output.data, target)
+    #     #     print(temp_result)
+
+    accs = []
+    ls = []
+    for i, j in zip(all_acc, all_loss):
+        accs.append(i.avg)
+        ls.append(j.avg)
         
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
-
-        ### Measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
-
-        # if i % args.print_freq == 0:
-        #     temp_result = 'Test: [{0}/{1}]\t' \
-        #           'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
-        #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-        #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
-        #           'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
-        #               i, len(val_loader), batch_time=batch_time, loss=losses,
-        #               top1=top1, x1_out_top1=x1_out_top1)
-        #     LOG(temp_result, logFile)
-
-        #     print(temp_result)
-    prec1_result = ' * Prec@1 {top1.avg:.3f}'.format(top1=top1)
-    x1_out_prec1_result = ' * x1_out_Prec@1 {top1_x1_out.avg:.3f}'.format(top1_x1_out=top1_x1_out)
-    x2_out_prec1_result = ' * x2_out_Prec@1 {top1_x2_out.avg:.3f}'.format(top1_x2_out=top1_x2_out)
-    x3_out_prec1_result = ' * x3_out_Prec@1 {top1_x3_out.avg:.3f}'.format(top1_x3_out=top1_x3_out)
-    LOG(prec1_result, logFile)
-    LOG(x1_out_prec1_result, logFile)
-    LOG(x2_out_prec1_result, logFile)
-    LOG(x3_out_prec1_result, logFile)
-
-    # print(prec1_result)
-    # print(x1_out_prec1_result)
-    intermediate_acc = [top1_x1_out.avg, top1_x2_out.avg, top1_x3_out.avg]
-    return top1.avg, intermediate_acc, losses.avg
+    return accs, ls
 
 
 
@@ -221,18 +169,28 @@ def main(**kwargs):
     print(args)
     global device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    # device = 'cpu'
 
-    imageStr = {
-        "ax0_set_ylabel": "error rate on " + args.data,
-        "ax0_title": args.model_name + " test on " + args.data,
-        "save_fig" : args.model_name + "_" + args.data + ".png"
+    if args.data == "cifar100" or args.data == "CIFAR100":
+        fig_title_str = "classification error on CIFAR-100"
+
+    elif args.data == "cifar10" or args.data == "CIFAR10":
+        fig_title_str = "classification error on CIFAR-10"
+    else:
+        print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
+        NotImplementedError
+
+    captionStrDict = {
+        "fig_title" : fig_title_str,
+        "x_label" : "epoch",
+        'elastic_final_layer_label': "Final_Layer_Output_Classifier",
+        "elastic_intermediate_layer_label" : "Intermediate_Layer_Classifier_"
     }
+
     # save input parameters into log file
     args_str = str(args)
     LOG(args_str, logFile)
+    LOG("program start time: " + ts_str +"\n", logFile)
 
-    intermediate_outputs = list()
 
     if args.layers_weight_change == 1:
         LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
@@ -248,9 +206,8 @@ def main(**kwargs):
         print("using Elastic_ResNet18 class")
 
     elif args.model == "Elastic_ResNet50":
-        # elasicNN_ResNet50, intermediate_outputs = Elastic_ResNet50()
-        elasicNN_ResNet50 = Elastic_ResNet50(args)
-        model = elasicNN_ResNet50.model
+
+        model = Elastic_ResNet50(args)
         print("using Elastic_ResNet50 class")
 
     # elif args.model == "Elastic_ResNet34":
@@ -286,18 +243,17 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
     
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
 
-    # Data loading
     # TUT thinkstation data folder path
-#   data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    data_folder = "D:\Elastic\data"
-    args.batch_size = 1
+    # data_folder = "D:\Elastic\data"
+    # args.batch_size = 1
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
@@ -306,49 +262,47 @@ def main(**kwargs):
                                     num_workers=1,pin_memory=True)
     
     # EarlyStopping(patience=15, )
-    epochs_acc_train = []
-    epochs_acc_test = []
-    epochs_intermediate_acc_train = []
-    epochs_intermediate_acc_test = []
 
-    epochs_loss_train = []
-    epochs_loss_test = []
-    epochs_intermediate_loss_train = []
-    epochs_intermediate_loss_test = []
-
+    epochs_train_accs = []
+    epochs_train_losses = []
+    epochs_val_accs = []
+    epochs_val_losses = []    
+    epochs_test_accs = []
+    epochs_test_losses = []
     epochs_lr = []
 
     for epoch in range(0, args.epochs):
         
-
         # Train for one epoch
-        tr_prec1, tr_pre1_x_out, loss, lr = train(train_loader, model, criterion, optimizer, epoch, intermediate_outputs)
-        epoch_str = "==================================== epoch %d ==============================" % epoch
-        print(epoch_str)
-        epoch_result = "accuracy " + str(tr_prec1) + ", x_out accuracy " + str(tr_pre1_x_out) + ", loss " + str(loss) + ", learning rate " + str(lr) 
-        print(epoch_result)
-        
-        epochs_acc_train.append(tr_prec1)
-        epochs_intermediate_acc_train.append(tr_pre1_x_out)
-        epochs_loss_train.append(loss)
+        accs, losses, lr = train(train_loader, model, criterion, optimizer, epoch)
+        epochs_train_accs.append(accs)
+        epochs_train_losses.append(losses)
         epochs_lr.append(lr)
 
+        epoch_str = "==================================== epoch %d ==============================" % epoch
+        print(epoch_str)
+        epoch_result = "accuracy: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) 
+        print(epoch_result)
+        
         LOG(epoch_str, logFile)
         LOG(epoch_result, logFile)
         
         # Evaluate on validation set
-        val_prec1, val_pre1_x_out, val_loss = validate(val_loader, model, criterion)
-        
-        val_str = "validation accuracy: " + str(val_prec1) + ", val_x1_out_prec1: " + str(val_pre1_x_out) + ", val_loss" + str(val_loss)
+        LOG("==> validate \n", logFile)
+        val_accs, val_losses = validate(val_loader, model, criterion)
+        epochs_val_accs.append(val_accs)
+        epochs_val_losses.append(val_losses)
+
+        val_str = "val_accuracy: " + str(val_accs) + ", val_loss" + str(val_losses)
         print(val_str)
         LOG(val_str, logFile)
         
-        scheduler.step(val_loss)
+        # scheduler.step(val_losses)
 
         # Remember best prec@1 and save checkpoint
-        is_best = val_prec1 < best_prec1
-        best_prec1 = max(val_prec1, best_prec1)
-        model_filename = 'checkpoint_%03d.pth.tar' % epoch
+        # is_best = val_accs < best_prec1
+        # best_prec1 = max(val_prec1, best_prec1)
+        # model_filename = 'checkpoint_%03d.pth.tar' % epoch
         # save_checkpoint({
         #     'epoch': epoch,
         #     'model': args.model_name,
@@ -359,50 +313,39 @@ def main(**kwargs):
         # }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1_x1_out, tr_prec1, val_x1_out_prec1, loss, lr))
 
         # run on test dataset
+        LOG("==> test \n", logFile)
+        test_accs, test_losses = validate(test_loader, model, criterion)
+        epochs_test_accs.append(test_accs)
+        epochs_test_losses.append(test_losses)
 
-        test_acc, test_pre1_x_out, test_loss = validate(test_loader, model, criterion)
-        test_result_str = "=============> Test epoch, final output classifier acc: " + str(test_acc) + ", x1 out classifier acc: " + str(test_pre1_x_out) + ", test_loss" +str(test_loss)
-        
-        epochs_loss_test.append(test_loss)
-        epochs_acc_test.append(test_acc)
-        epochs_intermediate_acc_test.append(test_pre1_x_out)
+        test_result_str = "==> Test epoch, final output classifier acc: " + str(test_accs) + ", test_loss" +str(test_losses)
 
         print(test_result_str)
         LOG(test_result_str, logFile)
+        log_stats(path, accs, losses, lr, test_accs, test_losses)
         # apply early_stop with monitoring val_loss
         # EarlyStopping(patience=15, score_function=score_function(val_loss), trainer=model)
         if epoch == 0:
-            prev_val_loss = val_loss
+            prev_val_loss = val_losses
         else:
-            if val_loss >= prev_val_loss:
+            if val_losses >= prev_val_loss:
                 EarlyStopping_epoch_count += 1
         if EarlyStopping_epoch_count > 10:
             print("it doesn't improve val_loss for 15 epochs, stop running model")
             break
-    # save stats into file
-    # log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_intermediate_acc_test, epochs_loss_test)
-    log_stats(path, epochs_acc_train, epochs_intermediate_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_intermediate_acc_test, epochs_loss_test)
-    # # plot figure
-    # args.errors = 0
-    # Plot(args)
 
-
-    # # TestModel and return
-    # model = model.cpu().module
-    # model = nn.DataParallel(model).cuda()
-    # print(model)
-
-    # test_prec1, test_x1_out_prec1 = validate(test_loader, model, criterion)
-    # test_str = "test accuracy: " + str(test_prec1) + ", test x1_out_accuracy: " + str(test_x1_out_prec1)
-    # print(test_str)
-    # LOG(test_str, logFile)
     # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
     # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
     # LOG(FLOPS_result, logFile)
     # print(FLOPS_result)
+    
+    end_timestamp = datetime.datetime.now()
+    end_ts_str = end_timestamp.strftime('%Y-%m-%d-%H-%M-%S')
+    LOG("program end time: " + end_ts_str +"\n", logFile)
+
+    # here plot figures
+    plot_figs(epochs_train_accs, epochs_train_losses, epochs_test_accs, epochs_test_losses, args, captionStrDict)
     print("============Finish============")
-
-
 
 if __name__ == "__main__":
 

@@ -106,24 +106,21 @@ class IntermediateClassifier(nn.Module):
         :param num_channels: Number of input channels to the classifier
         :param num_classes: Number of classes to classify
         """
-        kernel_size = 56
-        if num_channels == 64:
-            kernel_size = 56
-        elif num_channels == 128:
-            kernel_size = 28
-        elif num_channels == 256:
-            kernel_size = 14
-        elif num_channels == 512:
-            kernel_size = 7
-        else:
-            NotImplementedError
-
         super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        self.device = 'cuda'
+        kernel_size = int(14336/self.num_channels)
+        print("kernel_size for global pooling: " ,kernel_size)
+
+
+
+
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size))
-        )
-
-        self.classifier = nn.Linear(num_channels, 10)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
 
     def forward(self, x):
         """
@@ -133,8 +130,17 @@ class IntermediateClassifier(nn.Module):
                   the last block
         :return: Cifar object classification result
         """
+        # get the width or heigh on that feaure map
+        # kernel_size = x.size()[-1]
+        # get the number of feature maps
+        # num_channels = x.size()[-3]
+        
+        # print("kernel_size for global pooling: " ,kernel_size)
+        
 
+        # do global average pooling
         x = self.features(x)
+
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
@@ -143,6 +149,7 @@ class IntermediateClassifier(nn.Module):
 class ResNet(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000):
+        self.intermediate_CLF = []
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -151,13 +158,10 @@ class ResNet(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0])
-        # self.intermediate_layer_1 = self.build_intermediate_layer(layers)
-        self.layer2, = self._make_layer(block, 128, layers[1], stride=2)
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AvgPool2d(7, stride=1)
-        # self.x1_out_avgpool = nn.AvgPool2d(kernel_size=(56,56))
-        # self.x1_out_linear = nn.Linear(256, 10)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
@@ -176,25 +180,18 @@ class ResNet(nn.Module):
                 nn.BatchNorm2d(planes * block.expansion),
             )
 
+        # layers = [None] * (1+(blocks-1)*2) #自己添加的
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
+        self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
+        # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
-            print("blocks: ", i, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-            # layers[i+blocks] = IntermediateClassifier(planes, 10)
+            # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, 10))
 
         return nn.Sequential(*layers)
-
-    # def add_intermediate_layers(self, base_model):
-    #     # x1 = self.layer1[0].relu
-    #     # x1 = x1(base_model)
-        
-    #     block_out_1 = nn.AvgPool2d(kernel_size=(224, 224))(base_model)
-    #     # block_out_1_1 = block_out_1.view(16, 3)
-    #     inter_clf_block_1 = torch.nn.Linear(3, 10)(block_out_1)
-        
-    #     return inter_clf_block_1
 
     def forward(self, x):
         x = self.conv1(x)
@@ -202,39 +199,52 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x1 = self.layer1(x)
-        # x1_out = nn.AvgPool2d(kernel_size=(56,56))(x1)
-        # x1_out = Reshape(256).forward(x1_out)
-        # x1_out = self.x1_out_linear(x1_out)
-        # x1_out = nn.Linear(256, 10)(x1_out)
-        x2 = self.layer2(x1)
-        x3 = self.layer3(x2)
-        x4 = self.layer4(x3)
+        i = 0
+        intermediate_outputs = []
+        # print("=====> # of intermediate classifiers: ", len(self.intermediate_CLF), ", total classifiers: ", len(self.intermediate_CLF)+1)
+        # make sure insert an intermediate classifier after each residul block 
+        assert len(self.intermediate_CLF) == len(self.layer1)+len(self.layer2)+len(self.layer3)+len(self.layer4)
 
-        x5 = self.avgpool(x4)
-        x6 = x.view(x5.size(0), -1)
-        x7 = self.fc(x6)
+        for res_layer in self.layer1:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
+
+        for res_layer in self.layer2:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
+
+        for res_layer in self.layer3:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1                    
         
-        # intermediate_outputs = self.add_intermediate_layers(.layer1[0].relu)
+        for res_layer in self.layer4:
+            x = res_layer(x)
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
 
-        return x7
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+
+        return intermediate_outputs+[x]
 
 
-class Elastic_ResNet50():
-    def __init__(self, args):
-        self.num_classes = args.num_classes
-        self.add_intermediate_layers = args.add_intermediate_layers
-        self.batch_size = args.batch_size
-        self.model = self.build_model()
+def Elastic_ResNet50(args):
+    
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    batch_size = args.batch_size
+    
+    model = ResNet(Bottleneck, [3, 4, 6, 3])
+    model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
 
-    def build_model(self):
-        model = ResNet(Bottleneck, [3, 4, 6, 3])
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
-
-        for param in model.parameters():
-            param.requires_grad = True
-        print("=====> successfully load pretrained imagenet weight")
-        fc_features = model.fc.in_features
-        model.fc = nn.Linear(fc_features, self.num_classes)
-        
-        return model
+    for param in model.parameters():
+        param.requires_grad = True
+    # print("=====> successfully load pretrained imagenet weight")
+    fc_features = model.fc.in_features
+    model.fc = nn.Linear(fc_features, num_classes)
+    
+    return model
