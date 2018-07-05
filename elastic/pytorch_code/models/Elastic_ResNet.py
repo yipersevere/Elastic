@@ -112,7 +112,13 @@ class IntermediateClassifier(nn.Module):
         self.num_classes = num_classes
         self.num_channels = num_channels
         self.device = 'cuda'
-        kernel_size = int(14336/self.num_channels)
+        if block == "Bottleneck":
+            kernel_size = int(3584/self.num_channels)
+        elif block = "Bottleneck":
+            kernel_size = int(14336/self.num_channels)
+        else:
+            NotImplementedError
+            
         print("kernel_size for global pooling: " ,kernel_size)
 
 
@@ -266,6 +272,45 @@ def Elastic_ResNet50(args, logfile):
 
     if pretrained_weight == 1:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+        print("loaded ImageNet pretrained weights")
+        LOG("loaded ImageNet pretrained weights", logfile)
+        
+    elif pretrained_weight == 0:
+        print("not loading ImageNet pretrained weights")
+        LOG("not loading ImageNet pretrained weights", logfile)
+    else:
+        print("parameter--pretrained_weight, should be 0 or 1")
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
+
+    for param in model.parameters():
+        param.requires_grad = True
+    # print("=====> successfully load pretrained imagenet weight")
+    fc_features = model.fc.in_features
+    model.fc = nn.Linear(fc_features, num_classes)
+    
+    return model
+
+
+def Elastic_ResNet34(args, logfile):
+    
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    pretrained_weight = args.pretrained_weight
+
+    if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+    elif add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add any intermediate layer classifiers", logfile)
+    else:
+        NotImplementedError
+
+    model = ResNet(BasicBlock, [3, 4, 6, 3], num_classes, add_intermediate_layers)
+
+    if pretrained_weight == 1:
+        model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
         print("loaded ImageNet pretrained weights")
         LOG("loaded ImageNet pretrained weights", logfile)
         

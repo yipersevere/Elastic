@@ -108,15 +108,6 @@ def validate(val_loader, model, criterion):
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
             # print("precision_", i, ": ", prec1[0].data[0].item())
-    
-        # if args.add_intermediate_layers_number == 2:
-
-        # elif args.add_intermediate_layers_number == 0:
-        #     output = model.forward(input_var)
-        #     loss = criterion(output, target_var)
-        # else:
-        #     print("Error, args.add_intermediate_layers_number should be 0 or 2")
-        #     NotImplementedError
 
     #     ### Measure elapsed time
     #     batch_time.update(time.time() - end)
@@ -205,15 +196,15 @@ def main(**kwargs):
         model = elasicNN_ResNet18
         print("using Elastic_ResNet18 class")
 
-    elif args.model == "Elastic_ResNet50":
+    elif args.model == "Elastic_ResNet34":
+        model = Elastic_ResNet34(args, logFile)
+        print("using Elastic_ResNet34 class")
 
+    elif args.model == "Elastic_ResNet50":
         model = Elastic_ResNet50(args, logFile)
         print("using Elastic_ResNet50 class")
 
-    # elif args.model == "Elastic_ResNet34":
-    #     elasicNN_ResNet34 = Elastic_ResNet34(args)
-    #     model = elasicNN_ResNet34
-    #     print("using Elastic_ResNet34 class")
+
 
     # elif args.model == "Elastic_ResNet101":
     #     elasticNN_ResNet101 = Elastic_ResNet101(args)
@@ -246,14 +237,14 @@ def main(**kwargs):
     # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    # data_folder = "D:\Elastic\data"
-    # args.batch_size = 1
+    data_folder = "D:\Elastic\data"
+    args.batch_size = 1
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
