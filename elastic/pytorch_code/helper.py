@@ -143,8 +143,9 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
 
     all_y_labels = ["train error (%)", "train loss", "test error (%)", "test loss"]
     save_file_names = ["train_accuracy.png","train_loss.png","test_accuracy.png","test_loss.png"]
+    fig_titles = ["Train Classification error"+captionStrDict["fig_title"], "Train Loss"+captionStrDict["fig_title"], "Test Classification error"+captionStrDict["fig_title"], "Test Loss"+captionStrDict["fig_title"]]
     all_stats = [epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses]
-    for y_label, file_name, data in zip(all_y_labels, save_file_names, all_stats):
+    for y_label, file_name, fig_title, data in zip(all_y_labels, save_file_names, fig_titles, all_stats):
 
         fig, ax0 = plt.subplots(1, sharex=True)
         colormap = plt.cm.tab20
@@ -167,7 +168,7 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
         
         ax0.set_ylabel(y_label)
         ax0.set_xlabel(captionStrDict["x_label"])
-        ax0.set_title(captionStrDict["fig_title"])
+        ax0.set_title(fig_title)
 
         ax0.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 

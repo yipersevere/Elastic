@@ -14,7 +14,10 @@ from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet15
 from helper import LOG
 
 __all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101', 'Elastic_ResNet152']
-global outputs
+
+# global num_outputs
+# initially only one classifier output
+
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
     'resnet34': 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
@@ -101,7 +104,7 @@ class Bottleneck(nn.Module):
 
 class IntermediateClassifier(nn.Module):
 
-    def __init__(self, num_channels, num_classes):
+    def __init__(self, num_channels, residual_block_type, num_classes):
         """
         Classifier of a cifar10/100 image.
 
@@ -111,10 +114,11 @@ class IntermediateClassifier(nn.Module):
         super(IntermediateClassifier, self).__init__()
         self.num_classes = num_classes
         self.num_channels = num_channels
+        self.residual_block_type = residual_block_type
         self.device = 'cuda'
-        if block == "Bottleneck":
+        if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34
             kernel_size = int(3584/self.num_channels)
-        elif block = "Bottleneck":
+        elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152
             kernel_size = int(14336/self.num_channels)
         else:
             NotImplementedError
@@ -156,10 +160,12 @@ class IntermediateClassifier(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, cifar_classes, add_intermediate_layers, num_classes=1000):
+    def __init__(self, block, layers, residual_block_type, cifar_classes, add_intermediate_layers, num_outputs=1, num_classes=1000):
         self.intermediate_CLF = []
         self.add_intermediate_layers = add_intermediate_layers
         self.cifar_classes = cifar_classes
+        self.residual_block_type = residual_block_type
+        self.num_outputs = num_outputs
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -196,14 +202,18 @@ class ResNet(nn.Module):
         self.inplanes = planes * block.expansion
         
         if self.add_intermediate_layers == 2:
-            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.cifar_classes))
+            # global num_outputs #using this variable to count the number of CLF
+            self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+            self.num_outputs += 1
 
         # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
             # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
             if self.add_intermediate_layers == 2:
-                self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.cifar_classes))
+                # global num_outputs
+                self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+                self.num_outputs += 1
 
         return nn.Sequential(*layers)
 
@@ -251,8 +261,10 @@ class ResNet(nn.Module):
         return intermediate_outputs+[x]
 
 
-def Elastic_ResNet50(args, logfile):
+def Elastic_ResNet(args, logfile):
     
+    # num_outputs = 1 # initially only one classifier output
+
     num_classes = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
@@ -266,18 +278,45 @@ def Elastic_ResNet50(args, logfile):
     else:
         NotImplementedError
 
-    model = ResNet(Bottleneck, [3, 4, 6, 3], num_classes, add_intermediate_layers)
+    model_weight_url = None
+    if args.model == "Elastic_ResNet18":
+        print("resnet18")
+        # residual block type, 2 is BasicBlock, which means 2 conv-bn-relu in one block, 3 is BottleneckBlock, which means 3 conv-bn-relu blocks
+        residual_block_type = 2
+        model = ResNet(BasicBlock, [2, 2, 2, 2], residual_block_type, num_classes, add_intermediate_layers)
+        model_weight_url = model_urls['resnet18']
 
+    elif args.model == "Elastic_ResNet34":
+        # residual block type, 2 is BasicBlock, which means 2 conv-bn-relu in one block, 3 is BottleneckBlock, which means 3 conv-bn-relu blocks
+        residual_block_type = 2
+        model = ResNet(BasicBlock, [3, 4, 6, 3], residual_block_type, num_classes, add_intermediate_layers) 
+        model_weight_url =  model_urls['resnet34']      
+
+    elif args.model == "Elastic_ResNet50":
+        residual_block_type = 3
+        model = ResNet(Bottleneck, [3, 4, 6, 3], residual_block_type, num_classes, add_intermediate_layers)   
+        model_weight_url = model_urls['resnet50']  
+
+    elif args.model == "Elastic_ResNet101":
+        residual_block_type = 3
+        model = ResNet(Bottleneck, [3, 4, 23, 3], residual_block_type, num_classes, add_intermediate_layers)   
+        model_weight_url = model_urls['resnet101']  
+
+    elif args.model == "Elastic_ResNet152":
+        residual_block_type = 3
+        model = ResNet(Bottleneck,  [3, 8, 36, 3], residual_block_type, num_classes, add_intermediate_layers)   
+        model_weight_url = model_urls['resnet152']  
 
 
     if pretrained_weight == 1:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+        model.load_state_dict(model_zoo.load_url(model_weight_url))
         print("loaded ImageNet pretrained weights")
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
         print("not loading ImageNet pretrained weights")
         LOG("not loading ImageNet pretrained weights", logfile)
+
     else:
         print("parameter--pretrained_weight, should be 0 or 1")
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
@@ -288,44 +327,7 @@ def Elastic_ResNet50(args, logfile):
     # print("=====> successfully load pretrained imagenet weight")
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
-    
-    return model
 
-
-def Elastic_ResNet34(args, logfile):
-    
-    num_classes = args.num_classes
-    add_intermediate_layers = args.add_intermediate_layers
-    pretrained_weight = args.pretrained_weight
-
-    if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
-        print("not adding any intermediate layer classifiers")    
-        LOG("not adding any intermediate layer classifiers", logfile)
-    elif add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
-        LOG("add any intermediate layer classifiers", logfile)
-    else:
-        NotImplementedError
-
-    model = ResNet(BasicBlock, [3, 4, 6, 3], num_classes, add_intermediate_layers)
-
-    if pretrained_weight == 1:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
-        print("loaded ImageNet pretrained weights")
-        LOG("loaded ImageNet pretrained weights", logfile)
-        
-    elif pretrained_weight == 0:
-        print("not loading ImageNet pretrained weights")
-        LOG("not loading ImageNet pretrained weights", logfile)
-    else:
-        print("parameter--pretrained_weight, should be 0 or 1")
-        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
-        NotImplementedError
-
-    for param in model.parameters():
-        param.requires_grad = True
-    # print("=====> successfully load pretrained imagenet weight")
-    fc_features = model.fc.in_features
-    model.fc = nn.Linear(fc_features, num_classes)
+    # print("num_outputs: ", num_outputs)
     
     return model

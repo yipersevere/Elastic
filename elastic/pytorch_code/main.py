@@ -21,8 +21,9 @@ from models import *
 torch.manual_seed(args.manual_seed)
 torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
-best_prec1 = 0
 
+best_prec1 = 0
+# num_outputs = 1
 
 def train(train_loader, model, criterion, optimizer, epoch):
     # batch_time = AverageMeter()
@@ -35,7 +36,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
     all_acc = []
     all_loss = []
 
-    for ix in range(17):
+    for ix in range(num_outputs):
         all_loss.append(AverageMeter())
         all_acc.append(AverageMeter())
     
@@ -75,7 +76,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
     ls = []
     for i, j in zip(all_acc, all_loss):
         accs.append(float(100-i.avg))
-        ls.append(float(100-j.avg))
+        ls.append(j.avg)
     # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
     return accs, ls, lr
 
@@ -85,7 +86,7 @@ def validate(val_loader, model, criterion):
     model.eval()
     all_acc = []
     all_loss = []
-    for ix in range(17):
+    for ix in range(num_outputs):
         all_loss.append(AverageMeter())
         all_acc.append(AverageMeter())
     # end = time.time()
@@ -129,7 +130,7 @@ def validate(val_loader, model, criterion):
     ls = []
     for i, j in zip(all_acc, all_loss):
         accs.append(float(100-i.avg))
-        ls.append(float(100-j.avg))
+        ls.append(j.avg)
         
     return accs, ls
 
@@ -156,16 +157,18 @@ def main(**kwargs):
     global logFile
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
+    global num_outputs
+    # num_outputs = 1
     
     print(args)
     global device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     if args.data == "cifar100" or args.data == "CIFAR100":
-        fig_title_str = "classification error on CIFAR-100"
+        fig_title_str = " on CIFAR-100"
 
     elif args.data == "cifar10" or args.data == "CIFAR10":
-        fig_title_str = "classification error on CIFAR-10"
+        fig_title_str = " on CIFAR-10"
     else:
         print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
         NotImplementedError
@@ -191,25 +194,13 @@ def main(**kwargs):
         print("Parameter --layers_weight_change, Error")
         sys.exit()   
     
-    if args.model == "Elastic_ResNet18":
-        elasicNN_ResNet18 = Elastic_ResNet18()
-        model = elasicNN_ResNet18
-        print("using Elastic_ResNet18 class")
+    if args.model == "Elastic_ResNet18" or args.model == "Elastic_ResNet34" or args.model == "Elastic_ResNet50" or args.model == "Elastic_ResNet101" or args.model == "Elastic_ResNet152":
+        model = Elastic_ResNet(args, logFile)
+        num_outputs = model.num_outputs
+        print("num_outputs: ", num_outputs)
+        # num_outputs = model_num_outputs
+        print("successfully create model: ", args.model)
 
-    elif args.model == "Elastic_ResNet34":
-        model = Elastic_ResNet34(args, logFile)
-        print("using Elastic_ResNet34 class")
-
-    elif args.model == "Elastic_ResNet50":
-        model = Elastic_ResNet50(args, logFile)
-        print("using Elastic_ResNet50 class")
-
-
-
-    # elif args.model == "Elastic_ResNet101":
-    #     elasticNN_ResNet101 = Elastic_ResNet101(args)
-    #     model = elasticNN_ResNet101
-    #     print("using Elastic_ResNet101 class")
     elif args.model == "Elastic_InceptionV3":
         args.target_size = (229, 229, 3) # since pytorch inceptionv3 pretrained accepts image size (229, 229, 3) instead of (224, 224, 3)
         elasticNN_inceptionV3 = Elastic_InceptionV3(args)
@@ -237,14 +228,14 @@ def main(**kwargs):
     # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    data_folder = "D:\Elastic\data"
-    args.batch_size = 1
+    # data_folder = "D:\Elastic\data"
+    # args.batch_size = 1
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,

@@ -27,14 +27,14 @@ parser.add_argument('--layers_weight_change', type=int, default=0,
 # parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet")
 # parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_all_intermediate_resblock_Elastic_ResNet50")
 
-parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet50")
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet50")
+parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet152")
+parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet152")
 
 parser.add_argument('--print-freq', '-p', default=10, type=int,
                     metavar='N', help='print frequency (default: 10)')
 parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')
-parser.add_argument('--no-save-model', dest='no_save_model', action='store_true',
+parser.add_argument('--save-model', dest='save_model', action='store_true',
                     help='Only save best model (default: false)')
 parser.add_argument('--print_freq', dest='print_freq',
                     help='Only save best model (default: false)', type=int, default=1000)
