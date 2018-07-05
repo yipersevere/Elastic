@@ -5,6 +5,7 @@ import torchvision.models.resnet
 import torch.backends.cudnn as cudnn
 from ignite.handlers import EarlyStopping
 from torchsummary import summary
+from tensorboardX import SummaryWriter
 
 import os
 import time
@@ -22,8 +23,9 @@ torch.manual_seed(args.manual_seed)
 torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
-best_prec1 = 0
+
 # num_outputs = 1
+
 
 def train(train_loader, model, criterion, optimizer, epoch):
     # batch_time = AverageMeter()
@@ -137,7 +139,8 @@ def validate(val_loader, model, criterion):
 
 
 def main(**kwargs):
-    global args, best_prec1
+    global args
+    lowest_error1 = 100
     
     for arg, v in kwargs.items():
         args.__setattr__(arg, v)
@@ -153,6 +156,8 @@ def main(**kwargs):
     tensorboard_folder = path + os.sep + "Graph"
     os.makedirs(path)
     args.savedir = path
+
+    writer = SummaryWriter(tensorboard_folder)
 
     global logFile
     logFile = path + os.sep + "log.txt"    
@@ -255,15 +260,25 @@ def main(**kwargs):
 
     for epoch in range(0, args.epochs):
         
+
+        epoch_str = "==================================== epoch %d ==============================" % epoch
+        print(epoch_str)
+
         # Train for one epoch
         accs, losses, lr = train(train_loader, model, criterion, optimizer, epoch)
         epochs_train_accs.append(accs)
         epochs_train_losses.append(losses)
         epochs_lr.append(lr)
 
-        epoch_str = "==================================== epoch %d ==============================" % epoch
-        print(epoch_str)
-        epoch_result = "accuracy: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) 
+
+        writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'lr', lr, epoch)
+        for i, a, l in zip(range(len(accs)), accs, losses):
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
+        
+        
+    
+        epoch_result = "train error: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) 
         print(epoch_result)
         
         LOG(epoch_str, logFile)
@@ -275,24 +290,13 @@ def main(**kwargs):
         epochs_val_accs.append(val_accs)
         epochs_val_losses.append(val_losses)
 
-        val_str = "val_accuracy: " + str(val_accs) + ", val_loss" + str(val_losses)
+        for i, a, l in zip(range(len(val_accs)), val_accs, val_losses):
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
+        
+        val_str = "val_error: " + str(val_accs) + ", val_loss" + str(val_losses)
         print(val_str)
         LOG(val_str, logFile)
-        
-        
-
-        # Remember best prec@1 and save checkpoint
-        # is_best = val_accs < best_prec1
-        # best_prec1 = max(val_prec1, best_prec1)
-        # model_filename = 'checkpoint_%03d.pth.tar' % epoch
-        # save_checkpoint({
-        #     'epoch': epoch,
-        #     'model': args.model_name,
-        #     'state_dict': model.state_dict(),
-        #     'best_prec1': best_prec1,
-        #     'intermediate_layer_classifier': val_x1_out_prec1,
-        #     'optimizer': optimizer.state_dict(),
-        # }, args, is_best, model_filename, "%.4f %.4f %.4f %.4f %.4f %.4f\n" %(val_prec1, tr_prec1_x1_out, tr_prec1, val_x1_out_prec1, loss, lr))
 
         # run on test dataset
         LOG("==> test \n", logFile)
@@ -303,11 +307,29 @@ def main(**kwargs):
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
 
-        test_result_str = "==> Test epoch, final output classifier acc: " + str(test_accs) + ", test_loss" +str(test_losses)
+        for i, a, l in zip(range(len(test_accs)), test_accs, test_losses):
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
+
+        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", test_loss" +str(test_losses)
 
         print(test_result_str)
         LOG(test_result_str, logFile)
         log_stats(path, accs, losses, lr, test_accs, test_losses)
+
+        # Remember best prec@1 and save checkpoint
+        is_best = test_accs[-1] < lowest_error1 #error not accuracy, but i don't want to change variable names
+        lowest_error1 = test_accs[-1]  #但是有个问题，有时是倒数第二个CLF取得更好的结果
+        
+        if is_best:
+            save_checkpoint({
+                'epoch': epoch,
+                'model': args.model_name,
+                'state_dict': model.state_dict(),
+                'best_prec1': lowest_error1,
+                'optimizer': optimizer.state_dict(),
+            }, args)
+
         # apply early_stop with monitoring val_loss
         # EarlyStopping(patience=15, score_function=score_function(val_loss), trainer=model)
         if epoch == 0:
@@ -323,7 +345,8 @@ def main(**kwargs):
     # FLOPS_result = 'Finished training! FLOPs: %.2fM, Params: %.2fM' % (n_flops / 1e6, n_params / 1e6)
     # LOG(FLOPS_result, logFile)
     # print(FLOPS_result)
-    
+    writer.close()
+
     end_timestamp = datetime.datetime.now()
     end_ts_str = end_timestamp.strftime('%Y-%m-%d-%H-%M-%S')
     LOG("program end time: " + end_ts_str +"\n", logFile)

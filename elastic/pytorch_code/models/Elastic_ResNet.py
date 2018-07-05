@@ -274,7 +274,7 @@ def Elastic_ResNet(args, logfile):
         LOG("not adding any intermediate layer classifiers", logfile)
     elif add_intermediate_layers == 2:
         print("add any intermediate layer classifiers")    
-        LOG("add any intermediate layer classifiers", logfile)
+        LOG("add intermediate layer classifiers", logfile)
     else:
         NotImplementedError
 
@@ -327,7 +327,5 @@ def Elastic_ResNet(args, logfile):
     # print("=====> successfully load pretrained imagenet weight")
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
-
-    # print("num_outputs: ", num_outputs)
     
     return model

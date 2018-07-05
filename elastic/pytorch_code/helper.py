@@ -175,7 +175,7 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
         fig_size = plt.rcParams["figure.figsize"]
 
         plt.rcParams["figure.figsize"] = fig_size
-        plt.tight_layout()
+        # plt.tight_layout()
 
         plt.savefig(args.savedir + os.sep + file_name)
         plt.close("all")  
@@ -340,37 +340,16 @@ def measure_model(model, H, W, debug=False):
         print("modules flops sum: ", sum(modules_flops[0:2]))
     return count_ops, count_params
 
-def save_checkpoint(state, args, is_best, filename, result):
-    print(args)
-    result_filename = os.path.join(args.savedir, args.filename)
+def save_checkpoint(state, args):
+    
     model_dir = os.path.join(args.savedir, 'save_models')
 
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
-    model_filename = os.path.join(model_dir, filename)
-    latest_filename = os.path.join(model_dir, 'latest.txt')
     best_filename = os.path.join(model_dir, 'model_best.pth.tar')
+    torch.save(state, best_filename)
+    print("=> saved checkpoint '{}'".format(best_filename))
 
-    if not os.path.isdir(args.savedir):
-        os.makedirs(args.savedir)
-        os.makedirs(model_dir)
-
-    # For mkdir -p when using python3
-    # os.makedirs(args.savedir, exist_ok=True)
-    # os.makedirs(model_dir, exist_ok=True)
-
-    print("=> saving checkpoint '{}'".format(model_filename))
-    with open(result_filename, 'a') as fout:
-        fout.write(result)
-    torch.save(state, model_filename)
-    with open(latest_filename, 'w') as fout:
-        fout.write(model_filename)
-    if args.no_save_model:
-        shutil.move(model_filename, best_filename)
-    elif is_best:
-        shutil.copyfile(model_filename, best_filename)
-
-    print("=> saved checkpoint '{}'".format(model_filename))
     return
 
 def adjust_learning_rate(optimizer, epoch, args, batch=None, nBatch=None):
