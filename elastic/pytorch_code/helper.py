@@ -6,6 +6,8 @@ from __future__ import division
 import matplotlib
 matplotlib.use("PDF")
 import matplotlib.pyplot as plt
+plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
+plt.rcParams["figure.figsize"] = (20,10)
 
 import os
 import numpy as np
@@ -137,6 +139,7 @@ def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_t
     
     
 def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses, args, captionStrDict):
+    
     """
     plot epoch test error after model testing is finished
     """
@@ -159,10 +162,19 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
             x = np.arange(len(data)) + 1
             y = np.array(data)[:, k]
 
-            if k == last:
-                c_label = captionStrDict["elastic_final_layer_label"]
+            if y_label in ["train loss", "test loss"] and len(data[0]) > 1: # means model generates more than one classifier
+                if k == last:
+                    c_label = "total sum loss"
+                elif k == (last-1):
+                    c_label = captionStrDict["elastic_final_layer_label"]
+                else:
+                    c_label = captionStrDict["elastic_intermediate_layer_label"] + str(k)                
+
             else:
-                c_label = captionStrDict["elastic_intermediate_layer_label"] + str(k)
+                if k == last:
+                    c_label = captionStrDict["elastic_final_layer_label"]
+                else:
+                    c_label = captionStrDict["elastic_intermediate_layer_label"] + str(k)
 
             ax0.plot(x, y, label=c_label)
         
@@ -175,7 +187,7 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
         fig_size = plt.rcParams["figure.figsize"]
 
         plt.rcParams["figure.figsize"] = fig_size
-        # plt.tight_layout()
+        plt.tight_layout()
 
         plt.savefig(args.savedir + os.sep + file_name)
         plt.close("all")  

@@ -26,63 +26,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 # num_outputs = 1
 
-
-def train(train_loader, model, criterion, optimizer, epoch):
-    # batch_time = AverageMeter()
-    # data_time = AverageMeter()
-
-    model.train()
-
-    # end = time.time()
-    lr = None
-    all_acc = []
-    all_loss = []
-
-    for ix in range(num_outputs):
-        all_loss.append(AverageMeter())
-        all_acc.append(AverageMeter())
-    
-    LOG("==> train ", logFile)
-    for i, (input, target) in enumerate(train_loader):
-        lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
-
-        # data_time.update(time.time() - end)
-
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
-        
-        outputs = model(input_var)
-
-        losses = 0
-# 这里应该要再封装一下， 变成只有一个变量loss
-        for ix in range(len(outputs)):
-            loss = criterion(outputs[ix], target_var)
-            all_loss[ix].update(loss.item(), input.size(0))
-
-            losses += loss
-            # print("loss: ", i, ": ", loss.item())
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-            # print("precision_", i, ": ", prec1[0].data[0].item())
-        
-        optimizer.zero_grad()
-        losses.backward()
-        optimizer.step()
-
-        ### Measure elapsed time
-        # batch_time.update(time.time() - end)
-        # end = time.time()
-        
-    accs = []
-    ls = []
-    for i, j in zip(all_acc, all_loss):
-        accs.append(float(100-i.avg))
-        ls.append(j.avg)
-    # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
-    return accs, ls, lr
-
-
 def validate(val_loader, model, criterion):
     # batch_time = AverageMeter()
     model.eval()
@@ -138,6 +81,68 @@ def validate(val_loader, model, criterion):
 
 
 
+def train(train_loader, model, criterion, optimizer, epoch):
+    # batch_time = AverageMeter()
+    # data_time = AverageMeter()
+
+    model.train()
+
+    # end = time.time()
+    lr = None
+    all_acc = []
+    all_loss = []
+
+    for ix in range(num_outputs):
+        all_loss.append(AverageMeter())
+        all_acc.append(AverageMeter())
+    
+
+    LOG("==> train ", logFile)
+    for i, (input, target) in enumerate(train_loader):
+        lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
+
+        # data_time.update(time.time() - end)
+
+        target = target.cuda(async=True)
+        input_var = torch.autograd.Variable(input)
+        target_var = torch.autograd.Variable(target)
+        
+        outputs = model(input_var)
+
+        losses = 0
+# 这里应该要再封装一下， 变成只有一个变量loss
+        for ix in range(len(outputs)):
+            loss = criterion(outputs[ix], target_var)
+            all_loss[ix].update(loss.item(), input.size(0))
+
+            losses += loss
+            # print("loss: ", i, ": ", loss.item())
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+            # print("precision_", i, ": ", prec1[0].data[0].item())
+        
+
+        optimizer.zero_grad()
+        losses.backward()
+        optimizer.step()
+
+        ### Measure elapsed time
+        # batch_time.update(time.time() - end)
+        # end = time.time()
+        
+    accs = []
+    ls = []
+    for i, j in zip(all_acc, all_loss):
+        accs.append(float(100-i.avg))
+        ls.append(j.avg)
+
+    # if num_outputs > 1:
+    #     total_sum_loss
+    # ls.append(all_loss[-1].avg)
+    # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
+    return accs, ls, lr
+
+
 def main(**kwargs):
     global args
     lowest_error1 = 100
@@ -191,13 +196,13 @@ def main(**kwargs):
     LOG("program start time: " + ts_str +"\n", logFile)
 
 
-    if args.layers_weight_change == 1:
-        LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
-    elif args.layers_weight_change == 0:
-        LOG("weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1", logFile)
-    else:
-        print("Parameter --layers_weight_change, Error")
-        sys.exit()   
+    # if args.layers_weight_change == 1:
+    #     LOG("weights for intermediate layers: 1/(34-Depth), giving different weights for different intermediate layers output, using the formula weigh = 1/(34-Depth)", logFile)
+    # elif args.layers_weight_change == 0:
+    #     LOG("weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1", logFile)
+    # else:
+    #     print("Parameter --layers_weight_change, Error")
+    #     sys.exit()   
     
     if args.model == "Elastic_ResNet18" or args.model == "Elastic_ResNet34" or args.model == "Elastic_ResNet50" or args.model == "Elastic_ResNet101" or args.model == "Elastic_ResNet152":
         model = Elastic_ResNet(args, logFile)
@@ -229,7 +234,7 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
     
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', verbose=True, threshold=1e-4, patience=10)
     # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
@@ -263,7 +268,7 @@ def main(**kwargs):
 
         epoch_str = "==================================== epoch %d ==============================" % epoch
         print(epoch_str)
-
+        LOG(epoch_str, logFile)
         # Train for one epoch
         accs, losses, lr = train(train_loader, model, criterion, optimizer, epoch)
         epochs_train_accs.append(accs)
@@ -276,13 +281,15 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_accs_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
-        
     
-        epoch_result = "train error: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) 
+        epoch_result = "train error: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
         print(epoch_result)
-        
-        LOG(epoch_str, logFile)
         LOG(epoch_result, logFile)
+
+        if num_outputs > 1:
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_total_sum_losses', sum(losses), epoch) 
+            losses.append(sum(losses)) # add the total sum loss
+            print("train_total_sum_losses: ", sum(losses))       
         
         # Evaluate on validation set
         LOG("==> validate \n", logFile)
@@ -294,15 +301,20 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_accs_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
         
+
         val_str = "val_error: " + str(val_accs) + ", val_loss" + str(val_losses)
         print(val_str)
         LOG(val_str, logFile)
 
+        if num_outputs > 1:
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_total_sum_losses', sum(val_losses), epoch) 
+            val_losses.append(sum(val_losses)) # add the total sum loss
+            print("val_total_sum_losses: ", sum(val_losses))       
+                
+        
         # run on test dataset
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
-        
-        scheduler.step(test_losses[-1])
         
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
@@ -311,10 +323,17 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_accs_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
-        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", test_loss" +str(test_losses)
 
+        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", test_loss" +str(test_losses) + ", total test sum loss " + str(sum(test_losses))
         print(test_result_str)
         LOG(test_result_str, logFile)
+
+        if num_outputs > 1:
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_total_sum_losses', sum(test_losses), epoch) 
+            test_losses.append(sum(test_losses)) # add the total sum loss
+            print("test_total_sum_losses: ", sum(test_losses))   
+
+        
         log_stats(path, accs, losses, lr, test_accs, test_losses)
 
         # Remember best prec@1 and save checkpoint
@@ -332,12 +351,16 @@ def main(**kwargs):
 
         # apply early_stop with monitoring val_loss
         # EarlyStopping(patience=15, score_function=score_function(val_loss), trainer=model)
+        total_loss = sum(test_losses)
+
+        scheduler.step(total_loss) # adjust learning rate with test_loss
+        
         if epoch == 0:
-            prev_test_loss = test_losses[-1]
+            prev_epoch_loss = total_loss # use all intemediate classifiers sum loss instead of only one classifier loss
         else:
-            if test_losses[-1] >= prev_test_loss:
+            if total_loss >= prev_epoch_loss: # means this current epoch doesn't reduce test losses
                 EarlyStopping_epoch_count += 1
-        if EarlyStopping_epoch_count > 10:
+        if EarlyStopping_epoch_count > 20:
             print("No improving test_loss for more than 10 epochs, stop running model")
             break
 

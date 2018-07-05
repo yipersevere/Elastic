@@ -125,13 +125,12 @@ class IntermediateClassifier(nn.Module):
             
         print("kernel_size for global pooling: " ,kernel_size)
 
-
-
-
         self.features = nn.Sequential(
-            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size))
+            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
+            nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
+        # 在keras中这里还有dropout rate = 0.2，但是这里没有，需要添加一下
         self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
 
     def forward(self, x):
