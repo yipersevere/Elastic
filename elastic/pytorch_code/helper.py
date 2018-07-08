@@ -72,20 +72,19 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def accuracy(output, target, topk=(1,)):
-    """Computes the precision@k for the specified values of k"""
-    maxk = max(topk)
-    batch_size = target.size(0)
-
-    _, pred = output.topk(maxk, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        res.append(correct_k.mul_(100.0 / batch_size))
-    return res
+# def accuracy(output, target):
+#     """Computes the precision@k for the specified values of k"""
+#     # maxk = max(topk)
+#     batch_size = target.size(0)
+    
+#     _, predicted = torch.max(output.data, 1)
+#     correct += (predicted == target).sum().item()
+    
+#     # _, pred = output.topk(maxk, 1, True, True)
+#     pred = pred.t()
+#     correct = pred.eq(target.view(1, -1).expand_as(pred))
+    
+#     return res
 
 def LOG(message, logFile):
     ts = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
@@ -113,7 +112,7 @@ def log_summary(model, logFile):
 
 def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_loss_test):
 
-    with open(path + os.sep + "train_accuracies.txt", "a") as fp:
+    with open(path + os.sep + "train_errors.txt", "a") as fp:
         for a in epochs_acc_train:
             fp.write("%.4f " % a)
         fp.write("\n")
@@ -127,7 +126,7 @@ def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_t
         fp.write("%.7f " % epochs_lr)
         fp.write("\n")    
 
-    with open(path + os.sep + "test_accuracies.txt", "a") as fp:
+    with open(path + os.sep + "test_errors.txt", "a") as fp:
         for a in epochs_acc_test:
             fp.write("%.4f " % a)
         fp.write("\n")

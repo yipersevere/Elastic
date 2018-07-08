@@ -14,7 +14,7 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate, plot_figs
+from helper import LOG, log_summary, log_stats, AverageMeter, save_checkpoint, adjust_learning_rate, plot_figs
 from data_loader import get_train_valid_loader, get_test_loader
 from models import *
 
@@ -29,52 +29,64 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 def validate(val_loader, model, criterion):
     # batch_time = AverageMeter()
     model.eval()
-    all_acc = []
+    # all_acc = []
     all_loss = []
+    corrects = []
+
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
-        all_acc.append(AverageMeter())
+        # all_acc.append(AverageMeter())
+        corrects.append(0)
     # end = time.time()
-    
-    for i, (input, target) in enumerate(val_loader):
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)     
-        
-        outputs = model(input_var)
+    totals = 0
+    with torch.no_grad():
+        for i, (input, target) in enumerate(val_loader):
+            target = target.cuda(async=True)
+            input_var = torch.autograd.Variable(input, volatile=True)
+            target_var = torch.autograd.Variable(target, volatile=True)     
+            
+            outputs = model(input_var)
 
-        losses = 0
+            losses = 0
 
-        for ix in range(len(outputs)):
-            loss = criterion(outputs[ix], target_var)
-            all_loss[ix].update(loss.item(), input.size(0))
+            for ix in range(len(outputs)):
+                loss = criterion(outputs[ix], target_var)
+                all_loss[ix].update(loss.item(), input.size(0))
 
-            losses += loss
-            # print("loss: ", i, ": ", loss.item())
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-            # print("precision_", i, ": ", prec1[0].data[0].item())
+                losses += loss
 
-    #     ### Measure elapsed time
-    #     batch_time.update(time.time() - end)
-    #     end = time.time()
+                _, pred = outputs[ix].max(1)
+                corrects[ix] += pred.eq(target).sum().item()
+                totals += target.size(0)
+                # print("pred: ", pred)
+                # print("ground: ", target)
+                # print("temp_acc： ", temp_acc)
+                # # print("loss: ", i, ": ", loss.item())
+                # # prec1 = accuracy(outputs[ix].data, target)
+                # all_acc[ix].update(temp_acc, input.size(0))
+                # print("precision_", i, ": ", prec1[0].data[0].item())
 
-    #     # if i % args.print_freq == 0:
-    #     #     temp_result = 'Test: [{0}/{1}]\t' \
-    #     #           'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
-    #     #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-    #     #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
-    #     #           'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
-    #     #               i, len(val_loader), batch_time=batch_time, loss=losses,
-    #     #               top1=top1, x1_out_top1=x1_out_top1)
-    #     #     LOG(temp_result, logFile)
+        #     ### Measure elapsed time
+        #     batch_time.update(time.time() - end)
+        #     end = time.time()
 
-    #     #     print(temp_result)
+        #     # if i % args.print_freq == 0:
+        #     #     temp_result = 'Test: [{0}/{1}]\t' \
+        #     #           'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
+        #     #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
+        #     #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
+        #     #           'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
+        #     #               i, len(val_loader), batch_time=batch_time, loss=losses,
+        #     #               top1=top1, x1_out_top1=x1_out_top1)
+        #     #     LOG(temp_result, logFile)
+
+        #     #     print(temp_result)
 
     accs = []
     ls = []
-    for i, j in zip(all_acc, all_loss):
-        accs.append(float(100-i.avg))
+    for i, j in zip(corrects, all_loss):
+        # accs.append(float(100-i.avg))
+        accs.append(100-(i/totals))
         ls.append(j.avg)
         
     return accs, ls
@@ -89,14 +101,16 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
     # end = time.time()
     lr = None
-    all_acc = []
+    # all_acc = []
     all_loss = []
+    corrects = []
 
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
-        all_acc.append(AverageMeter())
-    
+        # all_acc.append(AverageMeter())
+        corrects.append(0)
 
+    totals = 0
     LOG("==> train ", logFile)
     for i, (input, target) in enumerate(train_loader):
         lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
@@ -110,15 +124,25 @@ def train(train_loader, model, criterion, optimizer, epoch):
         outputs = model(input_var)
 
         losses = 0
-# 这里应该要再封装一下， 变成只有一个变量loss
+            # 这里应该要再封装一下， 变成只有一个变量loss
         for ix in range(len(outputs)):
             loss = criterion(outputs[ix], target_var)
             all_loss[ix].update(loss.item(), input.size(0))
 
             losses += loss
             # print("loss: ", i, ": ", loss.item())
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+            _, pred = outputs[ix].max(1)
+            corrects[ix] += pred.eq(target).sum().item()
+            totals += target.size(0)
+            # temp_acc = correct/target.size(0)
+            # print("pred: ", pred)
+            # print("ground: ", target.data[0].item())
+            # print("ground: ", target.data[1].item())
+            # print("ground: ", target.data[2].item())
+            # print("ground: ", target.data[3].item())
+            # print("temp_acc： ", temp_acc)
+            # prec1 = accuracy(outputs[ix].data, target)
+            # print("current acc: ", all_acc[ix].avg)
             # print("precision_", i, ": ", prec1[0].data[0].item())
         
 
@@ -132,8 +156,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
     accs = []
     ls = []
-    for i, j in zip(all_acc, all_loss):
-        accs.append(float(100-i.avg))
+    for i, j in zip(corrects, all_loss):
+        accs.append(100-(i/totals))
         ls.append(j.avg)
 
     # if num_outputs > 1:
@@ -168,6 +192,7 @@ def main(**kwargs):
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
     global num_outputs
+    global model
     # num_outputs = 1
     
     print(args)
@@ -247,11 +272,11 @@ def main(**kwargs):
     # data_folder = "D:\Elastic\data"
     # args.batch_size = 1
 
-    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
-                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
+    train_loader, val_loader, test_loader  = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, logFile=logFile, augment=True, target_size = args.target_size,
+                                                    random_seed=20180614, valid_size=0.1, shuffle=True,show_sample=False,
                                                     num_workers=4,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
-                                    num_workers=4,pin_memory=True)
+    # test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, logFile=logFile, shuffle=False, target_size = args.target_size,
+    #                                 num_workers=4,pin_memory=True)
     
     # EarlyStopping(patience=15, )
 

@@ -12,11 +12,11 @@ from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 import scipy
+from helper import LOG
 
 
 
-
-def get_train_valid_loader(data, data_dir, batch_size, augment, random_seed, target_size,
+def get_train_valid_loader(data, data_dir, batch_size, logFile, augment, random_seed, target_size,
                            valid_size=0.1, shuffle=True, show_sample=False, num_workers=4, pin_memory=False):
     """
     Utility function for loading and returning train and valid
@@ -50,9 +50,11 @@ def get_train_valid_loader(data, data_dir, batch_size, augment, random_seed, tar
 
     # define transforms
     if target_size == (229,229,3):
-        print("=====> resize CIFAR image to 229*229*3")
+        print("=====> Train dataset, resize CIFAR image to 229*229*3")
+        LOG("=====> Train dataset, resize CIFAR image to 229*229*3", logFile)
         target_resize = (229, 229)
     else:
+        LOG("=====> Train dataset, resize CIFAR image to 224*224*3", logFile)
         target_resize = (224, 224)
 
     normalize = transforms.Normalize(
@@ -61,60 +63,58 @@ def get_train_valid_loader(data, data_dir, batch_size, augment, random_seed, tar
     )
 
     # define transforms
-    valid_transform = transforms.Compose([
-            # transforms.Pad(padding=96, padding_mode='reflect'),
-            transforms.Resize(target_resize),
-            transforms.ToTensor(),
-            normalize,
-    ])
+    # valid_transform = transforms.Compose([
+    #         # transforms.Pad(padding=96, padding_mode='reflect'),
+    #         transforms.Resize(target_resize),
+    #         transforms.ToTensor(),
+    #         normalize,
+    # ])
     if augment:
         train_transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
+            transforms.Resize(target_resize),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
-            normalize,
+            normalize
         ])
     else:
         train_transform = transforms.Compose([
-            # transforms.Pad(padding=96, padding_mode='reflect'),
             transforms.Resize(target_resize),
             transforms.ToTensor(),
-            normalize,
+            normalize
         ])
-    # train_transform_origin = transforms.Compose([
-    #     transforms.ToTensor(),
-    #     normalize,
-    # ])
+
     # load the dataset
     if data == "CIFAR10" or data == "cifar10":
         train_dataset = datasets.CIFAR10(
             root=data_dir, train=True,
-            download=True, transform=train_transform,
+            download=True, transform=train_transform
         )
-        # train_dataset_origin = datasets.CIFAR10(
-        #     root=data_dir, train=True,
-        #     download=True, transform=train_transform_origin,
-        # )
 
-        valid_dataset = datasets.CIFAR10(
-            root=data_dir, train=True,
-            download=True, transform=valid_transform,
-        )
-        print("===========================use CIFAR10 dataset===========================")
+        test_dataset = datasets.CIFAR10(
+            root=data_dir, train=False,
+            download=True, transform=train_transform
+        )        
+
+        # valid_dataset = datasets.CIFAR10(
+        #     root=data_dir, train=True,
+        #     download=True, transform=valid_transform,
+        # )
+        print("===========================load CIFAR10 dataset===========================")
     elif data == "cifar100" or data == "CIFAR100":
         train_dataset = datasets.CIFAR100(
             root=data_dir, train=True,
-            download=True, transform=train_transform,
+            download=True, transform=train_transform
         )
-        # train_dataset_origin = datasets.CIFAR10(
-        #     root=data_dir, train=True,
-        #     download=True, transform=train_transform_origin,
-        # )
 
-        valid_dataset = datasets.CIFAR100(
-            root=data_dir, train=True,
-            download=True, transform=valid_transform,
-        )
+        test_dataset = datasets.CIFAR100(
+            root=data_dir, train=False,
+            download=True, transform=train_transform
+        )        
+
+        # valid_dataset = datasets.CIFAR100(
+        #     root=data_dir, train=True,
+        #     download=True, transform=valid_transform,
+        # )
         print("===========================use CIFAR100 dataset===========================")
     else:
         print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
@@ -135,21 +135,27 @@ def get_train_valid_loader(data, data_dir, batch_size, augment, random_seed, tar
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, sampler=train_sampler,
-        num_workers=num_workers, pin_memory=pin_memory,
+        num_workers=num_workers, pin_memory=pin_memory
     )
     valid_loader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=batch_size, sampler=valid_sampler,
-        num_workers=num_workers, pin_memory=pin_memory,
+        train_dataset, batch_size=batch_size, sampler=valid_sampler,
+        num_workers=num_workers, pin_memory=pin_memory
     )
 
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset, batch_size=batch_size,
+        num_workers=num_workers, pin_memory=pin_memory
+    )    
+    # valid_loader = None
 
-    return (train_loader, valid_loader)
+    return train_loader, valid_loader, test_loader
 
 
 def get_test_loader(data,
                     data_dir,
                     batch_size,
                     target_size,
+                    logFile,
                     shuffle=True,
                     num_workers=4,
                     pin_memory=False):
@@ -173,9 +179,12 @@ def get_test_loader(data,
     - data_loader: test set iterator.
     """
     if target_size == (229,229,3):
-        print("=====> resize CIFAR image to 229*229*3")
+        print("==> Test dataset, resize CIFAR image to 229*229*3")
+        LOG("==> Test dataset, resize CIFAR image to 229*229*3", logFile)
         target_resize = (229, 229)
     else:
+        print("==> Test dataset, resize CIFAR image to 224*224*3")
+        LOG("==> Test dataset, resize CIFAR image to 224*224*3", logFile)
         target_resize = (224, 224)
 
     normalize = transforms.Normalize(
@@ -194,20 +203,21 @@ def get_test_loader(data,
     if data == "CIFAR10" or "cifar10":
         dataset = datasets.CIFAR10(
             root=data_dir, train=False,
-            download=True, transform=transform,
+            download=True, transform=transform
         )
     elif data == "CIFAR100" or "cifar100":
         dataset = datasets.CIFAR100(
             root=data_dir, train=False,
-            download=True, transform=transform,
+            download=True, transform=transform
         )
     else:
         print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
+        LOG("ERROR =============================dataset should be CIFAR10 or CIFAR100", logFile)
         NotImplementedError        
 
     data_loader = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, shuffle=shuffle,
-        num_workers=num_workers, pin_memory=pin_memory,
+        num_workers=num_workers, pin_memory=pin_memory
     )        
 
     return data_loader
