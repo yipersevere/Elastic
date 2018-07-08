@@ -139,9 +139,9 @@ def train(train_loader, model, criterion, optimizer, epoch):
         ls.append(j.avg)
 
     try:
-        lr = str(optimizer).split("\n")[-5].split(" ")[-1]
+        lr = float(str(optimizer).split("\n")[-5].split(" ")[-1])
     except:
-        lr = -1
+        lr = 100
     return accs, ls, lr
 
 
@@ -255,7 +255,7 @@ def main(**kwargs):
 
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 1):
+    for pretrain_epoch in range(0, 10):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
         print(epoch_result)
