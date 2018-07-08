@@ -223,24 +223,11 @@ def main(**kwargs):
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
-    
+
     model = model.to(device)
     if device == 'cuda':
         model = torch.nn.DataParallel(model).cuda()
         cudnn.benchmark = True
-
-    # implement early stop by own
-    EarlyStopping_epoch_count = 0
-    prev_val_loss = 100000
-
-    criterion = nn.CrossEntropyLoss().cuda()
-    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay,
-                                nesterov=False)# nesterov set False to keep align with keras default settting
-    
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
-    # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
     data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
@@ -258,7 +245,41 @@ def main(**kwargs):
     test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
                                     num_workers=4,pin_memory=True)
     
-    # EarlyStopping(patience=15, )
+    
+    criterion = nn.CrossEntropyLoss().cuda()
+
+    pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay,
+                                nesterov=False)# nesterov set False to keep align with keras default settting
+
+
+    # if args.add_intermediate_layers == 2:
+        # train intermediate classifier for 10 epochs first
+    print("==> Pretraining for 10 epoches    ")
+    LOG("==> Pretraining for 10 epoches    \n", logFile)
+    for pretrain_epoch in range(0, 10):
+        accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
+        epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
+        print(epoch_result)
+        LOG(epoch_result, logFile)
+        
+
+    
+    print("==> Full training ")
+    LOG("==> Full training    \n", logFile)
+    for param in model.parameters():
+        param.requires_grad = True
+    
+    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay,
+                                nesterov=False)# nesterov set False to keep align with keras default settting
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
+    
+    # implement early stop by own
+    EarlyStopping_epoch_count = 0
+    prev_val_loss = 100000
 
     epochs_train_accs = []
     epochs_train_losses = []

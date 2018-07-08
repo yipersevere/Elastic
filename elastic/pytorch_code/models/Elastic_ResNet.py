@@ -268,15 +268,6 @@ def Elastic_ResNet(args, logfile):
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
-        print("not adding any intermediate layer classifiers")    
-        LOG("not adding any intermediate layer classifiers", logfile)
-    elif add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
-        LOG("add intermediate layer classifiers", logfile)
-    else:
-        NotImplementedError
-
     model_weight_url = None
     if args.model == "Elastic_ResNet18":
         print("resnet18")
@@ -321,10 +312,40 @@ def Elastic_ResNet(args, logfile):
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
 
-    for param in model.parameters():
-        param.requires_grad = True
+    # if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
+    #     print("not adding any intermediate layer classifiers")    
+    #     LOG("not adding any intermediate layer classifiers", logfile)
+    # elif add_intermediate_layers == 2:
+    #     print("add any intermediate layer classifiers")    
+    #     LOG("add intermediate layer classifiers", logfile)
+
+
     # print("=====> successfully load pretrained imagenet weight")
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
+
+    for param in model.parameters():
+        param.requires_grad = False
     
+    if add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add intermediate layer classifiers", logfile)
+
+        # get all extra classifiers params and final classifier params
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
+        
+        for param in model.fc.parameters():
+            param.requires_grad = True 
+    
+    elif add_intermediate_layers == 0:
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+
+        for param in model.fc.parameters():
+            param.requires_grad = True         
+    else:
+        NotImplementedError
+
     return model
