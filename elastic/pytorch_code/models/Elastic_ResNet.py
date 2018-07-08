@@ -116,9 +116,9 @@ class IntermediateClassifier(nn.Module):
         self.num_channels = num_channels
         self.residual_block_type = residual_block_type
         self.device = 'cuda'
-        if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34
+        if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34, then feature_maps_width(height) * num_channels == 3584
             kernel_size = int(3584/self.num_channels)
-        elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152
+        elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152, then feature_maps_width(height) * num_channels == 14336
             kernel_size = int(14336/self.num_channels)
         else:
             NotImplementedError

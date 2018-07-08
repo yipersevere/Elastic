@@ -213,8 +213,11 @@ def main(**kwargs):
 
     elif args.model == "Elastic_InceptionV3":
         args.target_size = (229, 229, 3) # since pytorch inceptionv3 pretrained accepts image size (229, 229, 3) instead of (224, 224, 3)
-        elasticNN_inceptionV3 = Elastic_InceptionV3(args)
-        model = elasticNN_inceptionV3.model
+        model = Elastic_InceptionV3(args, logFile)
+        num_outputs = model.num_outputs
+        print("num_outputs: ", num_outputs)
+        # num_outputs = model_num_outputs
+        print("successfully create model: ", args.model)
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
@@ -238,14 +241,14 @@ def main(**kwargs):
     # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    # data_folder = "D:\Elastic\data"
-    # args.batch_size = 1
+    data_folder = "D:\Elastic\data"
+    args.batch_size = 1
 
     train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
