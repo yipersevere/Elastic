@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -14,7 +15,7 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, AverageMeter, save_checkpoint, adjust_learning_rate, plot_figs
+from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate, plot_figs
 from data_loader import get_train_valid_loader, get_test_loader
 from models import *
 
@@ -29,41 +30,30 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 def validate(val_loader, model, criterion):
     # batch_time = AverageMeter()
     model.eval()
-    # all_acc = []
+    all_acc = []
     all_loss = []
-    corrects = []
-
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
-        # all_acc.append(AverageMeter())
-        corrects.append(0)
+        all_acc.append(AverageMeter())
     # end = time.time()
-    totals = 0
-    with torch.no_grad():
-        for i, (input, target) in enumerate(val_loader):
-            target = target.cuda(async=True)
-            input_var = torch.autograd.Variable(input, volatile=True)
-            target_var = torch.autograd.Variable(target, volatile=True)     
-            
-            outputs = model(input_var)
-
-            losses = 0
-
+    
+    for i, (input, target) in enumerate(val_loader):
+        target = target.cuda(async=True)
+        input_var = torch.autograd.Variable(input)
+        target_var = torch.autograd.Variable(target)     
+        
+        losses = 0
+        
+        outputs = model(input_var)
+        with torch.no_grad():
             for ix in range(len(outputs)):
                 loss = criterion(outputs[ix], target_var)
                 all_loss[ix].update(loss.item(), input.size(0))
 
                 losses += loss
-
-                _, pred = outputs[ix].max(1)
-                corrects[ix] += pred.eq(target).sum().item()
-                totals += target.size(0)
-                # print("pred: ", pred)
-                # print("ground: ", target)
-                # print("temp_acc： ", temp_acc)
-                # # print("loss: ", i, ": ", loss.item())
-                # # prec1 = accuracy(outputs[ix].data, target)
-                # all_acc[ix].update(temp_acc, input.size(0))
+                # print("loss: ", i, ": ", loss.item())
+                prec1 = accuracy(outputs[ix].data, target)
+                all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
                 # print("precision_", i, ": ", prec1[0].data[0].item())
 
         #     ### Measure elapsed time
@@ -84,9 +74,8 @@ def validate(val_loader, model, criterion):
 
     accs = []
     ls = []
-    for i, j in zip(corrects, all_loss):
-        # accs.append(float(100-i.avg))
-        accs.append(100-(i/totals))
+    for i, j in zip(all_acc, all_loss):
+        accs.append(float(100-i.avg))
         ls.append(j.avg)
         
     return accs, ls
@@ -101,16 +90,14 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
     # end = time.time()
     lr = None
-    # all_acc = []
+    all_acc = []
     all_loss = []
-    corrects = []
 
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
-        # all_acc.append(AverageMeter())
-        corrects.append(0)
+        all_acc.append(AverageMeter())
+    
 
-    totals = 0
     LOG("==> train ", logFile)
     for i, (input, target) in enumerate(train_loader):
         lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
@@ -121,32 +108,23 @@ def train(train_loader, model, criterion, optimizer, epoch):
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
+        losses = 0
+        optimizer.zero_grad()
+
         outputs = model(input_var)
 
-        losses = 0
-            # 这里应该要再封装一下， 变成只有一个变量loss
+        
+        # 这里应该要再封装一下， 变成只有一个变量loss
         for ix in range(len(outputs)):
             loss = criterion(outputs[ix], target_var)
             all_loss[ix].update(loss.item(), input.size(0))
 
             losses += loss
             # print("loss: ", i, ": ", loss.item())
-            _, pred = outputs[ix].max(1)
-            corrects[ix] += pred.eq(target).sum().item()
-            totals += target.size(0)
-            # temp_acc = correct/target.size(0)
-            # print("pred: ", pred)
-            # print("ground: ", target.data[0].item())
-            # print("ground: ", target.data[1].item())
-            # print("ground: ", target.data[2].item())
-            # print("ground: ", target.data[3].item())
-            # print("temp_acc： ", temp_acc)
-            # prec1 = accuracy(outputs[ix].data, target)
-            # print("current acc: ", all_acc[ix].avg)
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
             # print("precision_", i, ": ", prec1[0].data[0].item())
         
-
-        optimizer.zero_grad()
         losses.backward()
         optimizer.step()
 
@@ -156,8 +134,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
     accs = []
     ls = []
-    for i, j in zip(corrects, all_loss):
-        accs.append(100-(i/totals))
+    for i, j in zip(all_acc, all_loss):
+        accs.append(float(100-i.avg))
         ls.append(j.avg)
 
     # if num_outputs > 1:
@@ -192,7 +170,6 @@ def main(**kwargs):
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
     global num_outputs
-    global model
     # num_outputs = 1
     
     print(args)
@@ -241,8 +218,8 @@ def main(**kwargs):
         model = Elastic_InceptionV3(args, logFile)
         num_outputs = model.num_outputs
         print("num_outputs: ", num_outputs)
-        # num_outputs = model_num_outputs
         print("successfully create model: ", args.model)
+
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
@@ -262,24 +239,24 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
     
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', verbose=True, threshold=1e-4, patience=10)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     # torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=False, threshold=0.00001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
-    data_folder = "D:\Elastic\data"
-    args.batch_size = 1
+    # data_folder = "D:\Elastic\data"
+    # args.batch_size = 1
 
-    train_loader, val_loader, test_loader  = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, logFile=logFile, augment=True, target_size = args.target_size,
-                                                    random_seed=20180614, valid_size=0.1, shuffle=True,show_sample=False,
+    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
+                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
                                                     num_workers=4,pin_memory=True)
-    # test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, logFile=logFile, shuffle=False, target_size = args.target_size,
-    #                                 num_workers=4,pin_memory=True)
+    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
+                                    num_workers=4,pin_memory=True)
     
     # EarlyStopping(patience=15, )
 
@@ -306,7 +283,7 @@ def main(**kwargs):
 
         writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'lr', lr, epoch)
         for i, a, l in zip(range(len(accs)), accs, losses):
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
     
@@ -326,7 +303,7 @@ def main(**kwargs):
         epochs_val_losses.append(val_losses)
 
         for i, a, l in zip(range(len(val_accs)), val_accs, val_losses):
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
         
 
@@ -348,7 +325,7 @@ def main(**kwargs):
         epochs_test_losses.append(test_losses)
 
         for i, a, l in zip(range(len(test_accs)), test_accs, test_losses):
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_accs_' + str(i), a, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
 

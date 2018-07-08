@@ -86,6 +86,22 @@ class AverageMeter(object):
     
 #     return res
 
+def accuracy(output, target, topk=(1,)):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = target.size(0)
+
+    _, pred = output.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+    return res
+
+
 def LOG(message, logFile):
     ts = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     msg = "[%s] %s" % (ts, message)
@@ -144,8 +160,8 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
     """
 
     all_y_labels = ["train error (%)", "train loss", "test error (%)", "test loss"]
-    save_file_names = ["train_accuracy.png","train_loss.png","test_accuracy.png","test_loss.png"]
-    fig_titles = ["Train Classification error"+captionStrDict["fig_title"], "Train Loss"+captionStrDict["fig_title"], "Test Classification error"+captionStrDict["fig_title"], "Test Loss"+captionStrDict["fig_title"]]
+    save_file_names = ["train_error.png","train_loss.png","test_error.png","test_loss.png"]
+    fig_titles = [args.model + " Train Classification error"+captionStrDict["fig_title"], args.model + " Train Loss"+captionStrDict["fig_title"], args.model + " Test Classification error"+captionStrDict["fig_title"], args.model + " Test Loss"+captionStrDict["fig_title"]]
     all_stats = [epochs_train_accs, epochs_train_losses, test_accs, epochs_test_losses]
     for y_label, file_name, fig_title, data in zip(all_y_labels, save_file_names, fig_titles, all_stats):
 
@@ -190,10 +206,6 @@ def plot_figs(epochs_train_accs, epochs_train_losses, test_accs, epochs_test_los
 
         plt.savefig(args.savedir + os.sep + file_name)
         plt.close("all")  
-
-
-
-
 
 def get_num_gen(gen):
     return sum(1 for x in gen)

@@ -13,7 +13,7 @@ import torch.utils.model_zoo as model_zoo
 from torchvision.models import resnet18, resnet34, resnet50, resnet101, resnet152
 from helper import LOG
 
-__all__ = ['Elastic_ResNet18', 'Elastic_ResNet34', 'Elastic_ResNet101', 'Elastic_ResNet152']
+__all__ = ['Elastic_ResNet']
 
 # global num_outputs
 # initially only one classifier output
