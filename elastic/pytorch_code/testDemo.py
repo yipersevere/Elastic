@@ -438,20 +438,20 @@ if __name__ == "__main__":
     # # x1_out = model.layer1[0].relu
     # # x2_out = model.layer1[1].relu
 
-    # model = model.to(device)
-    # model.cuda()
-    # if device == 'cuda':
-    #     model = torch.nn.DataParallel(model).cuda()
-    #     cudnn.benchmark = True
+    model = model.to(device)
+    model.cuda()
+    if device == 'cuda':
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True
 
 
-    # criterion = nn.CrossEntropyLoss().cuda()
-    # optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-    #                             momentum=args.momentum,
-    #                             weight_decay=args.weight_decay,
-    #                             nesterov=False)# nesterov set False to keep align with keras default settting
+    criterion = nn.CrossEntropyLoss().cuda()
+    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay,
+                                nesterov=False)# nesterov set False to keep align with keras default settting
 
-    # model.train()
+    model.train()
     # output = None
     # for i, (input, target) in enumerate(test_loader):
     #     target = target.cuda(async=True)

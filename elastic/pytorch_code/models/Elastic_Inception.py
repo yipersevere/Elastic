@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
-from torchvision.models import inception_v3
+from helper import LOG
 
 __all__ = ['Inception3', 'inception_v3']
 
@@ -13,27 +13,34 @@ model_urls = {
 }
 
 
-def inception_v3(pretrained=False, **kwargs):
-    r"""Inception v3 model architecture from
-    `"Rethinking the Inception Architecture for Computer Vision" <http://arxiv.org/abs/1512.00567>`_.
+# def inception_v3(pretrained=False, **kwargs):
+#     r"""Inception v3 model architecture from
+#     `"Rethinking the Inception Architecture for Computer Vision" <http://arxiv.org/abs/1512.00567>`_.
 
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        if 'transform_input' not in kwargs:
-            kwargs['transform_input'] = True
-        model = Inception3(**kwargs)
-        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
-        return model
+#     Args:
+#         pretrained (bool): If True, returns a model pre-trained on ImageNet
+#     """
+#     if pretrained:
+#         if 'transform_input' not in kwargs:
+#             kwargs['transform_input'] = True
+#         model = Inception3(**kwargs)
+#         model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
+#         return model
 
-    return Inception3(**kwargs)
+#     return Inception3(**kwargs)
 
 
 class Inception3(nn.Module):
 
-    def __init__(self, num_classes=1000, aux_logits=True, transform_input=False):
+    def __init__(self, label_classes, add_intermediate_layers, num_outputs=1, num_classes=1000, aux_logits=True, transform_input=False):
         super(Inception3, self).__init__()
+        
+        # self.intermediate_CLF
+        self.add_intermediate_layers = add_intermediate_layers
+        self.label_classes = label_classes
+        # self.residual_block_type = residual_block_type
+        self.num_outputs = num_outputs
+######################################################################################
         self.aux_logits = aux_logits
         self.transform_input = transform_input
         self.Conv2d_1a_3x3 = BasicConv2d(3, 32, kernel_size=3, stride=2)
@@ -42,6 +49,9 @@ class Inception3(nn.Module):
         self.Conv2d_3b_1x1 = BasicConv2d(64, 80, kernel_size=1)
         self.Conv2d_4a_3x3 = BasicConv2d(80, 192, kernel_size=3)
         self.Mixed_5b = InceptionA(192, pool_features=32)
+        # self.intermediate_CLF = IntermediateClassifier(256, self.label_classes)
+        self.intermediate_CLF = self._make_layer()
+        self.num_outputs += 1
         self.Mixed_5c = InceptionA(256, pool_features=64)
         self.Mixed_5d = InceptionA(288, pool_features=64)
         self.Mixed_6a = InceptionB(288)
@@ -68,7 +78,40 @@ class Inception3(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
+    def _make_layer(self):
+        # downsample = None
+        # if stride != 1 or self.inplanes != planes * block.expansion:
+        #     downsample = nn.Sequential(
+        #         nn.Conv2d(self.inplanes, planes * block.expansion,
+        #                   kernel_size=1, stride=stride, bias=False),
+        #         nn.BatchNorm2d(planes * block.expansion),
+        #     )
+
+        # layers = [None] * (1+(blocks-1)*2) #自己添加的
+        layers = []
+        layers.append(IntermediateClassifier(256, self.label_classes))
+        # self.inplanes = planes * block.expansion
+        
+        # if self.add_intermediate_layers == 2:
+        #     # global num_outputs #using this variable to count the number of CLF
+        #     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+        #     self.num_outputs += 1
+
+        # # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+        # for i in range(1, blocks):
+        #     layers.append(block(self.inplanes, planes))
+        #     # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+        #     if self.add_intermediate_layers == 2:
+        #         # global num_outputs
+        #         self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+        #         self.num_outputs += 1
+
+        return nn.Sequential(*layers)
+
+
     def forward(self, x):
+        intermediate_outputs = []
+
         if self.transform_input:
             x = x.clone()
             x[:, 0] = x[:, 0] * (0.229 / 0.5) + (0.485 - 0.5) / 0.5
@@ -90,6 +133,7 @@ class Inception3(nn.Module):
         x = F.max_pool2d(x, kernel_size=3, stride=2)
         # 35 x 35 x 192
         x = self.Mixed_5b(x)
+        intermediate_outputs.append(self.intermediate_CLF(x))
         # 35 x 35 x 256
         x = self.Mixed_5c(x)
         # 35 x 35 x 288
@@ -124,7 +168,7 @@ class Inception3(nn.Module):
         # 1000 (num_classes)
         if self.training and self.aux_logits:
             return x, aux
-        return x
+        return intermediate_outputs + [x]
 
 
 class InceptionA(nn.Module):
@@ -168,7 +212,8 @@ class InceptionB(nn.Module):
         self.branch3x3dbl_1 = BasicConv2d(in_channels, 64, kernel_size=1)
         self.branch3x3dbl_2 = BasicConv2d(64, 96, kernel_size=3, padding=1)
         self.branch3x3dbl_3 = BasicConv2d(96, 96, kernel_size=3, stride=2)
-
+        # self.intermediate_CLF.append(IntermediateClassifier(256, self.label_classes))
+        # self.num_outputs += 1
     def forward(self, x):
         branch3x3 = self.branch3x3(x)
 
@@ -326,22 +371,93 @@ class BasicConv2d(nn.Module):
         x = self.bn(x)
         return F.relu(x, inplace=True)
 
-class Elastic_InceptionV3():
-    def __init__(self, args):
-        self.num_classes = args.num_classes
-        self.add_intermediate_layers = args.add_intermediate_layers
-        self.batch_size = args.batch_size
-        self.model = self.build_model()
-    
-    def build_model(self):
-        model = inception_v3(pretrained=True)
-        
-        for param in model.parameters():
-            param.requires_grad = False
-        fc_features = model.fc.in_features
-        model.fc = nn.Linear(fc_features, self.num_classes)
-        print("=====> InceptionV3, successfully load pretrained imagenet weight")
+class IntermediateClassifier(nn.Module):
 
-        return model
+    def __init__(self, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+        super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        # self.residual_block_type = residual_block_type
+        self.device = 'cuda'
+        # if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34
+        #     kernel_size = int(3584/self.num_channels)
+        # elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152
+        #     kernel_size = int(14336/self.num_channels)
+        # else:
+        #     NotImplementedError
+        
+        kernel_size = 25
+
+        print("kernel_size for global pooling: " ,kernel_size)
+
+        self.features = nn.Sequential(
+            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
+            nn.Dropout(p=0.2, inplace=False)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+        x = self.features(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+
+def Elastic_InceptionV3(args, logfile):
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    pretrained_weight = args.pretrained_weight
+
+    # if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
+    #     print("not adding any intermediate layer classifiers")    
+    #     LOG("not adding any intermediate layer classifiers", logfile)
+    # elif add_intermediate_layers == 2:
+    #     print("add any intermediate layer classifiers")    
+    #     LOG("add intermediate layer classifiers", logfile)
+    # else:
+    #     NotImplementedError
+
+    model = Inception3(num_classes, add_intermediate_layers)
+
+    if pretrained_weight == 1:
+        
+        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
+        print("loaded ImageNet pretrained weights")
+        LOG("loaded ImageNet pretrained weights", logfile)
+        
+    elif pretrained_weight == 0:
+        print("not loading ImageNet pretrained weights")
+        LOG("not loading ImageNet pretrained weights", logfile)
+
+    else:
+        print("parameter--pretrained_weight, should be 0 or 1")
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
+    
+    for param in model.parameters():
+        param.requires_grad = False
+
+
+    fc_features = model.fc.in_features
+    model.fc = nn.Linear(fc_features, num_classes)
+
+    print("=====> InceptionV3, successfully load pretrained imagenet weight")
+
+    return model
 
     
