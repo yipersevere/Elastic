@@ -100,7 +100,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
     LOG("==> train ", logFile)
     for i, (input, target) in enumerate(train_loader):
-        lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
+        # lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
 
         # data_time.update(time.time() - end)
 
@@ -138,10 +138,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
         accs.append(float(100-i.avg))
         ls.append(j.avg)
 
-    # if num_outputs > 1:
-    #     total_sum_loss
-    # ls.append(all_loss[-1].avg)
-    # 这里的avg loss 和avg acc 是一张图片分类的平均loss 
+    try:
+        lr = str(optimizer).split("\n")[-5].split(" ")[-1]
+    except:
+        lr = -1
     return accs, ls, lr
 
 
@@ -253,18 +253,14 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay,
                                 nesterov=False)# nesterov set False to keep align with keras default settting
 
-
-    # if args.add_intermediate_layers == 2:
-        # train intermediate classifier for 10 epochs first
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 10):
+    for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
         print(epoch_result)
         LOG(epoch_result, logFile)
         
-
     
     print("==> Full training ")
     LOG("==> Full training    \n", logFile)
