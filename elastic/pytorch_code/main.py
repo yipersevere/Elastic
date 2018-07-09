@@ -254,16 +254,16 @@ def main(**kwargs):
 
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 10):
+    for pretrain_epoch in range(0, 2):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
-        print(epoch_result)
+        print(epoch_result)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
         
     
     print("==> Full training ")
     LOG("==> Full training    \n", logFile)
-    for param in model.parameters():
+    for param in model.parameters():                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,

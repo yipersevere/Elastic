@@ -35,7 +35,7 @@ class Inception3(nn.Module):
     def __init__(self, label_classes, add_intermediate_layers, num_outputs=1, num_classes=1000, aux_logits=True, transform_input=False):
         super(Inception3, self).__init__()
         
-        # self.intermediate_CLF
+        # self.intermediate_CLF = []
         self.add_intermediate_layers = add_intermediate_layers
         self.label_classes = label_classes
         # self.residual_block_type = residual_block_type
@@ -49,9 +49,9 @@ class Inception3(nn.Module):
         self.Conv2d_3b_1x1 = BasicConv2d(64, 80, kernel_size=1)
         self.Conv2d_4a_3x3 = BasicConv2d(80, 192, kernel_size=3)
         self.Mixed_5b = InceptionA(192, pool_features=32)
-        # self.intermediate_CLF = IntermediateClassifier(256, self.label_classes)
-        self.intermediate_CLF = self._make_layer()
-        self.num_outputs += 1
+        # self.intermediate_CLF.append(IntermediateClassifier(256, self.label_classes))
+        # self.intermediate_CLF = self._make_layer()
+        # self.num_outputs += 1
         self.Mixed_5c = InceptionA(256, pool_features=64)
         self.Mixed_5d = InceptionA(288, pool_features=64)
         self.Mixed_6a = InceptionB(288)
@@ -78,35 +78,35 @@ class Inception3(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-    def _make_layer(self):
-        # downsample = None
-        # if stride != 1 or self.inplanes != planes * block.expansion:
-        #     downsample = nn.Sequential(
-        #         nn.Conv2d(self.inplanes, planes * block.expansion,
-        #                   kernel_size=1, stride=stride, bias=False),
-        #         nn.BatchNorm2d(planes * block.expansion),
-        #     )
+    # def _make_layer(self):
+    #     # downsample = None
+    #     # if stride != 1 or self.inplanes != planes * block.expansion:
+    #     #     downsample = nn.Sequential(
+    #     #         nn.Conv2d(self.inplanes, planes * block.expansion,
+    #     #                   kernel_size=1, stride=stride, bias=False),
+    #     #         nn.BatchNorm2d(planes * block.expansion),
+    #     #     )
 
-        # layers = [None] * (1+(blocks-1)*2) #自己添加的
-        layers = []
-        layers.append(IntermediateClassifier(256, self.label_classes))
-        # self.inplanes = planes * block.expansion
+    #     # layers = [None] * (1+(blocks-1)*2) #自己添加的
+    #     layers = []
+    #     layers.append(IntermediateClassifier(256, self.label_classes))
+    #     # self.inplanes = planes * block.expansion
         
-        # if self.add_intermediate_layers == 2:
-        #     # global num_outputs #using this variable to count the number of CLF
-        #     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
-        #     self.num_outputs += 1
+    #     # if self.add_intermediate_layers == 2:
+    #     #     # global num_outputs #using this variable to count the number of CLF
+    #     #     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+    #     #     self.num_outputs += 1
 
-        # # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-        # for i in range(1, blocks):
-        #     layers.append(block(self.inplanes, planes))
-        #     # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-        #     if self.add_intermediate_layers == 2:
-        #         # global num_outputs
-        #         self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
-        #         self.num_outputs += 1
+    #     # # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+    #     # for i in range(1, blocks):
+    #     #     layers.append(block(self.inplanes, planes))
+    #     #     # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
+    #     #     if self.add_intermediate_layers == 2:
+    #     #         # global num_outputs
+    #     #         self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+    #     #         self.num_outputs += 1
 
-        return nn.Sequential(*layers)
+    #     return nn.Sequential(*layers)
 
 
     def forward(self, x):
@@ -133,30 +133,41 @@ class Inception3(nn.Module):
         x = F.max_pool2d(x, kernel_size=3, stride=2)
         # 35 x 35 x 192
         x = self.Mixed_5b(x)
-        intermediate_outputs.append(self.intermediate_CLF(x))
+        print("Mixed_5b size: ", x.size())
+        # intermediate_outputs.append(self.intermediate_CLF[0](x))
         # 35 x 35 x 256
         x = self.Mixed_5c(x)
+        print("Mixed_5c size: ", x.size())
         # 35 x 35 x 288
         x = self.Mixed_5d(x)
+        print("Mixed_5d size: ", x.size())
         # 35 x 35 x 288
         x = self.Mixed_6a(x)
+        print("Mixed_6a size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6b(x)
+        print("Mixed_6b size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6c(x)
+        print("Mixed_6c size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6d(x)
+        print("Mixed_6d size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6e(x)
+        print("Mixed_6e size: ", x.size())
         # 17 x 17 x 768
         if self.training and self.aux_logits:
             aux = self.AuxLogits(x)
         # 17 x 17 x 768
         x = self.Mixed_7a(x)
+        print("Mixed_7a size: ", x.size())
         # 8 x 8 x 1280
         x = self.Mixed_7b(x)
+        print("Mixed_7b size: ", x.size())
         # 8 x 8 x 2048
         x = self.Mixed_7c(x)
+        print("Mixed_7c size: ", x.size())
         # 8 x 8 x 2048
         x = F.avg_pool2d(x, kernel_size=8)
         # 1 x 1 x 2048
@@ -371,6 +382,7 @@ class BasicConv2d(nn.Module):
         x = self.bn(x)
         return F.relu(x, inplace=True)
 
+
 class IntermediateClassifier(nn.Module):
 
     def __init__(self, num_channels, num_classes):
@@ -392,7 +404,7 @@ class IntermediateClassifier(nn.Module):
         # else:
         #     NotImplementedError
         
-        kernel_size = 25
+        kernel_size = 26
 
         print("kernel_size for global pooling: " ,kernel_size)
 
@@ -401,7 +413,7 @@ class IntermediateClassifier(nn.Module):
             nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
-        self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
+        self.classifier = torch.nn.Sequential(nn.Linear(256, 100)).to(self.device)
 
     def forward(self, x):
         """
@@ -448,15 +460,36 @@ def Elastic_InceptionV3(args, logfile):
         print("parameter--pretrained_weight, should be 0 or 1")
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
-    
-    for param in model.parameters():
-        param.requires_grad = False
-
 
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
+    # print("=====> InceptionV3, successfully load pretrained imagenet weight")
 
-    print("=====> InceptionV3, successfully load pretrained imagenet weight")
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    if add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add intermediate layer classifiers", logfile)
+
+        # get all extra classifiers params and final classifier params
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
+        
+        for param in model.fc.parameters():
+            param.requires_grad = True 
+    
+    elif add_intermediate_layers == 0:
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+
+        for param in model.fc.parameters():
+            param.requires_grad = True         
+    else:
+        NotImplementedError
+
+    
 
     return model
 
