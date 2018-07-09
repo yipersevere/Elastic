@@ -2,10 +2,10 @@
     ## cifar10, 
         ### imagenet pretrained weight
 python main.py --model Elastic_ResNet152 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet152
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet152_include_pretrain
 
 python main.py --model Elastic_ResNet152 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet152
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet152_include_pretrain
     
         ### No imagenet pretrained weight
 

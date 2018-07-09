@@ -16,7 +16,7 @@ import sys
 
 from opts import args
 from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate, plot_figs
-from data_loader import get_train_valid_loader, get_test_loader
+from data_loader import get_train_loader, get_test_loader
 from models import *
 
 # Init Torch/Cuda
@@ -239,7 +239,7 @@ def main(**kwargs):
     # data_folder = "D:\Elastic\data"
     # args.batch_size = 1
 
-    train_loader, val_loader = get_train_valid_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
+    train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
                                                     num_workers=4,pin_memory=True)
     test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
@@ -250,8 +250,7 @@ def main(**kwargs):
 
     pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
                                 momentum=args.momentum,
-                                weight_decay=args.weight_decay,
-                                nesterov=False)# nesterov set False to keep align with keras default settting
+                                weight_decay=args.weight_decay)# nesterov set False to keep align with keras default settting
 
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
@@ -269,18 +268,17 @@ def main(**kwargs):
     
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
-                                weight_decay=args.weight_decay,
-                                nesterov=False)# nesterov set False to keep align with keras default settting
+                                weight_decay=args.weight_decay)# nesterov set False to keep align with keras default settting
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
     # implement early stop by own
     EarlyStopping_epoch_count = 0
-    prev_val_loss = 100000
+    # prev_val_loss = 100000
 
     epochs_train_accs = []
     epochs_train_losses = []
-    epochs_val_accs = []
-    epochs_val_losses = []    
+    # epochs_val_accs = []
+    # epochs_val_losses = []    
     epochs_test_accs = []
     epochs_test_losses = []
     epochs_lr = []
@@ -304,7 +302,7 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
     
-        epoch_result = "train error: " + str(accs) + ", loss: " + str(losses) + ", learning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
+        epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
         print(epoch_result)
         LOG(epoch_result, logFile)
 
@@ -314,24 +312,24 @@ def main(**kwargs):
             print("train_total_sum_losses: ", sum(losses))       
         
         # Evaluate on validation set
-        LOG("==> validate \n", logFile)
-        val_accs, val_losses = validate(val_loader, model, criterion)
-        epochs_val_accs.append(val_accs)
-        epochs_val_losses.append(val_losses)
+        # LOG("==> validate \n", logFile)
+        # val_accs, val_losses = validate(val_loader, model, criterion)
+        # epochs_val_accs.append(val_accs)
+        # epochs_val_losses.append(val_losses)
 
-        for i, a, l in zip(range(len(val_accs)), val_accs, val_losses):
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_error_' + str(i), a, epoch)
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
+        # for i, a, l in zip(range(len(val_accs)), val_accs, val_losses):
+        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_error_' + str(i), a, epoch)
+        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
         
 
-        val_str = "val_error: " + str(val_accs) + ", val_loss" + str(val_losses)
-        print(val_str)
-        LOG(val_str, logFile)
+        # val_str = "val_error: " + str(val_accs) + ", val_loss" + str(val_losses)
+        # print(val_str)
+        # LOG(val_str, logFile)
 
-        if num_outputs > 1:
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_total_sum_losses', sum(val_losses), epoch) 
-            val_losses.append(sum(val_losses)) # add the total sum loss
-            print("val_total_sum_losses: ", sum(val_losses))       
+        # if num_outputs > 1:
+        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_total_sum_losses', sum(val_losses), epoch) 
+        #     val_losses.append(sum(val_losses)) # add the total sum loss
+        #     print("val_total_sum_losses: ", sum(val_losses))       
                 
         
         # run on test dataset
@@ -346,7 +344,7 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
 
-        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", test_loss" +str(test_losses) + ", total test sum loss " + str(sum(test_losses))
+        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
         print(test_result_str)
         LOG(test_result_str, logFile)
 
