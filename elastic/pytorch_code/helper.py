@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use("PDF")
 import matplotlib.pyplot as plt
 plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
-plt.rcParams["figure.figsize"] = (20,10)
+plt.rcParams["figure.figsize"] = (12,6)
 
 import os
 import numpy as np

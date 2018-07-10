@@ -45,9 +45,9 @@ def get_train_loader(data, data_dir, batch_size, augment, random_seed, target_si
     assert ((valid_size >= 0) and (valid_size <= 1)), error_msg
 
     # define transforms
-    if target_size == (229,229,3):
+    if target_size == (299,299,3):
         print("=====> resize CIFAR image to 229*229*3")
-        target_resize = (229, 229)
+        target_resize = (299, 299)
     else:
         target_resize = (224, 224)
 
@@ -132,9 +132,9 @@ def get_test_loader(data,
     -------
     - data_loader: test set iterator.
     """
-    if target_size == (229,229,3):
+    if target_size == (299,299,3):
         print("=====> resize CIFAR image to 229*229*3")
-        target_resize = (229, 229)
+        target_resize = (299, 299)
     else:
         target_resize = (224, 224)
 

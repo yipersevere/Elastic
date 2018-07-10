@@ -211,8 +211,12 @@ class ResNet(nn.Module):
             # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
             if self.add_intermediate_layers == 2:
                 # global num_outputs
-                self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
-                self.num_outputs += 1
+                if i == (blocks-1) and planes == 512:# means this is the intermediate classifier has close position with the final output classifier
+                    # not append intermediate classifier
+                    print("skip the last intermediate classifer, since this classifier has close position with the final output classifier")
+                else:
+                    self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
+                    self.num_outputs += 1
 
         return nn.Sequential(*layers)
 
@@ -224,6 +228,7 @@ class ResNet(nn.Module):
 
         i = 0
         intermediate_outputs = []
+        final_inter_clf_position = len(self.intermediate_CLF)
         # print("=====> # of intermediate classifiers: ", len(self.intermediate_CLF), ", total classifiers: ", len(self.intermediate_CLF)+1)
         
         # make sure insert an intermediate classifier after each residul block 
@@ -233,25 +238,29 @@ class ResNet(nn.Module):
             x = res_layer(x)
             if self.add_intermediate_layers == 2:
                 intermediate_outputs.append(self.intermediate_CLF[i](x))
-            i += 1
+                i += 1
 
         for res_layer in self.layer2:
             x = res_layer(x)
             if self.add_intermediate_layers == 2:
                 intermediate_outputs.append(self.intermediate_CLF[i](x))
-            i += 1
+                i += 1
 
         for res_layer in self.layer3:
             x = res_layer(x)
             if self.add_intermediate_layers == 2:
                 intermediate_outputs.append(self.intermediate_CLF[i](x))
-            i += 1                    
+                i += 1                    
         
         for res_layer in self.layer4:
             x = res_layer(x)
             if self.add_intermediate_layers == 2:
-                intermediate_outputs.append(self.intermediate_CLF[i](x))
-            i += 1
+                if i == final_inter_clf_position:
+                    # print("forward function, skip the final intermediate classifier")
+                    pass
+                else:
+                    intermediate_outputs.append(self.intermediate_CLF[i](x))
+                    i += 1
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
