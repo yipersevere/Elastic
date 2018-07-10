@@ -284,27 +284,32 @@ def Elastic_ResNet(args, logfile):
         residual_block_type = 2
         model = ResNet(BasicBlock, [2, 2, 2, 2], residual_block_type, num_classes, add_intermediate_layers)
         model_weight_url = model_urls['resnet18']
+        LOG("successfully create model: (Elastic-)ResNet18", logfile)
 
     elif args.model == "Elastic_ResNet34":
         # residual block type, 2 is BasicBlock, which means 2 conv-bn-relu in one block, 3 is BottleneckBlock, which means 3 conv-bn-relu blocks
         residual_block_type = 2
         model = ResNet(BasicBlock, [3, 4, 6, 3], residual_block_type, num_classes, add_intermediate_layers) 
-        model_weight_url =  model_urls['resnet34']      
+        model_weight_url =  model_urls['resnet34']    
+        LOG("successfully create model: (Elastic-)ResNet34", logfile)  
 
     elif args.model == "Elastic_ResNet50":
         residual_block_type = 3
         model = ResNet(Bottleneck, [3, 4, 6, 3], residual_block_type, num_classes, add_intermediate_layers)   
         model_weight_url = model_urls['resnet50']  
+        LOG("successfully create model: (Elastic-)ResNet50", logfile)
 
     elif args.model == "Elastic_ResNet101":
         residual_block_type = 3
         model = ResNet(Bottleneck, [3, 4, 23, 3], residual_block_type, num_classes, add_intermediate_layers)   
         model_weight_url = model_urls['resnet101']  
+        LOG("successfully create model: (Elastic-)ResNet101", logfile)
 
     elif args.model == "Elastic_ResNet152":
         residual_block_type = 3
         model = ResNet(Bottleneck,  [3, 8, 36, 3], residual_block_type, num_classes, add_intermediate_layers)   
         model_weight_url = model_urls['resnet152']  
+        LOG("successfully create model: (Elastic-)ResNet152", logfile)
 
 
     if pretrained_weight == 1:
