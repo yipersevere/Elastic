@@ -15,7 +15,7 @@ import shutil
 import sys
 
 from opts import args
-from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, adjust_learning_rate, plot_figs
+from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, plot_figs
 from data_loader import get_train_loader, get_test_loader
 from models import *
 
@@ -214,7 +214,7 @@ def main(**kwargs):
         print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_InceptionV3":
-        args.target_size = (229, 229, 3) # since pytorch inceptionv3 pretrained accepts image size (229, 229, 3) instead of (224, 224, 3)
+        args.target_size = (299, 299, 3) # since pytorch inceptionv3 pretrained accepts image size (299, 299, 3) instead of (224, 224, 3)
         model = Elastic_InceptionV3(args, logFile)
         num_outputs = model.num_outputs
         print("num_outputs: ", num_outputs)
@@ -254,7 +254,7 @@ def main(**kwargs):
 
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 2):
+    for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
         print(epoch_result)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
@@ -263,7 +263,7 @@ def main(**kwargs):
     
     print("==> Full training ")
     LOG("==> Full training    \n", logFile)
-    for param in model.parameters():                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    for param in model.parameters():
         param.requires_grad = True
     
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
