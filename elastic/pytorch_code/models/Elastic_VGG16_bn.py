@@ -356,13 +356,21 @@ def Elastic_VGG16_bn(args, logfile):
         LOG("add intermediate layer classifiers", logfile)
 
         # get all extra classifiers params and final classifier params
-        for inter_clf in model.intermediate_CLF:
-            for param in inter_clf.parameters():
-                param.requires_grad = True
+        for param in model.features[7].parameters():
+            param.requires_grad = True
         
-        for param in model.classifier.parameters():
+        for param in model.features[15].parameters():
             param.requires_grad = True 
-    
+
+        for param in model.features[26].parameters():
+            param.requires_grad = True
+        
+        for param in model.features[37].parameters():
+            param.requires_grad = True 
+
+        for param in model.classifier.parameters():
+            param.requires_grad = True     
+            
     elif add_intermediate_layers == 0:
         print("not adding any intermediate layer classifiers")    
         LOG("not adding any intermediate layer classifiers", logfile)
