@@ -42,10 +42,82 @@ class VGG(nn.Module):
 
     def forward(self, x):
         # 这里的self.features 就是 make_layers 函数
-        x = self.features(x)
+        intermediate_outputs = []
+        
+        origin_0 = nn.Sequential(
+            self.features[0],
+            self.features[1],
+            self.features[2],
+            self.features[3],
+            self.features[4],
+            self.features[5],
+            self.features[6]
+        )        
+        x = origin_0(x)
+        intermediate_outputs.append(self.features[7](x))
+        origin_1 = nn.Sequential(
+            self.features[8],
+            self.features[9],
+            self.features[10],
+            self.features[11],
+            self.features[12],
+            self.features[13],
+            self.features[14]
+        )
+        x = origin_1(x)
+        intermediate_outputs.append(self.features[15](x))
+
+        origin_2 = nn.Sequential(
+            self.features[16],
+            self.features[17],
+            self.features[18],
+            self.features[19],
+            self.features[20],
+            self.features[21],
+            self.features[22],
+            self.features[23],
+            self.features[24],
+            self.features[25]
+        )
+        x = origin_2(x)
+        intermediate_outputs.append(self.features[26](x))        
+
+        origin_3 = nn.Sequential(
+            self.features[27],
+            self.features[28],
+            self.features[29],
+            self.features[30],
+            self.features[31],
+            self.features[32],
+            self.features[33],
+            self.features[34],
+            self.features[35],
+            self.features[36]
+        )
+        x = origin_3(x)
+        intermediate_outputs.append(self.features[37](x))  
+
+        origin_4 = nn.Sequential(
+            self.features[38],
+            self.features[39],
+            self.features[40],
+            self.features[41],
+            self.features[42],
+            self.features[43],
+            self.features[44],
+            self.features[45],
+            self.features[46],
+            self.features[47]
+        )
+        x = origin_4(x)
+        # 最后一个intermediate classifier不能接
+        # intermediate_outputs.append(self.features[48](x))  
+
+        # 需要把self.features 拆开
+        # x = self.features[]
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
-        return x
+        return intermediate_outputs+[x]
 
     def _initialize_weights(self):
         for m in self.modules():
@@ -111,15 +183,19 @@ class IntermediateClassifier(nn.Module):
 def make_layers(cfg, batch_norm=False):
     layers = []
     in_channels = 3
-    for v in cfg:
+    for v, i in zip(cfg, range(len(cfg))):
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
             # add intermediate classifier after pooling
-            print("v: ", v)
-            print("in_channels: ", in_channels)
-            layers += [IntermediateClassifier(in_channels, 100)]
-            global num_outputs
-            num_outputs += 1
+            if i != (len(cfg)-1):
+                print("v: ", v)
+                print("in_channels: ", in_channels)
+                layers += [IntermediateClassifier(in_channels, 100)]
+                global num_outputs
+                num_outputs += 1
+
+            # 做一个修改，在最后一个maxpooling中不再接intermediate classifier
+
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
@@ -255,51 +331,6 @@ def Elastic_VGG16_bn(args, logfile):
     num_classes = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
-
-    # model = Inception3(num_classes, add_intermediate_layers)
-
-    # if pretrained_weight == 1:
-        
-    #     model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
-    #     print("loaded ImageNet pretrained weights")
-    #     LOG("loaded ImageNet pretrained weights", logfile)
-        
-    # elif pretrained_weight == 0:
-    #     print("not loading ImageNet pretrained weights")
-    #     LOG("not loading ImageNet pretrained weights", logfile)
-
-    # else:
-    #     print("parameter--pretrained_weight, should be 0 or 1")
-    #     LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
-    #     NotImplementedError
-
-    # fc_features = model.fc.in_features
-    # model.fc = nn.Linear(fc_features, num_classes)
-    # # print("=====> InceptionV3, successfully load pretrained imagenet weight")
-
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    
-    # if add_intermediate_layers == 2:
-    #     print("add any intermediate layer classifiers")    
-    #     LOG("add intermediate layer classifiers", logfile)
-
-    #     # get all extra classifiers params and final classifier params
-    #     for inter_clf in model.intermediate_CLF:
-    #         for param in inter_clf.parameters():
-    #             param.requires_grad = True
-        
-    #     for param in model.fc.parameters():
-    #         param.requires_grad = True 
-    
-    # elif add_intermediate_layers == 0:
-    #     print("not adding any intermediate layer classifiers")    
-    #     LOG("not adding any intermediate layer classifiers", logfile)
-
-    #     for param in model.fc.parameters():
-    #         param.requires_grad = True         
-    # else:
-    #     NotImplementedError
 
     model = VGG(make_layers(cfg['D'], batch_norm=True))
     

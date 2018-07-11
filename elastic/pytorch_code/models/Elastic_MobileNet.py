@@ -56,24 +56,57 @@ class Net(nn.Module):
         x = self.fc(x)
         return x
 
-class Elastic_MobileNet():
+def Elastic_MobileNet(args, logfile):
     """
     based on MobileNet Version1 and ImageNet pretrained weight, https://github.com/marvis/pytorch-mobilenet
     但是这里并没有实现 alpha 乘子和width 乘子
     """
-    def __init__(self, args):
-        self.num_classes = args.num_classes
-        self.add_intermediate_layers = args.add_intermediate_layers
-        self.batch_size = args.batch_size
-        self.model = self.build_model()
-    
-    def build_model(self): 
-        model = Net()
-        
-        for param in model.parameters():
-            param.requires_grad = False
-        fc_features = model.fc.in_features
-        model.fc = nn.Linear(fc_features, self.num_classes)
-        print("=====> MobileNet V1, successfully load pretrained imagenet weight")
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    pretrained_weight = args.pretrained_weight
 
-        return model
+    model = Net()
+
+    if pretrained_weight == 1:
+        
+        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
+        print("loaded ImageNet pretrained weights")
+        LOG("loaded ImageNet pretrained weights", logfile)
+        
+    elif pretrained_weight == 0:
+        print("not loading ImageNet pretrained weights")
+        LOG("not loading ImageNet pretrained weights", logfile)
+
+    else:
+        print("parameter--pretrained_weight, should be 0 or 1")
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
+
+    fc_features = model.fc.in_features
+    model.fc = nn.Linear(fc_features, num_classes)
+    # print("=====> InceptionV3, successfully load pretrained imagenet weight")
+
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    if add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add intermediate layer classifiers", logfile)
+
+        # get all extra classifiers params and final classifier params
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
+        
+        for param in model.fc.parameters():
+            param.requires_grad = True 
+    
+    elif add_intermediate_layers == 0:
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+
+        for param in model.fc.parameters():
+            param.requires_grad = True         
+    else:
+        NotImplementedError
+    return model
