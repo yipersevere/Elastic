@@ -170,7 +170,6 @@ def main(**kwargs):
     logFile = path + os.sep + "log.txt"    
     args.filename = logFile
     global num_outputs
-    # num_outputs = 1
     
     print(args)
     global device
@@ -220,6 +219,14 @@ def main(**kwargs):
         print("num_outputs: ", num_outputs)
         print("successfully create model: ", args.model)
 
+    elif args.model == "Elastic_MobileNet":
+        model = Elastic_MobileNet(args, logFile)
+        print("successfully create model: ", args.model)
+
+    elif args.model == "Elastic_VGG16":
+         model,num_outputs = Elastic_VGG16_bn(args, logFile)
+         print("successfully create model: ", args.model)
+        
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
@@ -245,7 +252,6 @@ def main(**kwargs):
     test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
                                     num_workers=4,pin_memory=True)
     
-    
     criterion = nn.CrossEntropyLoss().cuda()
 
     pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
@@ -254,12 +260,13 @@ def main(**kwargs):
 
     print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 10):
+    for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))
         print(epoch_result)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
-        
+    
+    # summary(model, (3,224,224))
     
     print("==> Full training ")
     LOG("==> Full training    \n", logFile)
@@ -273,19 +280,15 @@ def main(**kwargs):
     
     # implement early stop by own
     EarlyStopping_epoch_count = 0
-    # prev_val_loss = 100000
 
     epochs_train_accs = []
     epochs_train_losses = []
-    # epochs_val_accs = []
-    # epochs_val_losses = []    
     epochs_test_accs = []
     epochs_test_losses = []
     epochs_lr = []
 
     for epoch in range(0, args.epochs):
         
-
         epoch_str = "==================================== epoch %d ==============================" % epoch
         print(epoch_str)
         LOG(epoch_str, logFile)
@@ -295,13 +298,11 @@ def main(**kwargs):
         epochs_train_losses.append(losses)
         epochs_lr.append(lr)
 
-
         writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'lr', lr, epoch)
         for i, a, l in zip(range(len(accs)), accs, losses):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
-    
         epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
         print(epoch_result)
         LOG(epoch_result, logFile)
@@ -309,28 +310,7 @@ def main(**kwargs):
         if num_outputs > 1:
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_total_sum_losses', sum(losses), epoch) 
             losses.append(sum(losses)) # add the total sum loss
-            print("train_total_sum_losses: ", sum(losses))       
-        
-        # Evaluate on validation set
-        # LOG("==> validate \n", logFile)
-        # val_accs, val_losses = validate(val_loader, model, criterion)
-        # epochs_val_accs.append(val_accs)
-        # epochs_val_losses.append(val_losses)
-
-        # for i, a, l in zip(range(len(val_accs)), val_accs, val_losses):
-        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_error_' + str(i), a, epoch)
-        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_losses_' + str(i), l, epoch)
-        
-
-        # val_str = "val_error: " + str(val_accs) + ", val_loss" + str(val_losses)
-        # print(val_str)
-        # LOG(val_str, logFile)
-
-        # if num_outputs > 1:
-        #     writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'val_total_sum_losses', sum(val_losses), epoch) 
-        #     val_losses.append(sum(val_losses)) # add the total sum loss
-        #     print("val_total_sum_losses: ", sum(val_losses))       
-                
+            print("train_total_sum_losses: ", sum(losses))              
         
         # run on test dataset
         LOG("==> test \n", logFile)
@@ -343,7 +323,6 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
-
         test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
         print(test_result_str)
         LOG(test_result_str, logFile)
@@ -352,7 +331,6 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_total_sum_losses', sum(test_losses), epoch) 
             test_losses.append(sum(test_losses)) # add the total sum loss
             print("test_total_sum_losses: ", sum(test_losses))   
-
         
         log_stats(path, accs, losses, lr, test_accs, test_losses)
 

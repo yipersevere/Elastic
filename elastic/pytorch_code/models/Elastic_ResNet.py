@@ -314,15 +314,12 @@ def Elastic_ResNet(args, logfile):
 
     if pretrained_weight == 1:
         model.load_state_dict(model_zoo.load_url(model_weight_url))
-        print("loaded ImageNet pretrained weights")
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
-        print("not loading ImageNet pretrained weights")
         LOG("not loading ImageNet pretrained weights", logfile)
 
     else:
-        print("parameter--pretrained_weight, should be 0 or 1")
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
 

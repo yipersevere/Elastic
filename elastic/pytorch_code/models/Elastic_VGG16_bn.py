@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 import math
-
+from helper import LOG
 
 __all__ = [
     'VGG', 'vgg11', 'vgg11_bn', 'vgg13', 'vgg13_bn', 'vgg16', 'vgg16_bn',
@@ -21,6 +21,8 @@ model_urls = {
 }
 
 
+num_outputs= 1
+
 class VGG(nn.Module):
 
     def __init__(self, features, num_classes=1000, init_weights=True):
@@ -39,6 +41,7 @@ class VGG(nn.Module):
             self._initialize_weights()
 
     def forward(self, x):
+        # 这里的self.features 就是 make_layers 函数
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
@@ -57,6 +60,53 @@ class VGG(nn.Module):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
 
+class IntermediateClassifier(nn.Module):
+
+    def __init__(self, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+        super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        self.device = 'cuda'
+        kernel_size = int(7168/self.num_channels)
+            
+        print("kernel_size for global pooling: " ,kernel_size)
+
+        self.features = nn.Sequential(
+            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
+            nn.Dropout(p=0.2, inplace=False)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        # 在keras中这里还有dropout rate = 0.2，但是这里没有，需要添加一下
+        self.classifier = nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+        # get the width or heigh on that feaure map
+        # kernel_size = x.size()[-1]
+        # get the number of feature maps
+        # num_channels = x.size()[-3]
+        
+        # print("kernel_size for global pooling: " ,kernel_size)
+        
+
+        # do global average pooling
+        x = self.features(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
 
 def make_layers(cfg, batch_norm=False):
     layers = []
@@ -64,6 +114,12 @@ def make_layers(cfg, batch_norm=False):
     for v in cfg:
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+            # add intermediate classifier after pooling
+            print("v: ", v)
+            print("in_channels: ", in_channels)
+            layers += [IntermediateClassifier(in_channels, 100)]
+            global num_outputs
+            num_outputs += 1
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
@@ -71,6 +127,8 @@ def make_layers(cfg, batch_norm=False):
             else:
                 layers += [conv2d, nn.ReLU(inplace=True)]
             in_channels = v
+    
+
     return nn.Sequential(*layers)
 
 
@@ -194,9 +252,9 @@ def vgg19_bn(pretrained=False, **kwargs):
     return model
 
 def Elastic_VGG16_bn(args, logfile):
-    # num_classes = args.num_classes
-    # add_intermediate_layers = args.add_intermediate_layers
-    # pretrained_weight = args.pretrained_weight
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    pretrained_weight = args.pretrained_weight
 
     # model = Inception3(num_classes, add_intermediate_layers)
 
@@ -243,6 +301,48 @@ def Elastic_VGG16_bn(args, logfile):
     # else:
     #     NotImplementedError
 
+    model = VGG(make_layers(cfg['D'], batch_norm=True))
     
+    if pretrained_weight == 1:
+        # model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))
+        LOG("loaded ImageNet pretrained weights", logfile)
+        
+    elif pretrained_weight == 0:
+        LOG("not loading ImageNet pretrained weights", logfile)
 
-    return None    
+    else:
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
+    fc_features = model.classifier[6].in_features
+    model.classifier[6] = nn.Linear(fc_features, num_classes)
+    print("number of outputs: ", num_outputs)
+
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    if add_intermediate_layers == 2:
+        print("add any intermediate layer classifiers")    
+        LOG("add intermediate layer classifiers", logfile)
+
+        # get all extra classifiers params and final classifier params
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
+        
+        for param in model.classifier.parameters():
+            param.requires_grad = True 
+    
+    elif add_intermediate_layers == 0:
+        print("not adding any intermediate layer classifiers")    
+        LOG("not adding any intermediate layer classifiers", logfile)
+
+        for param in model.classifier.parameters():
+            param.requires_grad = True         
+    else:
+        NotImplementedError
+
+    return model, num_outputs    
+
+
+
+

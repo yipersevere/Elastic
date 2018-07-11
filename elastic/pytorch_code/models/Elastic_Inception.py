@@ -435,15 +435,6 @@ def Elastic_InceptionV3(args, logfile):
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    # if add_intermediate_layers == 0: # not adding any intermediate layer classifiers
-    #     print("not adding any intermediate layer classifiers")    
-    #     LOG("not adding any intermediate layer classifiers", logfile)
-    # elif add_intermediate_layers == 2:
-    #     print("add any intermediate layer classifiers")    
-    #     LOG("add intermediate layer classifiers", logfile)
-    # else:
-    #     NotImplementedError
-
     model = Inception3(num_classes, add_intermediate_layers)
 
     if pretrained_weight == 1:
@@ -488,9 +479,6 @@ def Elastic_InceptionV3(args, logfile):
             param.requires_grad = True         
     else:
         NotImplementedError
-
-    
-
     return model
 
     
