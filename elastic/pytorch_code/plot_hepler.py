@@ -108,15 +108,61 @@ def pytorch_ResNet(model, data):
         fig_title_str = fig_title_str_cifar10
 
         if model == "ResNet18" or model == "resnet18":
-            NotImplementedError
+            # folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet18/Classification_Accuracy/"
+            # origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet18_include_pretrain_skip_lastCLF/2018-07-10-16-59-37/test_errors.txt"
+            # elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet18_include_pretrain_skip_lastCLF/2018-07-10-16-59-37/test_errors.txt"
+            # fig_title_prefix = "Elastic ResNet 18 "
+            # save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet18_include_pretrain_skip_last_interCLF"
+            # # 这里是[0,7] 而不是[0,8], 即把最后一层的intermediate classifier跳过了
+            # layer_plot_index = [0,1,2,3,4,5,6,7]
+            # original_layer_label = "Original_ResNet-18"   
+
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet18/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet18/2018-07-07-20-35-54/test_accuracies.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet18/2018-07-07-20-35-05/test_accuracies.txt"
+            fig_title_prefix = "Elastic ResNet 18-No-Include pretrain "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet18_No_include_pretrain"
+            # 这里是[0,7] 而不是[0,8], 即把最后一层的intermediate classifier跳过了
+            layer_plot_index = [0,1,2,3,4,5,6,7,8]
+            original_layer_label = "Original_ResNet-18"   
+
         elif model == "ResNet34" or model == "resnet34":
-            NotImplementedError
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet34/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet34/2018-07-06-12-19-42/test_accuracies.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet34/2018-07-06-12-18-33/test_accuracies.txt"
+            fig_title_prefix = "Elastic ResNet 34-No-Include pretrain "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet34_No_include_pretrain"
+            layer_plot_index = [0,3,6,9,13,15,16]
+            original_layer_label = "Original_ResNet-34"   
+            
         elif model == "ResNet50" or model == "resnet50":
-            NotImplementedError
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet50/2018-07-06-12-17-12/test_accuracies.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet50/2018-07-06-12-17-35/test_accuracies.txt"
+            fig_title_prefix = "Elastic ResNet 50-No-Include pretrain "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet50_No_include_pretrain"
+            layer_plot_index = [0,3,6,9,13,15,16]
+            original_layer_label = "Original_ResNet-50"   
+
         elif model == "ResNet101" or model == "resnet101":
-            NotImplementedError
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet101/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet101_include_pretrain_skip_lastCLF/2018-07-10-17-09-31/test_errors.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet101_include_pretrain_skip_lastCLF/2018-07-10-17-05-15/test_errors.txt"
+            fig_title_prefix = "Elastic ResNet 101 "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet101__include_pretrain_skip_lastCLF"
+            # 这里是[0,32] 而不是[0,33], 即把最后一层的intermediate classifier跳过了
+            layer_plot_index = [0,5,10,15,20,25,30,31,32]
+            original_layer_label = "Original_ResNet-101"   
+
         elif model == "ResNet152" or model == "resnet152":
-            NotImplementedError
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet152/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet152_include_pretrain/2018-07-10-01-12-21/test_errors.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet152_include_pretrain/2018-07-09-02-00-27/test_errors.txt"
+            fig_title_prefix = "Elastic ResNet 152 "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet101__include_pretrain_No_skip_lastCLF"
+            layer_plot_index = [0,5,15,25,35,42,47,49,50]
+            original_layer_label = "Original_ResNet-152"    
+
         else:
             NotImplementedError
 
@@ -135,11 +181,11 @@ def pytorch_ResNet(model, data):
             
         elif model == "ResNet34" or model == "resnet34":
             folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet34/Classification_Accuracy/"
-            origin_file = folder + os.sep + ""
+            origin_file = folder + os.sep + "pytorch_CIFAR100_0_intermediate_classifiers_Elastic_ResNet34_include_pretrain/2018-07-10-14-17-05/test_errors.txt"
             elastic_file = folder + os.sep + "pytorch_CIFAR100_all_intermediate_classifiers_Elastic_ResNet34_include_pretrain/2018-07-09-11-40-40/test_errors.txt"
-            fig_title_prefix = "Elastic ResNet 34 "
+            fig_title_prefix = "Elastic ResNet 34  "
             save_file_name = "Pytorch_CIFAR_100_accuracy_Elastic&Original_ResNet34"
-            layer_plot_index = [0,4,6,8,10,12,15,16]
+            layer_plot_index = [0,3,6,9,13,15,16]
             original_layer_label = "Original_ResNet-34"            
             
         elif model == "ResNet50" or model == "resnet50":
@@ -150,6 +196,7 @@ def pytorch_ResNet(model, data):
             save_file_name = "Pytorch_CIFAR_100_accuracy_Elastic&Original_ResNet50"
             layer_plot_index = [0,4,6,8,10,12,15,16]
             original_layer_label = "Original_ResNet-50"
+            
         elif model == "ResNet101" or model == "resnet101":
             folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet101/Classification_Accuracy/"
             origin_file = folder + os.sep + "pytorch_CIFAR100_0_intermediate_classifiers_Elastic_ResNet101_include_pretrain/2018-07-09-11-37-55/test_errors.txt"
@@ -160,12 +207,20 @@ def pytorch_ResNet(model, data):
             original_layer_label = "Original_ResNet-101"
 
         elif model == "ResNet152" or model == "resnet152":
-            NotImplementedError            
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet152/Classification_Accuracy/"
+            origin_file = folder + os.sep + "pytorch_CIFAR100_0_intermediate_classifiers_Elastic_ResNet152/2018-07-09-10-09-37/test_errors.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR100_all_intermediate_classifiers_Elastic_ResNet152/2018-07-08-18-50-08/test_errors.txt"
+            fig_title_prefix = "Elastic ResNet 152 "
+            save_file_name = "Pytorch_CIFAR_100_accuracy_Elastic&Original_ResNet152_No_include_pretrain_No_skip_lastCLF"
+            layer_plot_index = [0,5,15,25,35,42,47,49,50]
+            original_layer_label = "Original_ResNet-152"
+
         else:
             NotImplementedError
     else:
         print("data should be CIFAR 10 or CIFAR 100")
         NotImplementedError
+
     
     error_origin = pd.read_table(origin_file, delim_whitespace=True, header=None)
     error_elastic = pd.read_table(elastic_file, delim_whitespace=True, header=None) 

@@ -13,8 +13,7 @@ from cycler import cycler
 
 from plot_hepler import mobileNet_cifar100, mobileNet_cifar10,\
                         inceptionv3_cifar10, inceptionv3_cifar100,\
-                        pytorch_cifar10, pytorch_cifar10_loss,\
-                        pytorch_ResNet
+                        pytorch_cifar10_loss, pytorch_ResNet
 
 
 def plot_error_fig(errors, layer_index, strDict):
@@ -79,6 +78,28 @@ def plot_model_accuracy_on_CIFAR(dataframe, save_path, data):
     fig.savefig(save_path+ os.sep +'flops-' + data + '-accuracy-all-models-no-imagenet.pdf')
     fig.savefig(save_path+ os.sep +'flops-' + data + '-accuracy-all-models-no-imagenet.png')
 
+def plot_ResNet_model_accuracy_on_CIFAR(dataframe, save_path, data):
+    # red dashes, blue squares and green triangles
+    plt.style.use('seaborn-colorblind')
+    fig = plt.figure(figsize=(6,5))
+    ax = plt.subplot(111)
+    ax.set_prop_cycle(cycler('color', ['yellowgreen','mediumseagreen','cadetblue','lightslategray','skyblue','darkslategray','yellowgreen','mediumseagreen','cadetblue','lightslategray','skyblue','darkslategray','gold']))
+
+    for index, row in dataframe.iterrows():
+        if "Elastic" in row["model"]:
+            ax.plot(row["layers"], row["error"], '*', label=row["model"])
+        else:
+            ax.plot(row["layers"], row["error"],  markevery=2, drawstyle='steps', marker='o', markersize=3,linewidth=1, label=row["model"])
+    plt.xlabel('model-Layers')
+    plt.ylabel('Error (%)')
+
+    plt.title("Classification on " + data)
+    plt.legend(loc='upper left', prop={'size':5.6})
+    # plt.tight_layout(pad=4)
+    ax.grid(linestyle='--', linewidth=0.5)
+    fig.savefig(save_path+ os.sep +'layers-' + data + '-accuracy-all-ResNet-models.pdf')
+    fig.savefig(save_path+ os.sep +'layers-' + data + '-accuracy-all-ResNet-models.png')
+
 
 
 
@@ -89,7 +110,7 @@ if __name__ == "__main__":
 
     # error_origin, error_elastic, layer_plot_index, captionStrDict = pytorch_ResNet(model="ResNet18", data="CIFAR100")
     # error_origin, error_elastic, layer_plot_index, captionStrDict = pytorch_ResNet(model="ResNet50", data="CIFAR100")
-    error_origin, error_elastic, layer_plot_index, captionStrDict = pytorch_ResNet(model="ResNet101", data="CIFAR100")
+    # error_origin, error_elastic, layer_plot_index, captionStrDict = pytorch_ResNet(model="ResNet152", data="CIFAR100")
 
     # error_origin, error_elastic, layer_plot_index, captionStrDict = resetnet152_cifar100()
     
@@ -129,17 +150,17 @@ if __name__ == "__main__":
     # result_df.to_json("result_Inception.json")
 
 
-    for i in layer_plot_index:
-        errors.append(list(error_elastic.iloc[:, i]))
+    # for i in layer_plot_index:
+    #     errors.append(list(error_elastic.iloc[:, i]))
     
-    errors.append(list(error_origin.iloc[:,0]))
+    # errors.append(list(error_origin.iloc[:,0]))
 
-    plot_error_fig(errors, layer_plot_index, captionStrDict)
+    # plot_error_fig(errors, layer_plot_index, captionStrDict)
 
-    # cifar_10_model_result = pd.read_csv("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/plot/cifar10_model_result.csv")
-    # plot_model_accuracy_on_CIFAR(cifar_10_model_result, "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/plot", data="CIFAR-10")
+    # cifar_10_model_result = pd.read_csv("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/plot/cifar10_ResNet_model_result_in_pytorch.csv")
+    # plot_ResNet_model_accuracy_on_CIFAR(cifar_10_model_result, "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/plot", data="CIFAR-10")
 
-    # cifar_100_model_result = pd.read_csv("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/plot/cifar100_model_result.csv")
-    # plot_model_accuracy_on_CIFAR(cifar_100_model_result, "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/ElasticNN/trainModel_withCIFAR/elastic/plot", data="CIFAR-100")
+    cifar_100_model_result = pd.read_csv("/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/plot/cifar100_ResNet_model_result_in_pytorch.csv")
+    plot_ResNet_model_accuracy_on_CIFAR(cifar_100_model_result, "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/plot", data="CIFAR-100")
 
 
