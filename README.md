@@ -61,7 +61,7 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 '''
 # request allocation resource
 ## srun
-srun --pty -J torch --gres=gpu:1 --partition=gpu --time=3-23:59:00 --mem=40960 --ntasks=1 --cpus-per-task=16 /bin/bash -i
+srun --pty -J torch --gres=gpu:1 --partition=gpu --time=2-23:59:00 --mem=20480 --ntasks=1 --cpus-per-task=4 /bin/bash -i
 module load CUDA
 source activate dl
 /bin/bash MobileNets_alpha_0_75.sh

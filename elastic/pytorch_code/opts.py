@@ -36,7 +36,7 @@ parser.add_argument('--save-model', dest='save_model', action='store_true',
 parser.add_argument('--print_freq', dest='print_freq',
                     help='Only save best model (default: false)', type=int, default=1000)
 parser.add_argument('--pretrained_weight', type=int, help="flag to add imagenet pretrained weight; "
-                                                        "1 means loading pretrained weight, 0 means not loading pretrained weight",default = 0)
+                                                        "1 means loading pretrained weight, 0 means not loading pretrained weight",default = 1)
                     
 
 # Init Environment

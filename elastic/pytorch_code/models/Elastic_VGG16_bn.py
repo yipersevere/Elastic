@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../")
+
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 import math
@@ -25,9 +28,10 @@ num_outputs= 1
 
 class VGG(nn.Module):
 
-    def __init__(self, features, num_classes=1000, init_weights=True):
+    def __init__(self, features, add_intermediate_layers, num_classes=1000, init_weights=True):
         super(VGG, self).__init__()
         self.features = features
+        self.add_intermediate_layers = add_intermediate_layers
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
@@ -54,7 +58,9 @@ class VGG(nn.Module):
             self.features[6]
         )        
         x = origin_0(x)
-        intermediate_outputs.append(self.features[7](x))
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.features[7](x))
+
         origin_1 = nn.Sequential(
             self.features[8],
             self.features[9],
@@ -65,7 +71,9 @@ class VGG(nn.Module):
             self.features[14]
         )
         x = origin_1(x)
-        intermediate_outputs.append(self.features[15](x))
+
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.features[15](x))
 
         origin_2 = nn.Sequential(
             self.features[16],
@@ -80,7 +88,8 @@ class VGG(nn.Module):
             self.features[25]
         )
         x = origin_2(x)
-        intermediate_outputs.append(self.features[26](x))        
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.features[26](x))        
 
         origin_3 = nn.Sequential(
             self.features[27],
@@ -95,7 +104,9 @@ class VGG(nn.Module):
             self.features[36]
         )
         x = origin_3(x)
-        intermediate_outputs.append(self.features[37](x))  
+
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.features[37](x))  
 
         origin_4 = nn.Sequential(
             self.features[38],
@@ -111,10 +122,8 @@ class VGG(nn.Module):
         )
         x = origin_4(x)
         # 最后一个intermediate classifier不能接
-        # intermediate_outputs.append(self.features[48](x))  
 
         # 需要把self.features 拆开
-        # x = self.features[]
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return intermediate_outputs+[x]
@@ -154,48 +163,31 @@ class IntermediateClassifier(nn.Module):
             nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
-        # 在keras中这里还有dropout rate = 0.2，但是这里没有，需要添加一下
         self.classifier = nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
 
     def forward(self, x):
-        """
-        Drive features to classification.
 
-        :param x: Input of the lowest scale of the last layer of
-                  the last block
-        :return: Cifar object classification result
-        """
-        # get the width or heigh on that feaure map
-        # kernel_size = x.size()[-1]
-        # get the number of feature maps
-        # num_channels = x.size()[-3]
-        
-        # print("kernel_size for global pooling: " ,kernel_size)
-        
-
-        # do global average pooling
         x = self.features(x)
 
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
 
-def make_layers(cfg, batch_norm=False):
+def make_layers(cfg, add_intermediate_layers, num_classes, batch_norm=False):
     layers = []
     in_channels = 3
     for v, i in zip(cfg, range(len(cfg))):
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
             # add intermediate classifier after pooling
-            if i != (len(cfg)-1):
-                print("v: ", v)
-                print("in_channels: ", in_channels)
-                layers += [IntermediateClassifier(in_channels, 100)]
-                global num_outputs
-                num_outputs += 1
-
-            # 做一个修改，在最后一个maxpooling中不再接intermediate classifier
-
+            # in last maxpooling, we don't add intermediate classifier since there is already a final output classifiers.
+            if add_intermediate_layers == 2:
+                if i != (len(cfg)-1):
+                    print("v: ", v)
+                    print("in_channels: ", in_channels)
+                    layers += [IntermediateClassifier(in_channels, num_classes)]
+                    global num_outputs
+                    num_outputs += 1
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
@@ -203,10 +195,8 @@ def make_layers(cfg, batch_norm=False):
             else:
                 layers += [conv2d, nn.ReLU(inplace=True)]
             in_channels = v
-    
 
     return nn.Sequential(*layers)
-
 
 cfg = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
@@ -215,127 +205,16 @@ cfg = {
     'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
 }
 
-
-def vgg11(pretrained=False, **kwargs):
-    """VGG 11-layer model (configuration "A")
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['A']), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg11']))
-    return model
-
-
-def vgg11_bn(pretrained=False, **kwargs):
-    """VGG 11-layer model (configuration "A") with batch normalization
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['A'], batch_norm=True), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg11_bn']))
-    return model
-
-
-def vgg13(pretrained=False, **kwargs):
-    """VGG 13-layer model (configuration "B")
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['B']), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg13']))
-    return model
-
-
-def vgg13_bn(pretrained=False, **kwargs):
-    """VGG 13-layer model (configuration "B") with batch normalization
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['B'], batch_norm=True), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg13_bn']))
-    return model
-
-
-def vgg16(pretrained=False, **kwargs):
-    """VGG 16-layer model (configuration "D")
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['D']), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg16']))
-    return model
-
-
-def vgg16_bn(pretrained=False, **kwargs):
-    """VGG 16-layer model (configuration "D") with batch normalization
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['D'], batch_norm=True), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))
-    return model
-
-
-def vgg19(pretrained=False, **kwargs):
-    """VGG 19-layer model (configuration "E")
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['E']), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg19']))
-    return model
-
-
-def vgg19_bn(pretrained=False, **kwargs):
-    """VGG 19-layer model (configuration 'E') with batch normalization
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    if pretrained:
-        kwargs['init_weights'] = False
-    model = VGG(make_layers(cfg['E'], batch_norm=True), **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['vgg19_bn']))
-    return model
-
 def Elastic_VGG16_bn(args, logfile):
     num_classes = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    model = VGG(make_layers(cfg['D'], batch_norm=True))
+    model = VGG(make_layers(cfg['D'], add_intermediate_layers, num_classes, batch_norm=True), add_intermediate_layers)
+    model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))
     
     if pretrained_weight == 1:
-        # model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))
+        
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
@@ -344,6 +223,7 @@ def Elastic_VGG16_bn(args, logfile):
     else:
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
+
     fc_features = model.classifier[6].in_features
     model.classifier[6] = nn.Linear(fc_features, num_classes)
     print("number of outputs: ", num_outputs)
@@ -352,7 +232,6 @@ def Elastic_VGG16_bn(args, logfile):
         param.requires_grad = False
     
     if add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
         LOG("add intermediate layer classifiers", logfile)
 
         # get all extra classifiers params and final classifier params
@@ -370,16 +249,15 @@ def Elastic_VGG16_bn(args, logfile):
 
         for param in model.classifier.parameters():
             param.requires_grad = True     
-            
+
     elif add_intermediate_layers == 0:
-        print("not adding any intermediate layer classifiers")    
         LOG("not adding any intermediate layer classifiers", logfile)
 
         for param in model.classifier.parameters():
             param.requires_grad = True         
     else:
         NotImplementedError
-
+    
     return model, num_outputs    
 
 
