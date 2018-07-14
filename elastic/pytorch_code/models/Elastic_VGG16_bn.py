@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
 import sys
 sys.path.append("../")
 
@@ -24,14 +28,19 @@ model_urls = {
 }
 
 
-num_outputs= 1
+
 
 class VGG(nn.Module):
 
-    def __init__(self, features, add_intermediate_layers, num_classes=1000, init_weights=True):
+    def __init__(self, cfg, add_intermediate_layers, num_categories, batch_norm, num_classes=1000, init_weights=True):
         super(VGG, self).__init__()
-        self.features = features
+        
         self.add_intermediate_layers = add_intermediate_layers
+        self.num_categories = num_categories
+        self.num_outputs = 1
+        self.intermediate_CLF = []
+        self.features = self.make_layers(cfg, batch_norm)
+
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
@@ -44,9 +53,36 @@ class VGG(nn.Module):
         if init_weights:
             self._initialize_weights()
 
+    def make_layers(self, cfg, batch_norm=False):
+        layers = []
+        in_channels = 3
+        for v, i in zip(cfg, range(len(cfg))):
+            if v == 'M':
+                layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+                # add intermediate classifier after pooling
+                # in last maxpooling, we don't add intermediate classifier since there is already a final output classifiers.
+                if self.add_intermediate_layers == 2:
+                    if i != (len(cfg)-1):
+                        print("v: ", v)
+                        print("in_channels: ", in_channels)
+                        self.intermediate_CLF.append(IntermediateClassifier(in_channels, self.num_categories))
+                        self.num_outputs += 1
+            else:
+                conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+                if batch_norm:
+                    layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
+                else:
+                    layers += [conv2d, nn.ReLU(inplace=True)]
+                in_channels = v
+
+        return nn.Sequential(*layers)
+
+
+
     def forward(self, x):
         # 这里的self.features 就是 make_layers 函数
         intermediate_outputs = []
+        i = 0
         
         origin_0 = nn.Sequential(
             self.features[0],
@@ -59,23 +95,27 @@ class VGG(nn.Module):
         )        
         x = origin_0(x)
         if self.add_intermediate_layers == 2:
-            intermediate_outputs.append(self.features[7](x))
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
 
         origin_1 = nn.Sequential(
+            self.features[7],
             self.features[8],
             self.features[9],
             self.features[10],
             self.features[11],
             self.features[12],
-            self.features[13],
-            self.features[14]
+            self.features[13]
         )
         x = origin_1(x)
 
         if self.add_intermediate_layers == 2:
-            intermediate_outputs.append(self.features[15](x))
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
+            i += 1
 
         origin_2 = nn.Sequential(
+            self.features[14],
+            self.features[15],
             self.features[16],
             self.features[17],
             self.features[18],
@@ -83,42 +123,41 @@ class VGG(nn.Module):
             self.features[20],
             self.features[21],
             self.features[22],
-            self.features[23],
-            self.features[24],
-            self.features[25]
+            self.features[23]
         )
         x = origin_2(x)
         if self.add_intermediate_layers == 2:
-            intermediate_outputs.append(self.features[26](x))        
+            intermediate_outputs.append(self.intermediate_CLF[i](x))        
+            i += 1
 
         origin_3 = nn.Sequential(
+            self.features[24],
+            self.features[25],
+            self.features[26],
             self.features[27],
             self.features[28],
             self.features[29],
             self.features[30],
             self.features[31],
             self.features[32],
-            self.features[33],
-            self.features[34],
-            self.features[35],
-            self.features[36]
+            self.features[33]
         )
         x = origin_3(x)
 
         if self.add_intermediate_layers == 2:
-            intermediate_outputs.append(self.features[37](x))  
+            intermediate_outputs.append(self.intermediate_CLF[i](x))
 
         origin_4 = nn.Sequential(
+            self.features[34],
+            self.features[35],
+            self.features[36],
+            self.features[37],
             self.features[38],
             self.features[39],
             self.features[40],
             self.features[41],
             self.features[42],
-            self.features[43],
-            self.features[44],
-            self.features[45],
-            self.features[46],
-            self.features[47]
+            self.features[43]
         )
         x = origin_4(x)
         # 最后一个intermediate classifier不能接
@@ -165,6 +204,8 @@ class IntermediateClassifier(nn.Module):
         # print("num_channels: ", num_channels, "\n")
         self.classifier = nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
 
+
+
     def forward(self, x):
 
         x = self.features(x)
@@ -173,30 +214,7 @@ class IntermediateClassifier(nn.Module):
         x = self.classifier(x)
         return x
 
-def make_layers(cfg, add_intermediate_layers, num_classes, batch_norm=False):
-    layers = []
-    in_channels = 3
-    for v, i in zip(cfg, range(len(cfg))):
-        if v == 'M':
-            layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
-            # add intermediate classifier after pooling
-            # in last maxpooling, we don't add intermediate classifier since there is already a final output classifiers.
-            if add_intermediate_layers == 2:
-                if i != (len(cfg)-1):
-                    print("v: ", v)
-                    print("in_channels: ", in_channels)
-                    layers += [IntermediateClassifier(in_channels, num_classes)]
-                    global num_outputs
-                    num_outputs += 1
-        else:
-            conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
-            if batch_norm:
-                layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
-            else:
-                layers += [conv2d, nn.ReLU(inplace=True)]
-            in_channels = v
 
-    return nn.Sequential(*layers)
 
 cfg = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
@@ -206,15 +224,15 @@ cfg = {
 }
 
 def Elastic_VGG16_bn(args, logfile):
-    num_classes = args.num_classes
+    num_categories = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    model = VGG(make_layers(cfg['D'], add_intermediate_layers, num_classes, batch_norm=True), add_intermediate_layers)
-    model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))
+    model = VGG(cfg['D'], add_intermediate_layers, num_categories, batch_norm=True)
     
+
     if pretrained_weight == 1:
-        
+        model.load_state_dict(model_zoo.load_url(model_urls['vgg16_bn']))    
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
@@ -225,8 +243,8 @@ def Elastic_VGG16_bn(args, logfile):
         NotImplementedError
 
     fc_features = model.classifier[6].in_features
-    model.classifier[6] = nn.Linear(fc_features, num_classes)
-    print("number of outputs: ", num_outputs)
+    model.classifier[6] = nn.Linear(fc_features, num_categories)
+    # print("number of outputs: ", num_categories)
 
     for param in model.parameters():
         param.requires_grad = False
@@ -235,17 +253,9 @@ def Elastic_VGG16_bn(args, logfile):
         LOG("add intermediate layer classifiers", logfile)
 
         # get all extra classifiers params and final classifier params
-        for param in model.features[7].parameters():
-            param.requires_grad = True
-        
-        for param in model.features[15].parameters():
-            param.requires_grad = True 
-
-        for param in model.features[26].parameters():
-            param.requires_grad = True
-        
-        for param in model.features[37].parameters():
-            param.requires_grad = True 
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
 
         for param in model.classifier.parameters():
             param.requires_grad = True     
@@ -258,7 +268,7 @@ def Elastic_VGG16_bn(args, logfile):
     else:
         NotImplementedError
     
-    return model, num_outputs    
+    return model    
 
 
 
