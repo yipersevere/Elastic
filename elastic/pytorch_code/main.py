@@ -224,7 +224,9 @@ def main(**kwargs):
         print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_VGG16":
-         model,num_outputs = Elastic_VGG16_bn(args, logFile)
+         model = Elastic_VGG16_bn(args, logFile)
+         num_outputs = model.num_outputs
+         print("num_outputs: ", num_outputs)
          print("successfully create model: ", args.model)
         
     else:
