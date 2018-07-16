@@ -216,7 +216,7 @@ def main(**kwargs):
         args.target_size = (299, 299, 3) # since pytorch inceptionv3 pretrained accepts image size (299, 299, 3) instead of (224, 224, 3)
         model = Elastic_InceptionV3(args, logFile)
         num_outputs = model.num_outputs
-        print("num_outputs: ", num_outputs)
+        LOG("num_outputs: ", num_outputs)
         print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_MobileNet":
@@ -226,7 +226,7 @@ def main(**kwargs):
     elif args.model == "Elastic_VGG16":
          model = Elastic_VGG16_bn(args, logFile)
          num_outputs = model.num_outputs
-         print("num_outputs: ", num_outputs)
+         LOG("num_outputs: ", num_outputs)
          print("successfully create model: ", args.model)
         
     else:

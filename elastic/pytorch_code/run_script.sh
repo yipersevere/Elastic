@@ -103,4 +103,13 @@ python main.py --model Elastic_VGG16 --data cifar100 --num_classes 100 --batch_s
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
 
 python main.py --model Elastic_VGG16 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_classifiers_Elastic_VGG16_include_pretrain_skip_last_interCLF_No_imagenet
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
+
+
+
+python main.py --model Elastic_VGG16 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
+
+python main.py --model Elastic_VGG16 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
+
