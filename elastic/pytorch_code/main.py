@@ -32,6 +32,7 @@ def validate(val_loader, model, criterion):
     model.eval()
     all_acc = []
     all_loss = []
+
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
         all_acc.append(AverageMeter())
@@ -312,6 +313,10 @@ def main(**kwargs):
         # run on test dataset
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
+        if args.model == "Elastic_InceptionV3":
+            #since InceptionV3 will reduce to one ouput in eval phrase, but has 2 outputs in train phrase
+            test_accs = test_accs[:-1]
+            test_losses = test_accs[:-]
         
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
