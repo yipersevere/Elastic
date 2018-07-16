@@ -208,30 +208,25 @@ def main(**kwargs):
     if args.model == "Elastic_ResNet18" or args.model == "Elastic_ResNet34" or args.model == "Elastic_ResNet50" or args.model == "Elastic_ResNet101" or args.model == "Elastic_ResNet152":
         model = Elastic_ResNet(args, logFile)
         num_outputs = model.num_outputs
-        print("num_outputs: ", num_outputs)
-        # num_outputs = model_num_outputs
-        print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_InceptionV3":
         args.target_size = (299, 299, 3) # since pytorch inceptionv3 pretrained accepts image size (299, 299, 3) instead of (224, 224, 3)
         model = Elastic_InceptionV3(args, logFile)
         num_outputs = model.num_outputs
-        LOG("num_outputs: ", num_outputs)
-        print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_MobileNet":
         model = Elastic_MobileNet(args, logFile)
-        print("successfully create model: ", args.model)
 
     elif args.model == "Elastic_VGG16":
          model = Elastic_VGG16_bn(args, logFile)
          num_outputs = model.num_outputs
-         LOG("num_outputs: ", num_outputs)
-         print("successfully create model: ", args.model)
         
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
+    
+    LOG("num_outputs: " + str(num_outputs), logFile)
+    LOG("successfully create model: " + args.model, logFile)
 
     model = model.to(device)
     if device == 'cuda':

@@ -49,22 +49,56 @@ class Inception3(nn.Module):
         self.Conv2d_3b_1x1 = BasicConv2d(64, 80, kernel_size=1)
         self.Conv2d_4a_3x3 = BasicConv2d(80, 192, kernel_size=3)
         self.Mixed_5b = InceptionA(192, pool_features=32)
-        self.intermediate_CLF.append(IntermediateClassifier(256, self.num_categories))
-        # self.intermediate_CLF = self._make_layer()
-        self.num_outputs += 1
+        
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(35, 256, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_5c = InceptionA(256, pool_features=64)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(35, 288, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_5d = InceptionA(288, pool_features=64)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(35, 288, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_6a = InceptionB(288)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_6b = InceptionC(768, channels_7x7=128)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
+            self.num_outputs += 1        
+
         self.Mixed_6c = InceptionC(768, channels_7x7=160)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_6d = InceptionC(768, channels_7x7=160)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_6e = InceptionC(768, channels_7x7=192)
         if aux_logits:
             self.AuxLogits = InceptionAux(768, num_classes)
             # add 1 again, since there is an aux classifier
             self.num_outputs += 1
         self.Mixed_7a = InceptionD(768)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(8, 1280, self.num_categories))
+            self.num_outputs += 1
+        
         self.Mixed_7b = InceptionE(1280)
+        if self.add_intermediate_layers == 2:
+            self.intermediate_CLF.append(IntermediateClassifier(8, 2048, self.num_categories))
+            self.num_outputs += 1
+
         self.Mixed_7c = InceptionE(2048)
         self.fc = nn.Linear(2048, num_classes)
 
@@ -79,36 +113,6 @@ class Inception3(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-
-    # def _make_layer(self):
-    #     # downsample = None
-    #     # if stride != 1 or self.inplanes != planes * block.expansion:
-    #     #     downsample = nn.Sequential(
-    #     #         nn.Conv2d(self.inplanes, planes * block.expansion,
-    #     #                   kernel_size=1, stride=stride, bias=False),
-    #     #         nn.BatchNorm2d(planes * block.expansion),
-    #     #     )
-
-    #     # layers = [None] * (1+(blocks-1)*2) #自己添加的
-    #     layers = []
-    #     layers.append(IntermediateClassifier(256, self.label_classes))
-    #     # self.inplanes = planes * block.expansion
-        
-    #     # if self.add_intermediate_layers == 2:
-    #     #     # global num_outputs #using this variable to count the number of CLF
-    #     #     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
-    #     #     self.num_outputs += 1
-
-    #     # # print("blocks: ", 1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-    #     # for i in range(1, blocks):
-    #     #     layers.append(block(self.inplanes, planes))
-    #     #     # print("blocks: ", i+1, "/", blocks, ", self.inplanes: ", self.inplanes, ", planes: ", planes)
-    #     #     if self.add_intermediate_layers == 2:
-    #     #         # global num_outputs
-    #     #         self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
-    #     #         self.num_outputs += 1
-
-    #     return nn.Sequential(*layers)
 
 
     def forward(self, x):
@@ -135,41 +139,55 @@ class Inception3(nn.Module):
         x = F.max_pool2d(x, kernel_size=3, stride=2)
         # 35 x 35 x 192
         x = self.Mixed_5b(x)
-        print("Mixed_5b size: ", x.size())
-        intermediate_outputs.append(self.intermediate_CLF[0](x))
+        # print("Mixed_5b size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[0](x))
         # 35 x 35 x 256
         x = self.Mixed_5c(x)
-        print("Mixed_5c size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[1](x))
+        # print("Mixed_5c size: ", x.size())
         # 35 x 35 x 288
         x = self.Mixed_5d(x)
-        print("Mixed_5d size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[2](x))
+        # print("Mixed_5d size: ", x.size())
         # 35 x 35 x 288
         x = self.Mixed_6a(x)
-        print("Mixed_6a size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[3](x))
+        # print("Mixed_6a size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6b(x)
-        print("Mixed_6b size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[4](x))
+        # print("Mixed_6b size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6c(x)
-        print("Mixed_6c size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[5](x))
+        # print("Mixed_6c size: ", x.size())
         # 17 x 17 x 768
         x = self.Mixed_6d(x)
-        print("Mixed_6d size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[6](x))
         # 17 x 17 x 768
         x = self.Mixed_6e(x)
-        print("Mixed_6e size: ", x.size())
         # 17 x 17 x 768
         if self.training and self.aux_logits:
             aux = self.AuxLogits(x)
         # 17 x 17 x 768
         x = self.Mixed_7a(x)
-        print("Mixed_7a size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[7](x))
         # 8 x 8 x 1280
         x = self.Mixed_7b(x)
-        print("Mixed_7b size: ", x.size())
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[8](x))
+        # print("Mixed_7b size: ", x.size())
         # 8 x 8 x 2048
         x = self.Mixed_7c(x)
-        print("Mixed_7c size: ", x.size())
+        # print("Mixed_7c size: ", x.size())
         # 8 x 8 x 2048
         x = F.avg_pool2d(x, kernel_size=8)
         # 1 x 1 x 2048
@@ -180,7 +198,7 @@ class Inception3(nn.Module):
         x = self.fc(x)
         # 1000 (num_classes)
         if self.training and self.aux_logits:
-            return [aux] + intermediate_outputs + [x] 
+            return  intermediate_outputs[:7] + [aux] + intermediate_outputs[7:]+ [x] 
         return intermediate_outputs + [x]
 
 
@@ -387,7 +405,7 @@ class BasicConv2d(nn.Module):
 
 class IntermediateClassifier(nn.Module):
 
-    def __init__(self, num_channels, num_classes):
+    def __init__(self, global_pooling_size, num_channels, num_classes):
         """
         Classifier of a cifar10/100 image.
 
@@ -406,7 +424,7 @@ class IntermediateClassifier(nn.Module):
         # else:
         #     NotImplementedError
         
-        kernel_size = 26
+        kernel_size = global_pooling_size
 
         print("kernel_size for global pooling: " ,kernel_size)
 
@@ -415,7 +433,7 @@ class IntermediateClassifier(nn.Module):
             nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
-        self.classifier = torch.nn.Sequential(nn.Linear(256, 100)).to(self.device)
+        self.classifier = torch.nn.Sequential(nn.Linear(num_channels, num_classes)).to(self.device)
 
     def forward(self, x):
         """
@@ -439,19 +457,16 @@ def Elastic_InceptionV3(args, logfile):
 
     model = Inception3(num_classes, add_intermediate_layers, aux_logits=True)
 
-    model = Inception3
+    # model = Inception3
     if pretrained_weight == 1:
         
-        # model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
-        print("loaded ImageNet pretrained weights")
+        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
-        print("not loading ImageNet pretrained weights")
         LOG("not loading ImageNet pretrained weights", logfile)
 
     else:
-        print("parameter--pretrained_weight, should be 0 or 1")
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
 
@@ -463,7 +478,6 @@ def Elastic_InceptionV3(args, logfile):
         param.requires_grad = False
     
     if add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
         LOG("add intermediate layer classifiers", logfile)
 
         # get all extra classifiers params and final classifier params
@@ -475,7 +489,6 @@ def Elastic_InceptionV3(args, logfile):
             param.requires_grad = True 
     
     elif add_intermediate_layers == 0:
-        print("not adding any intermediate layer classifiers")    
         LOG("not adding any intermediate layer classifiers", logfile)
 
         for param in model.fc.parameters():
