@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser(description='PyTorch Elastic-ResNet implementat
 
 parser.add_argument('--data', type=str, help="training and testing data, data=cifar10; data=cifar100", default="cifar100")
 parser.add_argument('--num_classes', type=int, help="classification number, 10 or 100", default=100)
-parser.add_argument('--target_size', type=tuple, help='default target size is (224,224,3)', default=(224,224,3))
+parser.add_argument('--target_size', type=tuple, help='default target size is (224,224,3)', default=(229,229,3))
 parser.add_argument('--epochs', type=int, help="epoch number, default 1, set 100 or 1000", default=1)
 parser.add_argument('--dropout_rate', type=float, help="dropout rate, (default: 0.2)", default=0.2)
 parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 16)", default=64)
@@ -19,15 +19,15 @@ parser.add_argument('--gpu', default="0", help='gpu available')
 parser.add_argument('--add_intermediate_layers', type=int, 
                     help="add intermediate layers, 2: all intermediate layers; "
                                                     "1: skip early intermediate layers output;"
-                                                    "0 : not any intermediate layers. (default: 0)", default=0)
+                                                    "0 : not any intermediate layers. (default: 0)", default=2)
 parser.add_argument('--layers_weight_change', type=int, default=0, 
                     help="1 for giving different weights for different intermediate layers output classifiers, 0 for setting all weights are 1")
 
 # parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet")
 # parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_all_intermediate_resblock_Elastic_ResNet50")
 
-parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_VGG16")
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_No_pretrain_skip_last_interCLF")
+parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_InceptionV3")
+parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_1_intermediate_classifiers_Elastic_InceptionV3_no_imagenet")
 
 parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')

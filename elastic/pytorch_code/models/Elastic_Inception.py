@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
+
 from helper import LOG
 
 __all__ = ['Inception3', 'inception_v3']
@@ -32,13 +33,12 @@ model_urls = {
 
 class Inception3(nn.Module):
 
-    def __init__(self, label_classes, add_intermediate_layers, num_outputs=1, num_classes=1000, aux_logits=True, transform_input=False):
+    def __init__(self, num_categories, add_intermediate_layers, num_outputs=1, num_classes=1000, aux_logits=True, transform_input=False):
         super(Inception3, self).__init__()
         
-        # self.intermediate_CLF = []
+        self.intermediate_CLF = []
         self.add_intermediate_layers = add_intermediate_layers
-        self.label_classes = label_classes
-        # self.residual_block_type = residual_block_type
+        self.num_categories = num_categories
         self.num_outputs = num_outputs
 ######################################################################################
         self.aux_logits = aux_logits
@@ -49,9 +49,9 @@ class Inception3(nn.Module):
         self.Conv2d_3b_1x1 = BasicConv2d(64, 80, kernel_size=1)
         self.Conv2d_4a_3x3 = BasicConv2d(80, 192, kernel_size=3)
         self.Mixed_5b = InceptionA(192, pool_features=32)
-        # self.intermediate_CLF.append(IntermediateClassifier(256, self.label_classes))
+        self.intermediate_CLF.append(IntermediateClassifier(256, self.num_categories))
         # self.intermediate_CLF = self._make_layer()
-        # self.num_outputs += 1
+        self.num_outputs += 1
         self.Mixed_5c = InceptionA(256, pool_features=64)
         self.Mixed_5d = InceptionA(288, pool_features=64)
         self.Mixed_6a = InceptionB(288)
@@ -61,6 +61,8 @@ class Inception3(nn.Module):
         self.Mixed_6e = InceptionC(768, channels_7x7=192)
         if aux_logits:
             self.AuxLogits = InceptionAux(768, num_classes)
+            # add 1 again, since there is an aux classifier
+            self.num_outputs += 1
         self.Mixed_7a = InceptionD(768)
         self.Mixed_7b = InceptionE(1280)
         self.Mixed_7c = InceptionE(2048)
@@ -134,7 +136,7 @@ class Inception3(nn.Module):
         # 35 x 35 x 192
         x = self.Mixed_5b(x)
         print("Mixed_5b size: ", x.size())
-        # intermediate_outputs.append(self.intermediate_CLF[0](x))
+        intermediate_outputs.append(self.intermediate_CLF[0](x))
         # 35 x 35 x 256
         x = self.Mixed_5c(x)
         print("Mixed_5c size: ", x.size())
@@ -178,7 +180,7 @@ class Inception3(nn.Module):
         x = self.fc(x)
         # 1000 (num_classes)
         if self.training and self.aux_logits:
-            return x, aux
+            return [aux] + intermediate_outputs + [x] 
         return intermediate_outputs + [x]
 
 
@@ -435,11 +437,12 @@ def Elastic_InceptionV3(args, logfile):
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    model = Inception3(num_classes, add_intermediate_layers)
+    model = Inception3(num_classes, add_intermediate_layers, aux_logits=True)
 
+    model = Inception3
     if pretrained_weight == 1:
         
-        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
+        # model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
         print("loaded ImageNet pretrained weights")
         LOG("loaded ImageNet pretrained weights", logfile)
         
@@ -479,6 +482,7 @@ def Elastic_InceptionV3(args, logfile):
             param.requires_grad = True         
     else:
         NotImplementedError
+
     return model
 
     
