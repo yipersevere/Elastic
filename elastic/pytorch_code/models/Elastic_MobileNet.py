@@ -22,6 +22,7 @@ from helper import LOG
 # not official model weights
 model_urls = {
     'mobilenetV1': '/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
+    #'mobilenetV1': '/home/zhouy/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
 }
 
 class MobileNet(nn.Module):
@@ -136,7 +137,7 @@ class IntermediateClassifier(nn.Module):
         
         kernel_size = global_pooling_size
 
-        print("kernel_size for global pooling: " ,kernel_size)
+        print("kernel_size for global pooling: ", kernel_size)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),

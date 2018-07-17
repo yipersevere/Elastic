@@ -63,8 +63,8 @@ class VGG(nn.Module):
                 # in last maxpooling, we don't add intermediate classifier since there is already a final output classifiers.
                 if self.add_intermediate_layers == 2:
                     if i != (len(cfg)-1):
-                        print("v: ", v)
-                        print("in_channels: ", in_channels)
+                        # print("v: ", v)
+                        # print("in_channels: ", in_channels)
                         self.intermediate_CLF.append(IntermediateClassifier(in_channels, self.num_categories))
                         self.num_outputs += 1
             else:
@@ -195,7 +195,7 @@ class IntermediateClassifier(nn.Module):
         self.device = 'cuda'
         kernel_size = int(7168/self.num_channels)
             
-        print("kernel_size for global pooling: " ,kernel_size)
+        print("kernel_size for global pooling: ", kernel_size)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),

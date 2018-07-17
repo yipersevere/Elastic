@@ -182,7 +182,7 @@ def main(**kwargs):
     elif args.data == "cifar10" or args.data == "CIFAR10":
         fig_title_str = " on CIFAR-10"
     else:
-        print("ERROR =============================dataset should be CIFAR10 or CIFAR100")
+        LOG("ERROR =============================dataset should be CIFAR10 or CIFAR100", logFile)
         NotImplementedError
 
     captionStrDict = {
@@ -222,7 +222,7 @@ def main(**kwargs):
         model = Elastic_SqueezeNet(args, logFile)
         
     else:
-        print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
+        LOG("--model parameter should be in ResNet, InceptionV3, MobileNet, VGG16, SqueezeNet, DenseNet", logFile)
         exit()    
     
     num_outputs = model.num_outputs
@@ -263,7 +263,6 @@ def main(**kwargs):
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)# nesterov set False to keep align with keras default settting
 
-    print("==> Pretraining for 10 epoches    ")
     LOG("==> Pretraining for 10 epoches    \n", logFile)
     for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
@@ -271,9 +270,6 @@ def main(**kwargs):
         print(epoch_result)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
     
-    
-    
-    print("==> Full training ")
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
         param.requires_grad = True
@@ -295,7 +291,6 @@ def main(**kwargs):
     for epoch in range(0, args.epochs):
         
         epoch_str = "==================================== epoch %d ==============================" % epoch
-        print(epoch_str)
         LOG(epoch_str, logFile)
         # Train for one epoch
         accs, losses, lr = train(train_loader, model, criterion, optimizer, epoch)
@@ -309,13 +304,12 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
         epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
-        print(epoch_result)
         LOG(epoch_result, logFile)
 
         if num_outputs > 1:
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_total_sum_losses', sum(losses), epoch) 
             losses.append(sum(losses)) # add the total sum loss
-            print("train_total_sum_losses: ", sum(losses))              
+            LOG("train_total_sum_losses: " + str(sum(losses)), logFile)              
         
         # run on test dataset
         LOG("==> test \n", logFile)
@@ -334,13 +328,12 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
         test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
-        print(test_result_str)
         LOG(test_result_str, logFile)
 
         if num_outputs > 1:
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_total_sum_losses', sum(test_losses), epoch) 
             test_losses.append(sum(test_losses)) # add the total sum loss
-            print("test_total_sum_losses: ", sum(test_losses))   
+            LOG("test_total_sum_losses: " + str(sum(test_losses)), logFile)   
         
         log_stats(path, accs, losses, lr, test_accs, test_losses)
 
@@ -369,7 +362,7 @@ def main(**kwargs):
             if total_loss >= prev_epoch_loss: # means this current epoch doesn't reduce test losses
                 EarlyStopping_epoch_count += 1
         if EarlyStopping_epoch_count > 20:
-            print("No improving test_loss for more than 10 epochs, stop running model")
+            LOG("No improving test_loss for more than 10 epochs, stop running model", logFile)
             break
 
     # n_flops, n_params = measure_model(model, IMAGE_SIZE, IMAGE_SIZE)
@@ -384,7 +377,7 @@ def main(**kwargs):
 
     # here plot figures
     plot_figs(epochs_train_accs, epochs_train_losses, epochs_test_accs, epochs_test_losses, args, captionStrDict)
-    print("============Finish============")
+    LOG("============Finish============", logFile)
 
 if __name__ == "__main__":
 

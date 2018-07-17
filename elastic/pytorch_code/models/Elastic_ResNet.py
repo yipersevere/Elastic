@@ -123,7 +123,7 @@ class IntermediateClassifier(nn.Module):
         else:
             NotImplementedError
             
-        print("kernel_size for global pooling: " ,kernel_size)
+        print("kernel_size for global pooling: ", kernel_size)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
@@ -213,7 +213,7 @@ class ResNet(nn.Module):
                 # global num_outputs
                 if i == (blocks-1) and planes == 512:# means this is the intermediate classifier has close position with the final output classifier
                     # not append intermediate classifier
-                    print("skip the last intermediate classifer, since this classifier has close position with the final output classifier")
+                    LOG("skip the last intermediate classifer, since this classifier has close position with the final output classifier", logFile)
                 else:
                     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
                     self.num_outputs += 1
@@ -279,7 +279,6 @@ def Elastic_ResNet(args, logfile):
 
     model_weight_url = None
     if args.model == "Elastic_ResNet18":
-        print("resnet18")
         # residual block type, 2 is BasicBlock, which means 2 conv-bn-relu in one block, 3 is BottleneckBlock, which means 3 conv-bn-relu blocks
         residual_block_type = 2
         model = ResNet(BasicBlock, [2, 2, 2, 2], residual_block_type, num_classes, add_intermediate_layers)
@@ -339,7 +338,6 @@ def Elastic_ResNet(args, logfile):
         param.requires_grad = False
     
     if add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
         LOG("add intermediate layer classifiers", logfile)
 
         # get all extra classifiers params and final classifier params
@@ -351,7 +349,6 @@ def Elastic_ResNet(args, logfile):
             param.requires_grad = True 
     
     elif add_intermediate_layers == 0:
-        print("not adding any intermediate layer classifiers")    
         LOG("not adding any intermediate layer classifiers", logfile)
 
         for param in model.fc.parameters():

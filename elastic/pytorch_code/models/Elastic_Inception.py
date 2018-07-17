@@ -426,7 +426,7 @@ class IntermediateClassifier(nn.Module):
         
         kernel_size = global_pooling_size
 
-        print("kernel_size for global pooling: " ,kernel_size)
+        print("kernel_size for global pooling: ", kernel_size)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),

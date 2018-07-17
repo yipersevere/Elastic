@@ -133,6 +133,7 @@ class SqueezeNet(nn.Module):
                     init.constant_(m.bias, 0)
 
     def forward(self, x):
+        # print("forward function")
         intermediate_outputs = []
 
         # x = self.features(x)
@@ -171,7 +172,8 @@ class SqueezeNet(nn.Module):
         x7 = self.features[11:](x6)
 
         x = self.classifier(x7)
-        return intermediate_outputs + [x.view(x.size(0), self.num_categories)]
+        # 这里实际上应该是 x.view(x.size(0), -1)才对?
+        return intermediate_outputs + [x.view(x.size(0), -1)]
 
 
 class IntermediateClassifier(nn.Module):
@@ -197,7 +199,7 @@ class IntermediateClassifier(nn.Module):
         
         kernel_size = global_pooling_size
 
-        print("kernel_size for global pooling: " ,kernel_size)
+        # LOG("kernel_size for global pooling: " + str(kernel_size), logfile)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
@@ -236,25 +238,10 @@ def squeezenet1_0(pretrained=False, **kwargs):
     return model
 
 
-def squeezenet1_1(pretrained=False, **kwargs):
-    r"""SqueezeNet 1.1 model from the `official SqueezeNet repo
-    <https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1>`_.
-    SqueezeNet 1.1 has 2.4x less computation and slightly fewer parameters
-    than SqueezeNet 1.0, without sacrificing accuracy.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = SqueezeNet(version=1.1, **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['squeezenet1_1']))
-    return model
-
 def Elastic_SqueezeNet(args, logfile):
     num_categories = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
-
 
     model = SqueezeNet(num_categories, add_intermediate_layers, version=1.0)
 
@@ -271,10 +258,6 @@ def Elastic_SqueezeNet(args, logfile):
 
 
     model.classifier._modules["1"] = nn.Conv2d(512, num_categories, kernel_size=(1, 1))
-
-    # fc_features = model.classifier[6].in_features
-    # model.classifier[6] = nn.Linear(fc_features, num_categories)
-    # # print("number of outputs: ", num_categories)
 
     for param in model.parameters():
         param.requires_grad = False

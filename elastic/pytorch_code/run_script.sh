@@ -129,10 +129,24 @@ python main.py --model Elastic_InceptionV3 --data cifar10 --num_classes 10 --bat
 
 
 #SqueezeNet
+    #CIFAR100
 python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
 
 python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
+    
+    #CIFAR10
+python main.py --model Elastic_SqueezeNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
+
+python main.py --model Elastic_SqueezeNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
 
 #MobileNet
+    #CIFAR10
+python main.py --model Elastic_MobileNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_Elastic_MobileNet_include_pretrain_skip_last_interCLF
+
+python main.py --model Elastic_MobileNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_Elastic_MobileNet_include_pretrain_skip_last_interCLF
