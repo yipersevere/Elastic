@@ -109,10 +109,62 @@ class MobileNet(nn.Module):
         self.fc = nn.Linear(1024, 1000)
 
     def forward(self, x):
-        x = self.model(x)
+        intermediate_outputs = []
+
+        x0 = self.model[:2](x)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[0](x0))   
+
+        x1 = self.model[2](x0)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[1](x1))   
+
+        x2 = self.model[3](x1)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[2](x2))   
+
+        x3 = self.model[4](x2)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[3](x3))           
+
+        x4 = self.model[5](x3)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[4](x4))           
+
+        x5 = self.model[6](x4)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[5](x5))           
+
+        x6 = self.model[7](x5)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[6](x6))           
+
+        x7 = self.model[8](x6)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[7](x7))           
+
+        x8 = self.model[9](x7)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[8](x8))           
+
+        x9 = self.model[10](x8)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[9](x9))           
+
+        x10 = self.model[11](x9)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[10](x10))           
+
+        x11 = self.model[12](x10)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[11](x11))           
+
+        x = self.model[13:](x11)
+    
+
         x = x.view(-1, 1024)
         x = self.fc(x)
-        return [x]
+        return intermediate_outputs + [x]
 
 class IntermediateClassifier(nn.Module):
 

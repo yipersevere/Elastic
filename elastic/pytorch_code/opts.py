@@ -8,7 +8,7 @@ parser.add_argument('--num_classes', type=int, help="classification number, 10 o
 parser.add_argument('--target_size', type=tuple, help='default target size is (224,224,3)', default=(224,224,3))
 parser.add_argument('--epochs', type=int, help="epoch number, default 1, set 100 or 1000", default=3)
 parser.add_argument('--dropout_rate', type=float, help="dropout rate, (default: 0.2)", default=0.2)
-parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 16)", default=1)
+parser.add_argument('--batch_size', type=int, help="batch size for training and testing, (default: 16)", default=16)
 parser.add_argument('--learning_rate', type=float, help="initial learning rate (default: 1e-3)", default=1e-2)
 parser.add_argument('--pretrain_learning_rate', type=float, help="initial learning rate (default: 1e-3)", default=1e-3)
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
