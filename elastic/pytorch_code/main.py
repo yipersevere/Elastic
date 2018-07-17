@@ -208,24 +208,26 @@ def main(**kwargs):
     
     if args.model == "Elastic_ResNet18" or args.model == "Elastic_ResNet34" or args.model == "Elastic_ResNet50" or args.model == "Elastic_ResNet101" or args.model == "Elastic_ResNet152":
         model = Elastic_ResNet(args, logFile)
-        num_outputs = model.num_outputs
 
     elif args.model == "Elastic_InceptionV3":
         args.target_size = (299, 299, 3) # since pytorch inceptionv3 pretrained accepts image size (299, 299, 3) instead of (224, 224, 3)
         model = Elastic_InceptionV3(args, logFile)
-        num_outputs = model.num_outputs
 
     elif args.model == "Elastic_MobileNet":
         model = Elastic_MobileNet(args, logFile)
 
     elif args.model == "Elastic_VGG16":
-         model = Elastic_VGG16_bn(args, logFile)
-         num_outputs = model.num_outputs
+        model = Elastic_VGG16_bn(args, logFile)
+    
+    elif args.model == "Elastic_SqueezeNet":
+        model = Elastic_SqueezeNet(args, logFile)
         
     else:
         print("--model parameter should be in [Elastic_ResNet18, Elastic_ResNet34, Elastic_ResNet101]")
         exit()    
     
+    num_outputs = model.num_outputs
+
     LOG("num_outputs: " + str(num_outputs), logFile)
     LOG("successfully create model: " + args.model, logFile)
 
@@ -243,6 +245,9 @@ def main(**kwargs):
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
     # args.batch_size = 1
+
+
+    # summary(model, (3,224,224))
 
     train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
@@ -264,7 +269,7 @@ def main(**kwargs):
         print(epoch_result)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
     
-    # summary(model, (3,224,224))
+    
     
     print("==> Full training ")
     LOG("==> Full training    \n", logFile)
@@ -313,10 +318,11 @@ def main(**kwargs):
         # run on test dataset
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
+        
         if args.model == "Elastic_InceptionV3":
             #since InceptionV3 will reduce to one ouput in eval phrase, but has 2 outputs in train phrase
-            test_accs = test_accs[:-1]
-            test_losses = test_accs[:-]
+            test_accs = test_accs[:(num_outputs-1)]
+            test_losses = test_accs[:(num_outputs-1)]
         
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
