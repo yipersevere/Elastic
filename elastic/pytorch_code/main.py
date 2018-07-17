@@ -32,11 +32,15 @@ def validate(val_loader, model, criterion):
     model.eval()
     all_acc = []
     all_loss = []
-
-    for ix in range(num_outputs):
-        all_loss.append(AverageMeter())
-        all_acc.append(AverageMeter())
-    # end = time.time()
+    
+    if args.model == "Elastic_InceptionV3":
+        for ix in range((num_outputs-1)):
+            all_loss.append(AverageMeter())
+            all_acc.append(AverageMeter())
+    else:
+        for ix in range(num_outputs):
+            all_loss.append(AverageMeter())
+            all_acc.append(AverageMeter())        
     
     for i, (input, target) in enumerate(val_loader):
         target = target.cuda(async=True)
@@ -249,7 +253,7 @@ def main(**kwargs):
     # args.batch_size = 1
 
 
-    # summary(model, (3,224,224))
+    summary(model, (3,224,224))
 
     train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
@@ -314,10 +318,10 @@ def main(**kwargs):
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
         
-        if args.model == "Elastic_InceptionV3":
-            #since InceptionV3 will reduce to one ouput in eval phrase, but has 2 outputs in train phrase
-            test_accs = test_accs[:(num_outputs-1)]
-            test_losses = test_accs[:(num_outputs-1)]
+        # if args.model == "Elastic_InceptionV3":
+        #     #since InceptionV3 will reduce to one ouput in eval phrase, but has 2 outputs in train phrase
+        #     test_accs = test_accs[:(num_outputs-1)]
+        #     test_losses = test_accs[:(num_outputs-1)]
         
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
