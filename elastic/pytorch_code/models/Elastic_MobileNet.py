@@ -1,3 +1,10 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+import sys
+sys.path.append("../")
+
 import argparse
 import os
 import shutil
@@ -8,10 +15,23 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim
+import torch.utils.model_zoo as model_zoo
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
+from helper import LOG
+
+# not official model weights
+model_urls = {
+    'mobilenetV1': '/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
+}
+
+class MobileNet(nn.Module):
+    def __init__(self, num_categories, add_intermediate_layers, num_outputs=1):
+        super(MobileNet, self).__init__()
+        
+        self.intermediate_CLF = []
+        self.add_intermediate_layers = add_intermediate_layers
+        self.num_categories = num_categories
+        self.num_outputs = num_outputs
 
         def conv_bn(inp, oup, stride):
             return nn.Sequential(
@@ -48,65 +68,154 @@ class Net(nn.Module):
             conv_dw(1024, 1024, 1),
             nn.AvgPool2d(7),
         )
+        if self.add_intermediate_layers == 2:                
+            self.intermediate_CLF.append(IntermediateClassifier(112, 64, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
+            self.num_outputs += 1
+
+            self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
+            self.num_outputs += 1     
+            
+            self.intermediate_CLF.append(IntermediateClassifier(28, 256, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(28, 256, self.num_categories))
+            self.num_outputs += 1                     
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1        
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1        
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1        
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(7, 1024, self.num_categories))
+            self.num_outputs += 1     
+
         self.fc = nn.Linear(1024, 1000)
 
     def forward(self, x):
         x = self.model(x)
         x = x.view(-1, 1024)
         x = self.fc(x)
+        return [x]
+
+class IntermediateClassifier(nn.Module):
+
+    def __init__(self, global_pooling_size, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+        super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        # self.residual_block_type = residual_block_type
+        self.device = 'cuda'
+        # if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34
+        #     kernel_size = int(3584/self.num_channels)
+        # elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152
+        #     kernel_size = int(14336/self.num_channels)
+        # else:
+        #     NotImplementedError
+        
+        kernel_size = global_pooling_size
+
+        print("kernel_size for global pooling: " ,kernel_size)
+
+        self.features = nn.Sequential(
+            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
+            nn.Dropout(p=0.2, inplace=False)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        self.classifier = torch.nn.Sequential(nn.Linear(num_channels, num_classes)).to(self.device)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+        x = self.features(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
         return x
+
+
 
 def Elastic_MobileNet(args, logfile):
     """
     based on MobileNet Version1 and ImageNet pretrained weight, https://github.com/marvis/pytorch-mobilenet
     但是这里并没有实现 alpha 乘子和width 乘子
     """
-    num_classes = args.num_classes
+    num_categories = args.num_classes
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    model = Net()
+    model = MobileNet(num_categories, add_intermediate_layers)
 
     if pretrained_weight == 1:
-        
-        model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
-        print("loaded ImageNet pretrained weights")
+        tar = torch.load(model_urls['mobilenetV1'])
+        state_dict = tar['state_dict']
+
+        from collections import OrderedDict
+        new_state_dict = OrderedDict()
+        for k, v in state_dict.items():
+            name = k[7:] # remove `module.`
+            new_state_dict[name] = v
+        model.load_state_dict(new_state_dict)
+
+        # model.load_state_dict(model_zoo.load_url(model_urls['mobilenetV1']))
         LOG("loaded ImageNet pretrained weights", logfile)
         
     elif pretrained_weight == 0:
-        print("not loading ImageNet pretrained weights")
         LOG("not loading ImageNet pretrained weights", logfile)
 
     else:
-        print("parameter--pretrained_weight, should be 0 or 1")
         LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
         NotImplementedError
 
     fc_features = model.fc.in_features
-    model.fc = nn.Linear(fc_features, num_classes)
-    # print("=====> InceptionV3, successfully load pretrained imagenet weight")
+    model.fc = nn.Linear(fc_features, num_categories)
 
     for param in model.parameters():
         param.requires_grad = False
     
     if add_intermediate_layers == 2:
-        print("add any intermediate layer classifiers")    
-        LOG("add intermediate layer classifiers", logfile)
+        LOG("set all intermediate classifiers and final classifiers parameter as trainable.", logfile)
 
         # get all extra classifiers params and final classifier params
         for inter_clf in model.intermediate_CLF:
             for param in inter_clf.parameters():
                 param.requires_grad = True
-        
+
         for param in model.fc.parameters():
-            param.requires_grad = True 
-    
+            param.requires_grad = True     
+
     elif add_intermediate_layers == 0:
-        print("not adding any intermediate layer classifiers")    
-        LOG("not adding any intermediate layer classifiers", logfile)
+        LOG("only set final classifiers parameter as trainable.", logfile)
 
         for param in model.fc.parameters():
             param.requires_grad = True         
     else:
         NotImplementedError
+
     return model

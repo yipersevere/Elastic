@@ -193,8 +193,7 @@ def main(**kwargs):
     }
 
     # save input parameters into log file
-    args_str = str(args)
-    LOG(args_str, logFile)
+
     LOG("program start time: " + ts_str +"\n", logFile)
 
 
@@ -230,6 +229,9 @@ def main(**kwargs):
 
     LOG("num_outputs: " + str(num_outputs), logFile)
     LOG("successfully create model: " + args.model, logFile)
+
+    args_str = str(args)
+    LOG(args_str, logFile)
 
     model = model.to(device)
     if device == 'cuda':
