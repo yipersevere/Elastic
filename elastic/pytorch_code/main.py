@@ -225,11 +225,15 @@ def main(**kwargs):
     elif args.model == "Elastic_SqueezeNet":
         model = Elastic_SqueezeNet(args, logFile)
         
+    elif args.model == "Elastic_DenseNet121" or args.model == "Elastic_DenseNet169" or args.model == "Elastic_DenseNet201":
+        model = Elastic_DenseNet(args, logFile)
+
     else:
         LOG("--model parameter should be in ResNet, InceptionV3, MobileNet, VGG16, SqueezeNet, DenseNet", logFile)
         exit()    
     
-    num_outputs = model.num_outputs
+    # num_outputs = model.num_outputs
+    num_outputs = 1
 
     LOG("num_outputs: " + str(num_outputs), logFile)
     LOG("successfully create model: " + args.model, logFile)

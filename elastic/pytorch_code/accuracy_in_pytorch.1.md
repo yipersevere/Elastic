@@ -19,6 +19,19 @@ Elastic_ResNet-50-No-include-pretrain                                     | 9.10
 ResNet-101-include-pretrain-skip-last-interCLF                            | 8.5900
 Elastic_ResNet-101-include-pretrain-skip-last-interCLF                    | 10.4900
 
+InceptionV3                                                               | 
+Elastic_InceptionV3                                                       | 
+
+VGG16                                                                     | 
+Elastic_VGG16                                                             | 
+
+SqueezeNet                                                                | 
+Elastic_SqueezeNet                                                        | 
+
+MobileNet                                                                 | 
+Elastic_MobileNet                                                         | 
+
+
 reference  
 **pretrain** means using 10 epochs to train classifier first
 *[1] second to last classifier gets better result than the last classifier
@@ -46,4 +59,15 @@ Elastic_ResNet-50-No-include-pretrain                                     | 29.1
 ResNet-101-include-pretrain                                               | 22.3300   
 Elastic_ResNet-101-include-pretrain                                       | 38.1000  
 
+InceptionV3                                                               | 
+Elastic_InceptionV3                                                       | 
+
+VGG16                                                                     | 
+Elastic_VGG16                                                             | 
+
+SqueezeNet                                                                | 
+Elastic_SqueezeNet                                                        | 
+
+MobileNet                                                                 | 
+Elastic_MobileNet                                                         | 
 

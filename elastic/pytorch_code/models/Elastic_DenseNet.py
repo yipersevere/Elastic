@@ -1,9 +1,17 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+import sys
+sys.path.append("../")
+
 import re
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
 from collections import OrderedDict
+from helper import LOG
 
 __all__ = ['DenseNet', 'densenet121', 'densenet169', 'densenet201', 'densenet161']
 
@@ -224,23 +232,32 @@ class DenseNet(nn.Module):
         out = self.classifier(out)
         return out
 
-class Elastic_DenseNet121():
-    def __init__(self, args):
-        self.num_classes = args.num_classes
-        self.add_intermediate_layers = args.add_intermediate_layers
-        self.batch_size = args.batch_size
-        self.model = self.build_model()
+def Elastic_DenseNet(args, logfile):
 
-    def build_model(self):
-        model = densenet121(pretrained=True)
-        
+    num_classes = args.num_classes
+    add_intermediate_layers = args.add_intermediate_layers
+    pretrained_weight = args.pretrained_weight
 
-        for param in model.parameters():
-            param.requires_grad = True
-        print("=====> successfully load pretrained imagenet weight")
-        
-        fc_features = model.classifier.in_features
-        model.classifier = nn.Linear(fc_features, self.num_classes)
+    if args.model == "Elastic_DenseNet121":
+        model = DenseNet(num_init_features=64, growth_rate=32, block_config=(6, 12, 24, 16))        
+        LOG("successfully create model: (Elastic-)Dense121", logfile)
+    if pretrained_weight == 1:
+        # '.'s are no longer allowed in module names, but pervious _DenseLayer
+        # has keys 'norm.1', 'relu.1', 'conv.1', 'norm.2', 'relu.2', 'conv.2'.
+        # They are also in the checkpoints in model_urls. This pattern is used
+        # to find such keys.
+        pattern = re.compile(
+            r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
+        state_dict = model_zoo.load_url(model_urls['densenet121'])
+        for key in list(state_dict.keys()):
+            res = pattern.match(key)
+            if res:
+                new_key = res.group(1) + res.group(2)
+                state_dict[new_key] = state_dict[key]
+                del state_dict[key]
+        model.load_state_dict(state_dict)
 
-        
-        return model
+    in_features = model.classifier.in_features
+    model.classifier = nn.Linear(in_features, num_classes)
+
+    return model

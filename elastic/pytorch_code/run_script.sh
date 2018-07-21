@@ -18,7 +18,7 @@ python main.py --model Elastic_ResNet152 --data cifar100 --num_classes 100 --bat
 
 
 # ResNet-101
-    ## cifar10, 
+    ## cifar10
         ### imagenet pretrained weight
 python main.py --model Elastic_ResNet101 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet101
@@ -139,8 +139,8 @@ python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --ba
 python main.py --model Elastic_SqueezeNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
 
-python main.py --model Elastic_SqueezeNet --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
+python main.py --model Elastic_SqueezeNet --data cifar10 --num_classes 10 --batch_size 32 --epochs 100 --add_intermediate_layers 0 \
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_0_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF_batch32
 
 #MobileNet
     #CIFAR10
