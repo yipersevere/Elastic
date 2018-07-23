@@ -1,0 +1,9 @@
+model,error
+InceptionV3,
+Elastic_InceptionV3,
+VGG16, 
+Elastic_VGG16,
+SqueezeNet,
+Elastic_SqueezeNet,
+MobileNet,
+Elastic_MobileNet,

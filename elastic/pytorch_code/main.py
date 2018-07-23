@@ -232,8 +232,8 @@ def main(**kwargs):
         LOG("--model parameter should be in ResNet, InceptionV3, MobileNet, VGG16, SqueezeNet, DenseNet", logFile)
         exit()    
     
-    # num_outputs = model.num_outputs
-    num_outputs = 1
+    num_outputs = model.num_outputs
+    # num_outputs = 1
 
     LOG("num_outputs: " + str(num_outputs), logFile)
     LOG("successfully create model: " + args.model, logFile)
@@ -257,7 +257,7 @@ def main(**kwargs):
     # args.batch_size = 1
 
 
-    summary(model, (3,224,224))
+    # summary(model, (3,224,224))
 
     train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                     random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,

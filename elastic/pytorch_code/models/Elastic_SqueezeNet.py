@@ -173,7 +173,7 @@ class SqueezeNet(nn.Module):
 
         x = self.classifier(x7)
         # 这里实际上应该是 x.view(x.size(0), -1)才对?
-        return intermediate_outputs + [x.view(x.size(0), -1)]
+        return intermediate_outputs + [x.view(x.size(0), self.num_categories)]
 
 
 class IntermediateClassifier(nn.Module):

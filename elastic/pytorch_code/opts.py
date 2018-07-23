@@ -27,7 +27,7 @@ parser.add_argument('--layers_weight_change', type=int, default=0,
 # parser.add_argument('--model_name', type=str, help="exact model name", default="CIFAR10_all_intermediate_resblock_Elastic_ResNet50")
 
 parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_DenseNet121")
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR10_0_intermediate_classifiers_Elastic_DenseNet121")
+parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR10_all_intermediate_classifiers_Elastic_DenseNet121")
 
 parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')

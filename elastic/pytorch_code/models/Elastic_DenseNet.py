@@ -184,10 +184,15 @@ class DenseNet(nn.Module):
         num_classes (int) - number of classification classes
     """
 
-    def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
+    def __init__(self, add_intermediate_layers, num_categories, num_outputs = 1, growth_rate=32, block_config=(6, 12, 24, 16),
                  num_init_features=64, bn_size=4, drop_rate=0, num_classes=1000):
 
         super(DenseNet, self).__init__()
+        
+        self.intermediate_CLF = []
+        self.add_intermediate_layers = add_intermediate_layers
+        self.num_categories = num_categories
+        self.num_outputs = num_outputs
 
         # First convolution
         self.features = nn.Sequential(OrderedDict([
@@ -209,6 +214,11 @@ class DenseNet(nn.Module):
                 self.features.add_module('transition%d' % (i + 1), trans)
                 num_features = num_features // 2
 
+                if self.add_intermediate_layers == 2:
+                    self.intermediate_CLF.append(IntermediateClassifier(num_features, self.num_categories))
+                    self.num_outputs += 1
+
+
         # Final batch norm
         self.features.add_module('norm5', nn.BatchNorm2d(num_features))
 
@@ -226,11 +236,81 @@ class DenseNet(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
-        features = self.features(x)
-        out = F.relu(features, inplace=True)
-        out = F.avg_pool2d(out, kernel_size=7, stride=1).view(features.size(0), -1)
+        intermediate_outputs = []
+        i = 0
+
+        x0 = self.features[:6](x)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[i](x0))
+            i += 1
+        
+        x1 = self.features[6:8](x0)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[i](x1))
+            i += 1
+
+        x2 = self.features[8:10](x1)
+        if self.add_intermediate_layers == 2:
+            intermediate_outputs.append(self.intermediate_CLF[i](x2))
+            i += 1
+
+        x3 = self.features[10:](x2)
+        # features = self.features(x)
+
+        out = F.relu(x3, inplace=True)
+        out = F.avg_pool2d(out, kernel_size=7, stride=1).view(x3.size(0), -1)
         out = self.classifier(out)
-        return out
+        return intermediate_outputs + [out]
+
+class IntermediateClassifier(nn.Module):
+
+    def __init__(self, num_channels, num_classes):
+        """
+        Classifier of a cifar10/100 image.
+
+        :param num_channels: Number of input channels to the classifier
+        :param num_classes: Number of classes to classify
+        """
+        super(IntermediateClassifier, self).__init__()
+        self.num_classes = num_classes
+        self.num_channels = num_channels
+        
+        self.device = 'cuda'
+        kernel_size = int(3584/self.num_channels)
+            
+        print("kernel_size for global pooling: ", kernel_size)
+
+        self.features = nn.Sequential(
+            nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
+            nn.Dropout(p=0.2, inplace=False)
+        ).to(self.device)
+        # print("num_channels: ", num_channels, "\n")
+        # 在keras中这里还有dropout rate = 0.2，但是这里没有，需要添加一下
+        self.classifier = torch.nn.Sequential(nn.Linear(self.num_channels, self.num_classes)).to(self.device)
+
+    def forward(self, x):
+        """
+        Drive features to classification.
+
+        :param x: Input of the lowest scale of the last layer of
+                  the last block
+        :return: Cifar object classification result
+        """
+        # get the width or heigh on that feaure map
+        # kernel_size = x.size()[-1]
+        # get the number of feature maps
+        # num_channels = x.size()[-3]
+        
+        # print("kernel_size for global pooling: " ,kernel_size)
+        
+
+        # do global average pooling
+        x = self.features(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
 
 def Elastic_DenseNet(args, logfile):
 
@@ -239,7 +319,7 @@ def Elastic_DenseNet(args, logfile):
     pretrained_weight = args.pretrained_weight
 
     if args.model == "Elastic_DenseNet121":
-        model = DenseNet(num_init_features=64, growth_rate=32, block_config=(6, 12, 24, 16))        
+        model = DenseNet(add_intermediate_layers=add_intermediate_layers, num_categories=num_classes, num_init_features=64, growth_rate=32, block_config=(6, 12, 24, 16))        
         LOG("successfully create model: (Elastic-)Dense121", logfile)
     if pretrained_weight == 1:
         # '.'s are no longer allowed in module names, but pervious _DenseLayer
@@ -256,8 +336,40 @@ def Elastic_DenseNet(args, logfile):
                 state_dict[new_key] = state_dict[key]
                 del state_dict[key]
         model.load_state_dict(state_dict)
+        LOG("loaded ImageNet pretrained weights", logfile)
+    elif pretrained_weight == 0:
+        LOG("not loading ImageNet pretrained weights", logfile)
+    
+    else:
+        LOG("parameter--pretrained_weight, should be 0 or 1", logfile)
+        NotImplementedError
 
     in_features = model.classifier.in_features
     model.classifier = nn.Linear(in_features, num_classes)
+
+    for param in model.parameters():
+        param.requires_grad = False
+    
+    if add_intermediate_layers == 2:
+        LOG("add intermediate layer classifiers", logfile)
+
+        # get all extra classifiers params and final classifier params
+        for inter_clf in model.intermediate_CLF:
+            for param in inter_clf.parameters():
+                param.requires_grad = True
+
+        for param in model.classifier.parameters():
+            param.requires_grad = True     
+
+    elif add_intermediate_layers == 0:
+        LOG("not adding any intermediate layer classifiers", logfile)
+
+        for param in model.classifier.parameters():
+            param.requires_grad = True         
+    else:
+        NotImplementedError
+
+
+
 
     return model
