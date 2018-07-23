@@ -318,9 +318,26 @@ def Elastic_DenseNet(args, logfile):
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
+    model_weight_url = None
+
     if args.model == "Elastic_DenseNet121":
         model = DenseNet(add_intermediate_layers=add_intermediate_layers, num_categories=num_classes, num_init_features=64, growth_rate=32, block_config=(6, 12, 24, 16))        
+        model_weight_url = model_urls['densenet121']
         LOG("successfully create model: (Elastic-)Dense121", logfile)
+        
+
+    elif args.model == "Elastic_DenseNet169":
+        model = DenseNet(add_intermediate_layers=add_intermediate_layers, num_categories=num_classes, num_init_features=64, growth_rate=32, block_config=(6, 12, 32, 32))        
+        model_weight_url = model_urls['densenet169']
+        LOG("successfully create model: (Elastic-)Dense169", logfile)
+    
+    else:
+        LOG("DenseNet model should be DenseNet121, DenseNet169, DenseNet201", logfile)
+        NotImplementedError        
+
+
+
+
     if pretrained_weight == 1:
         # '.'s are no longer allowed in module names, but pervious _DenseLayer
         # has keys 'norm.1', 'relu.1', 'conv.1', 'norm.2', 'relu.2', 'conv.2'.
@@ -328,7 +345,7 @@ def Elastic_DenseNet(args, logfile):
         # to find such keys.
         pattern = re.compile(
             r'^(.*denselayer\d+\.(?:norm|relu|conv))\.((?:[12])\.(?:weight|bias|running_mean|running_var))$')
-        state_dict = model_zoo.load_url(model_urls['densenet121'])
+        state_dict = model_zoo.load_url(model_weight_url)
         for key in list(state_dict.keys()):
             res = pattern.match(key)
             if res:
