@@ -2,7 +2,6 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.models.resnet
 import torch.backends.cudnn as cudnn
 from ignite.handlers import EarlyStopping
 from torchsummary import summary
@@ -25,10 +24,7 @@ torch.cuda.manual_seed_all(args.manual_seed)
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
 
-# num_outputs = 1
-
 def validate(val_loader, model, criterion):
-    # batch_time = AverageMeter()
     model.eval()
     all_acc = []
     all_loss = []
@@ -54,29 +50,11 @@ def validate(val_loader, model, criterion):
             for ix in range(len(outputs)):
                 loss = criterion(outputs[ix], target_var)
                 all_loss[ix].update(loss.item(), input.size(0))
-
                 losses += loss
                 # print("loss: ", i, ": ", loss.item())
                 prec1 = accuracy(outputs[ix].data, target)
                 all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
                 # print("precision_", i, ": ", prec1[0].data[0].item())
-
-        #     ### Measure elapsed time
-        #     batch_time.update(time.time() - end)
-        #     end = time.time()
-
-        #     # if i % args.print_freq == 0:
-        #     #     temp_result = 'Test: [{0}/{1}]\t' \
-        #     #           'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t' \
-        #     #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t' \
-        #     #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
-        #     #           'x1_out_Prec@1 {x1_out_top1.val:.3f} ({x1_out_top1.avg:.3f})'.format(
-        #     #               i, len(val_loader), batch_time=batch_time, loss=losses,
-        #     #               top1=top1, x1_out_top1=x1_out_top1)
-        #     #     LOG(temp_result, logFile)
-
-        #     #     print(temp_result)
-
     accs = []
     ls = []
     for i, j in zip(all_acc, all_loss):
@@ -86,14 +64,10 @@ def validate(val_loader, model, criterion):
     return accs, ls
 
 
-
 def train(train_loader, model, criterion, optimizer, epoch):
-    # batch_time = AverageMeter()
-    # data_time = AverageMeter()
 
     model.train()
 
-    # end = time.time()
     lr = None
     all_acc = []
     all_loss = []
@@ -101,13 +75,9 @@ def train(train_loader, model, criterion, optimizer, epoch):
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
         all_acc.append(AverageMeter())
-    
 
     LOG("==> train ", logFile)
     for i, (input, target) in enumerate(train_loader):
-        # lr = adjust_learning_rate(optimizer, epoch, args, batch=i, nBatch=len(train_loader))
-
-        # data_time.update(time.time() - end)
 
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
@@ -118,7 +88,6 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         outputs = model(input_var)
 
-        
         # 这里应该要再封装一下， 变成只有一个变量loss
         for ix in range(len(outputs)):
             loss = criterion(outputs[ix], target_var)
@@ -132,10 +101,6 @@ def train(train_loader, model, criterion, optimizer, epoch):
         
         losses.backward()
         optimizer.step()
-
-        ### Measure elapsed time
-        # batch_time.update(time.time() - end)
-        # end = time.time()
         
     accs = []
     ls = []
@@ -269,7 +234,7 @@ def main(**kwargs):
 
     pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
                                 momentum=args.momentum,
-                                weight_decay=args.weight_decay)# nesterov set False to keep align with keras default settting
+                                weight_decay=args.weight_decay)
 
     LOG("==> Pretraining for 10 epoches    \n", logFile)
     for pretrain_epoch in range(0, 1):
@@ -283,7 +248,8 @@ def main(**kwargs):
     
     optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
                                 momentum=args.momentum,
-                                weight_decay=args.weight_decay)# nesterov set False to keep align with keras default settting
+                                weight_decay=args.weight_decay)
+
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
     # implement early stop by own
@@ -310,7 +276,7 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
-        epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", total train sum loss " + str(sum(losses))
+        epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", \ntotal train sum loss " + str(sum(losses))
         LOG(epoch_result, logFile)
 
         if num_outputs > 1:
@@ -322,11 +288,6 @@ def main(**kwargs):
         LOG("==> test \n", logFile)
         test_accs, test_losses = validate(test_loader, model, criterion)
         
-        # if args.model == "Elastic_InceptionV3":
-        #     #since InceptionV3 will reduce to one ouput in eval phrase, but has 2 outputs in train phrase
-        #     test_accs = test_accs[:(num_outputs-1)]
-        #     test_losses = test_accs[:(num_outputs-1)]
-        
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
 
@@ -336,19 +297,23 @@ def main(**kwargs):
 
         test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
         LOG(test_result_str, logFile)
-
+        
+        total_loss = sum(test_losses)
+        
         if num_outputs > 1:
-            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_total_sum_losses', sum(test_losses), epoch) 
-            test_losses.append(sum(test_losses)) # add the total sum loss
-            LOG("test_total_sum_losses: " + str(sum(test_losses)), logFile)   
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_total_sum_losses', total_loss, epoch) 
+            test_losses.append(total_loss) # add the total sum loss
+            LOG("test_total_sum_losses: " + str(total_loss), logFile)   
         
         log_stats(path, accs, losses, lr, test_accs, test_losses)
 
         # Remember best prec@1 and save checkpoint
         is_best = test_accs[-1] < lowest_error1 #error not accuracy, but i don't want to change variable names
-        lowest_error1 = test_accs[-1]  #但是有个问题，有时是倒数第二个CLF取得更好的结果
         
         if is_best:
+            
+            lowest_error1 = test_accs[-1]  #但是有个问题，有时是倒数第二个CLF取得更好的结果
+            
             save_checkpoint({
                 'epoch': epoch,
                 'model': args.model_name,
@@ -359,8 +324,7 @@ def main(**kwargs):
 
         # apply early_stop with monitoring val_loss
         # EarlyStopping(patience=15, score_function=score_function(val_loss), trainer=model)
-        total_loss = sum(test_losses)
-
+        
         scheduler.step(total_loss) # adjust learning rate with test_loss
         
         if epoch == 0:

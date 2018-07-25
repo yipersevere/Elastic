@@ -137,39 +137,33 @@ class SqueezeNet(nn.Module):
         intermediate_outputs = []
 
         # x = self.features(x)
-        x0 = self.features[:4](x)
         if self.add_intermediate_layers == 2:
+            x0 = self.features[:4](x)
             intermediate_outputs.append(self.intermediate_CLF[0](x0))   
 
-        x1 = self.features[4](x0)
-        if self.add_intermediate_layers == 2:
+            x1 = self.features[4](x0)
             intermediate_outputs.append(self.intermediate_CLF[1](x1))   
 
-        x2 = self.features[5](x1)
-        # print("x2 shape: ", x2.size())
-        if self.add_intermediate_layers == 2:
+            x2 = self.features[5](x1)
             intermediate_outputs.append(self.intermediate_CLF[2](x2))   
 
-        x3 = self.features[6:8](x2)
-        if self.add_intermediate_layers == 2:
+            x3 = self.features[6:8](x2)
             intermediate_outputs.append(self.intermediate_CLF[3](x3))   
 
-        x4 = self.features[8](x3)
-        if self.add_intermediate_layers == 2:
+            x4 = self.features[8](x3)
             intermediate_outputs.append(self.intermediate_CLF[4](x4))   
 
-        x5 = self.features[9](x4)
-        if self.add_intermediate_layers == 2:
+            x5 = self.features[9](x4)
             intermediate_outputs.append(self.intermediate_CLF[5](x5))   
-        
-        # print("x5 shape: ", x5.size())
 
-        x6 = self.features[10](x5)
-        if self.add_intermediate_layers == 2:
+            x6 = self.features[10](x5)
             intermediate_outputs.append(self.intermediate_CLF[6](x6))   
 
-        # print("x6 shape: ", x6.size())
-        x7 = self.features[11:](x6)
+            # print("x6 shape: ", x6.size())
+            x7 = self.features[11:](x6)
+
+        elif self.add_intermediate_layers == 0:
+            x7 = self.features(x)
 
         x = self.classifier(x7)
         # 这里实际上应该是 x.view(x.size(0), -1)才对?
@@ -186,26 +180,18 @@ class IntermediateClassifier(nn.Module):
         :param num_classes: Number of classes to classify
         """
         super(IntermediateClassifier, self).__init__()
-        self.num_classes = num_classes
         self.num_channels = num_channels
-        # self.residual_block_type = residual_block_type
+        self.num_classes = num_classes
+
         self.device = 'cuda'
-        # if self.residual_block_type == 2: # basicblock type, ResNet-18, ResNet-34
-        #     kernel_size = int(3584/self.num_channels)
-        # elif self.residual_block_type == 3: # bottleneck block, ResNet-50, ResNet-101, ResNet-152
-        #     kernel_size = int(14336/self.num_channels)
-        # else:
-        #     NotImplementedError
         
         kernel_size = global_pooling_size
-
-        # LOG("kernel_size for global pooling: " + str(kernel_size), logfile)
 
         self.features = nn.Sequential(
             nn.AvgPool2d(kernel_size=(kernel_size, kernel_size)),
             nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
-        # print("num_channels: ", num_channels, "\n")
+
         self.classifier = torch.nn.Sequential(nn.Linear(num_channels, num_classes)).to(self.device)
 
     def forward(self, x):
@@ -243,7 +229,7 @@ def Elastic_SqueezeNet(args, logfile):
     add_intermediate_layers = args.add_intermediate_layers
     pretrained_weight = args.pretrained_weight
 
-    model = SqueezeNet(num_categories, add_intermediate_layers, version=1.0)
+    model = SqueezeNet(num_categories=num_categories, add_intermediate_layers=add_intermediate_layers, version=1.0)
 
     if pretrained_weight == 1:
         model.load_state_dict(model_zoo.load_url(model_urls['squeezenet1_0']))    
@@ -264,21 +250,18 @@ def Elastic_SqueezeNet(args, logfile):
     
     if add_intermediate_layers == 2:
         LOG("set all intermediate classifiers and final classifiers parameter as trainable.", logfile)
-
         # get all extra classifiers params and final classifier params
         for inter_clf in model.intermediate_CLF:
             for param in inter_clf.parameters():
                 param.requires_grad = True
 
-        for param in model.classifier.parameters():
-            param.requires_grad = True     
-
     elif add_intermediate_layers == 0:
         LOG("only set final classifiers parameter as trainable.", logfile)
-
-        for param in model.classifier.parameters():
-            param.requires_grad = True         
+    
     else:
         NotImplementedError
+
+    for param in model.classifier.parameters():
+        param.requires_grad = True     
     
     return model    

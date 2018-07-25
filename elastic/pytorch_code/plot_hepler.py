@@ -238,3 +238,64 @@ def pytorch_ResNet(model, data):
         "original_layer_label" : original_layer_label
     }
     return error_origin, error_elastic, layer_plot_index, captionStrDict    
+
+
+def pytorch_DenseNet(model, data):
+    if data == "CIFAR10" or data == "cifar10":
+        fig_title_str = fig_title_str_cifar10
+
+        if model == "DenseNet121" or model == "densenet121":
+            # folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_ResNet18/Classification_Accuracy/"
+            # origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_classifiers_Elastic_ResNet18_include_pretrain_skip_lastCLF/2018-07-10-16-59-37/test_errors.txt"
+            # elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_classifiers_Elastic_ResNet18_include_pretrain_skip_lastCLF/2018-07-10-16-59-37/test_errors.txt"
+            # fig_title_prefix = "Elastic ResNet 18 "
+            # save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_ResNet18_include_pretrain_skip_last_interCLF"
+            # # 这里是[0,7] 而不是[0,8], 即把最后一层的intermediate classifier跳过了
+            # layer_plot_index = [0,1,2,3,4,5,6,7]
+            # original_layer_label = "Original_ResNet-18"   
+
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_DenseNet121/Classification_Accuracy"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_Elastic_DenseNet121_include_pretrain_skip_last_interCLF/2018-07-23-16-07-41/test_errors.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_Elastic_DenseNet121_include_pretrain_skip_last_interCLF/2018-07-23-16-05-30/test_errors.txt"
+            fig_title_prefix = "Elastic DenseNet 121  "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_DenseNet-121"
+            # 这里是[0,7] 而不是[0,8], 即把最后一层的intermediate classifier跳过了
+            layer_plot_index = [0,1,2,3]
+            original_layer_label = "Original_DenseNet-121"   
+
+        elif model == "DenseNet169" or model == "densenet169":
+            folder = "/home/yi/narvi/elastic/pytorch_code/Elastic_DenseNet169/Classification_Accuracy"
+            origin_file = folder + os.sep + "pytorch_CIFAR10_0_intermediate_Elastic_DenseNet169_include_pretrain_skip_last_interCLF/2018-07-24-00-06-26/test_errors.txt"
+            elastic_file = folder + os.sep + "pytorch_CIFAR10_all_intermediate_Elastic_DenseNet169_include_pretrain_skip_last_interCLF/2018-07-24-00-06-24/test_errors.txt"
+            fig_title_prefix = "Elastic DenseNet 169 "
+            save_file_name = "Pytorch_CIFAR_10_accuracy_Elastic&Original_DenseNet-169"
+            layer_plot_index = [0,1,2,3]
+            original_layer_label = "Original_DenseNet-169"   
+
+        else:
+            NotImplementedError
+
+    elif data == "CIFAR100" or data == "cifar100":
+        fig_title_str = fig_title_str_cifar100
+        NotImplementedError   
+    else:
+        print("data should be CIFAR 10 or CIFAR 100")
+        NotImplementedError
+
+    
+    error_origin = pd.read_table(origin_file, delim_whitespace=True, header=None)
+    error_elastic = pd.read_table(elastic_file, delim_whitespace=True, header=None) 
+    
+    save_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/plot"
+
+    captionStrDict = {
+        "save_file_name" : save_folder + os.sep + save_file_name +".pdf",
+        "save_png_file_name" : save_folder + os.sep + save_file_name +".png",
+        "fig_title" : fig_title_prefix + fig_title_str,
+        "x_label" : x_label_str,
+        "y_label" : y_label_str,
+        'elastic_final_layer_label': "Final_Output_Classifier",
+        "elastic_intermediate_layer_label" : "Intermediate_Classifier_",
+        "original_layer_label" : original_layer_label
+    }
+    return error_origin, error_elastic, layer_plot_index, captionStrDict    
