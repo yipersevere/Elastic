@@ -213,10 +213,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
-    # data_folder = "/home/zhouy/Elastic/data"
+    data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
@@ -233,24 +233,24 @@ def main(**kwargs):
     
     criterion = nn.CrossEntropyLoss().cuda()
 
-    # pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
-    #                             momentum=args.momentum,
-    #                             weight_decay=args.weight_decay)
+    pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay)
 
-    # LOG("==> Pretraining for 10 epoches    \n", logFile)
-    # for pretrain_epoch in range(0, 10):
-    #     accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
-    #     epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-    #     LOG(epoch_result, logFile)
+    LOG("==> Pretraining for 10 epoches    \n", logFile)
+    for pretrain_epoch in range(0, 10):
+        accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
+        epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+        LOG(epoch_result, logFile)
     
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
         param.requires_grad = True
     
-    # optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-    #                             momentum=args.momentum,
-    #                             weight_decay=args.weight_decay)
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
+    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay)
+    # optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
