@@ -83,24 +83,25 @@ def train(train_loader, model, criterion, optimizer, epoch):
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
-        losses = 0
-        optimizer.zero_grad()
+        # losses = 0
+        
 
         outputs = model(input_var)
 
         # 这里应该要再封装一下， 变成只有一个变量loss
         for ix in range(len(outputs)):
+            optimizer.zero_grad()
+            
             loss = criterion(outputs[ix], target_var)
             all_loss[ix].update(loss.item(), input.size(0))
 
-            losses += loss
+            # losses += loss
             # print("loss: ", i, ": ", loss.item())
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-            # print("precision_", i, ": ", prec1[0].data[0].item())
-        
-        losses.backward()
-        optimizer.step()
+            # print("precision_", i, ": ", prec1[0].data[0].item())        
+            loss.backward()
+            optimizer.step()
         
     accs = []
     ls = []
@@ -232,23 +233,24 @@ def main(**kwargs):
     
     criterion = nn.CrossEntropyLoss().cuda()
 
-    pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    # pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
+    #                             momentum=args.momentum,
+    #                             weight_decay=args.weight_decay)
 
-    LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 1):
-        accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
-        epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-        LOG(epoch_result, logFile)
+    # LOG("==> Pretraining for 10 epoches    \n", logFile)
+    # for pretrain_epoch in range(0, 10):
+    #     accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
+    #     epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    #     LOG(epoch_result, logFile)
     
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
         param.requires_grad = True
     
-    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    # optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
+    #                             momentum=args.momentum,
+    #                             weight_decay=args.weight_decay)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
@@ -276,7 +278,7 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
         
-        epoch_result = "train error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", \ntotal train sum loss " + str(sum(losses))
+        epoch_result = "\ntrain error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", \ntotal train sum loss " + str(sum(losses))
         LOG(epoch_result, logFile)
 
         if num_outputs > 1:
@@ -295,7 +297,7 @@ def main(**kwargs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
 
-        test_result_str = "==> Test epoch, final output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
+        test_result_str = "==> Test epoch: \nfinal output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
         LOG(test_result_str, logFile)
         
         total_loss = sum(test_losses)
