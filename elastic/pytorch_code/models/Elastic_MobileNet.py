@@ -21,8 +21,8 @@ from helper import LOG
 
 # not official model weights
 model_urls = {
-    'mobilenetV1': '/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
-    #'mobilenetV1': '/home/zhouy/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
+    # 'mobilenetV1': '/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
+    'mobilenetV1': '/home/zhouy/Elastic/elastic/pytorch_code/models/mobilenet_sgd_68.848.pth.tar'
 }
 
 class MobileNet(nn.Module):
