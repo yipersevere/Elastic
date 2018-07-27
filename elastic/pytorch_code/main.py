@@ -83,6 +83,31 @@ def train(train_loader, model, criterion, optimizer, epoch):
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
         
+
+        # losses = 0
+        # optimizer.zero_grad()
+
+        # outputs = model(input_var)
+
+        
+        # # 这里应该要再封装一下， 变成只有一个变量loss
+        # for ix in range(len(outputs)):
+        #     loss = criterion(outputs[ix], target_var)
+        #     all_loss[ix].update(loss.item(), input.size(0))
+
+        #     losses += loss
+        #     print("loss: ", ix, ": ", loss.item())
+        #     prec1 = accuracy(outputs[ix].data, target)
+        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        #     # print("precision_", i, ": ", prec1[0].data[0].item())
+        
+        # losses.backward()
+        # optimizer.step()
+
+        ### Measure elapsed time
+        # batch_time.update(time.time() - end)
+        # end = time.time()
+
         # losses = 0
         
 
@@ -91,7 +116,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # 这里应该要再封装一下， 变成只有一个变量loss
         for ix in range(len(outputs)):
             optimizer.zero_grad()
-            
+
             loss = criterion(outputs[ix], target_var)
             all_loss[ix].update(loss.item(), input.size(0))
 
@@ -100,7 +125,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
             # print("precision_", i, ": ", prec1[0].data[0].item())        
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
         
     accs = []
@@ -213,10 +238,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
-    data_folder = "/home/zhouy/Elastic/data"
+    # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
@@ -238,7 +263,7 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay)
 
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 10):
+    for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)

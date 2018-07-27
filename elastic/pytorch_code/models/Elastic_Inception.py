@@ -142,57 +142,50 @@ class Inception3(nn.Module):
         # print("Mixed_5b size: ", x.size())
         if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[0](x))
-        # 35 x 35 x 256
-        x = self.Mixed_5c(x)
-        if self.add_intermediate_layers == 2:
+            # 35 x 35 x 256
+            x = self.Mixed_5c(x)
             intermediate_outputs.append(self.intermediate_CLF[1](x))
-        # print("Mixed_5c size: ", x.size())
-        # 35 x 35 x 288
-        x = self.Mixed_5d(x)
-        if self.add_intermediate_layers == 2:
+            # print("Mixed_5c size: ", x.size())
+            # 35 x 35 x 288
+            x = self.Mixed_5d(x)
+        
             intermediate_outputs.append(self.intermediate_CLF[2](x))
-        # print("Mixed_5d size: ", x.size())
-        # 35 x 35 x 288
-        x = self.Mixed_6a(x)
-        if self.add_intermediate_layers == 2:
+            # print("Mixed_5d size: ", x.size())
+            # 35 x 35 x 288
+            x = self.Mixed_6a(x)
             intermediate_outputs.append(self.intermediate_CLF[3](x))
-        # print("Mixed_6a size: ", x.size())
-        # 17 x 17 x 768
-        x = self.Mixed_6b(x)
-        if self.add_intermediate_layers == 2:
+            # print("Mixed_6a size: ", x.size())
+            # 17 x 17 x 768
+            x = self.Mixed_6b(x)
             intermediate_outputs.append(self.intermediate_CLF[4](x))
-        # print("Mixed_6b size: ", x.size())
-        # 17 x 17 x 768
-        x = self.Mixed_6c(x)
-        if self.add_intermediate_layers == 2:
+            # print("Mixed_6b size: ", x.size())
+            # 17 x 17 x 768
+            x = self.Mixed_6c(x)
             intermediate_outputs.append(self.intermediate_CLF[5](x))
-        # print("Mixed_6c size: ", x.size())
-        # 17 x 17 x 768
-        x = self.Mixed_6d(x)
-        if self.add_intermediate_layers == 2:
+            # print("Mixed_6c size: ", x.size())
+            # 17 x 17 x 768
+            x = self.Mixed_6d(x)
             intermediate_outputs.append(self.intermediate_CLF[6](x))
-        # 17 x 17 x 768
-        x = self.Mixed_6e(x)
-        # 17 x 17 x 768
-        if self.training and self.aux_logits:
-            aux = self.AuxLogits(x)
-        # 17 x 17 x 768
-        x = self.Mixed_7a(x)
-        if self.add_intermediate_layers == 2:
+            # 17 x 17 x 768
+            x = self.Mixed_6e(x)
+            # 17 x 17 x 768
+            if self.training and self.aux_logits:
+                aux = self.AuxLogits(x)
+            # 17 x 17 x 768
+            x = self.Mixed_7a(x)
             intermediate_outputs.append(self.intermediate_CLF[7](x))
-        # 8 x 8 x 1280
-        x = self.Mixed_7b(x)
-        if self.add_intermediate_layers == 2:
+            # 8 x 8 x 1280
+            x = self.Mixed_7b(x)
             intermediate_outputs.append(self.intermediate_CLF[8](x))
-        # print("Mixed_7b size: ", x.size())
-        # 8 x 8 x 2048
-        x = self.Mixed_7c(x)
-        # print("Mixed_7c size: ", x.size())
-        # 8 x 8 x 2048
-        x = F.avg_pool2d(x, kernel_size=8)
-        # 1 x 1 x 2048
-        x = F.dropout(x, training=self.training)
-        # 1 x 1 x 2048
+            # print("Mixed_7b size: ", x.size())
+            # 8 x 8 x 2048
+            x = self.Mixed_7c(x)
+            # print("Mixed_7c size: ", x.size())
+            # 8 x 8 x 2048
+            x = F.avg_pool2d(x, kernel_size=8)
+            # 1 x 1 x 2048
+            x = F.dropout(x, training=self.training)
+            # 1 x 1 x 2048
         x = x.view(x.size(0), -1)
         # 2048
         x = self.fc(x)
