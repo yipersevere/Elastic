@@ -213,7 +213,7 @@ class ResNet(nn.Module):
                 # global num_outputs
                 if i == (blocks-1) and planes == 512:# means this is the intermediate classifier has close position with the final output classifier
                     # not append intermediate classifier
-                    LOG("skip the last intermediate classifer, since this classifier has close position with the final output classifier", logFile)
+                    print("skip the last intermediate classifer, since this classifier has close position with the final output classifier")
                 else:
                     self.intermediate_CLF.append(IntermediateClassifier(self.inplanes, self.residual_block_type, self.cifar_classes))
                     self.num_outputs += 1

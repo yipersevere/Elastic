@@ -1,7 +1,6 @@
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from ignite.handlers import EarlyStopping
 from torchsummary import summary
@@ -77,31 +76,57 @@ def train(train_loader, model, criterion, optimizer, epoch):
         all_acc.append(AverageMeter())
 
     LOG("==> train ", logFile)
-    for i, (input, target) in enumerate(train_loader):
+    # print("num_outputs: ", num_outputs)
+    for ix in range(num_outputs):
+        for i, (input, target) in enumerate(train_loader):
 
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
-        
-        # losses = 0
-        
+            target = target.cuda(async=True)
+            input_var = torch.autograd.Variable(input)
+            target_var = torch.autograd.Variable(target)
 
-        outputs = model(input_var)
-
-        # 这里应该要再封装一下， 变成只有一个变量loss
-        for ix in range(len(outputs)):
+            outputs = model(input_var)
             optimizer.zero_grad()
-            
+
             loss = criterion(outputs[ix], target_var)
+
+            # temp_loss += loss
+            # temp_loss.backward(retain_graph=True)
+            loss.backward()
+            optimizer.step()
+
             all_loss[ix].update(loss.item(), input.size(0))
 
             # losses += loss
             # print("loss: ", i, ": ", loss.item())
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-            # print("precision_", i, ": ", prec1[0].data[0].item())        
-            loss.backward()
-            optimizer.step()
+
+    # for i, (input, target) in enumerate(train_loader):
+    #
+    #     target = target.cuda(async=True)
+    #     input_var = torch.autograd.Variable(input)
+    #     target_var = torch.autograd.Variable(target)
+    #
+    #     optimizer.zero_grad()
+    #
+    #     outputs = model(input_var)
+    #
+    #
+    #     for ix in range(len(outputs)):
+    #         print(ix)
+    #         loss = criterion(outputs[ix], target_var)
+    #         loss.backward()
+    #         optimizer.step()
+    #
+    #         all_loss[ix].update(loss.item(), input.size(0))
+    #
+    #         # losses += loss
+    #         # print("loss: ", i, ": ", loss.item())
+    #         prec1 = accuracy(outputs[ix].data, target)
+    #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+    #         optimizer.zero_grad()
+    #         # print("precision_", i, ": ", prec1[0].data[0].item())
+
         
     accs = []
     ls = []
@@ -138,7 +163,7 @@ def main(**kwargs):
     writer = SummaryWriter(tensorboard_folder)
 
     global logFile
-    logFile = path + os.sep + "log.txt"    
+    logFile = path + os.sep + "log.txt"
     args.filename = logFile
     global num_outputs
     
@@ -213,10 +238,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
 
     # narvi data folder path
-    data_folder = "/home/zhouy/Elastic/data"
+    # data_folder = "/home/zhouy/Elastic/data"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
@@ -238,7 +263,7 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay)
 
     LOG("==> Pretraining for 10 epoches    \n", logFile)
-    for pretrain_epoch in range(0, 10):
+    for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
