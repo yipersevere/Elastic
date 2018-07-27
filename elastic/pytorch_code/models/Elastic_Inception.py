@@ -14,33 +14,15 @@ model_urls = {
 }
 
 
-# def inception_v3(pretrained=False, **kwargs):
-#     r"""Inception v3 model architecture from
-#     `"Rethinking the Inception Architecture for Computer Vision" <http://arxiv.org/abs/1512.00567>`_.
-
-#     Args:
-#         pretrained (bool): If True, returns a model pre-trained on ImageNet
-#     """
-#     if pretrained:
-#         if 'transform_input' not in kwargs:
-#             kwargs['transform_input'] = True
-#         model = Inception3(**kwargs)
-#         model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
-#         return model
-
-#     return Inception3(**kwargs)
-
-
 class Inception3(nn.Module):
 
     def __init__(self, num_categories, add_intermediate_layers, num_outputs=1, num_classes=1000, aux_logits=True, transform_input=False):
         super(Inception3, self).__init__()
-        
+
         self.intermediate_CLF = []
         self.add_intermediate_layers = add_intermediate_layers
         self.num_categories = num_categories
         self.num_outputs = num_outputs
-######################################################################################
         self.aux_logits = aux_logits
         self.transform_input = transform_input
         self.Conv2d_1a_3x3 = BasicConv2d(3, 32, kernel_size=3, stride=2)
@@ -48,54 +30,52 @@ class Inception3(nn.Module):
         self.Conv2d_2b_3x3 = BasicConv2d(32, 64, kernel_size=3, padding=1)
         self.Conv2d_3b_1x1 = BasicConv2d(64, 80, kernel_size=1)
         self.Conv2d_4a_3x3 = BasicConv2d(80, 192, kernel_size=3)
-        
+
         self.Mixed_5b = InceptionA(192, pool_features=32)
+        self.Mixed_5c = InceptionA(256, pool_features=64)
+        self.Mixed_5d = InceptionA(288, pool_features=64)
+        self.Mixed_6a = InceptionB(288)
+        self.Mixed_6b = InceptionC(768, channels_7x7=128)
+        self.Mixed_6c = InceptionC(768, channels_7x7=160)
+        self.Mixed_6d = InceptionC(768, channels_7x7=160)
+        self.Mixed_6e = InceptionC(768, channels_7x7=192)
+
         if self.add_intermediate_layers == 2:
+
             self.intermediate_CLF.append(IntermediateClassifier(35, 256, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_5c = InceptionA(256, pool_features=64)
-        if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(35, 288, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_5d = InceptionA(288, pool_features=64)
-        if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(35, 288, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_6a = InceptionB(288)
-        if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_6b = InceptionC(768, channels_7x7=128)
-        if self.add_intermediate_layers == 2:
-            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
-            self.num_outputs += 1        
-
-        self.Mixed_6c = InceptionC(768, channels_7x7=160)
-        if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_6d = InceptionC(768, channels_7x7=160)
-        if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
             self.num_outputs += 1
 
-        self.Mixed_6e = InceptionC(768, channels_7x7=192)
+            self.intermediate_CLF.append(IntermediateClassifier(17, 768, self.num_categories))
+            self.num_outputs += 1
+
+
         if aux_logits:
             self.AuxLogits = InceptionAux(768, num_classes)
             # add 1 again, since there is an aux classifier
             self.num_outputs += 1
+
         self.Mixed_7a = InceptionD(768)
+        self.Mixed_7b = InceptionE(1280)
+
         if self.add_intermediate_layers == 2:
             self.intermediate_CLF.append(IntermediateClassifier(8, 1280, self.num_categories))
             self.num_outputs += 1
-        
-        self.Mixed_7b = InceptionE(1280)
-        if self.add_intermediate_layers == 2:
+
             self.intermediate_CLF.append(IntermediateClassifier(8, 2048, self.num_categories))
             self.num_outputs += 1
 
@@ -142,57 +122,61 @@ class Inception3(nn.Module):
         # print("Mixed_5b size: ", x.size())
         if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[0](x))
-            # 35 x 35 x 256
-            x = self.Mixed_5c(x)
+        # 35 x 35 x 256
+        x = self.Mixed_5c(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[1](x))
-            # print("Mixed_5c size: ", x.size())
-            # 35 x 35 x 288
-            x = self.Mixed_5d(x)
-        
+        # print("Mixed_5c size: ", x.size())
+        # 35 x 35 x 288
+        x = self.Mixed_5d(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[2](x))
-            # print("Mixed_5d size: ", x.size())
-            # 35 x 35 x 288
-            x = self.Mixed_6a(x)
+        # print("Mixed_5d size: ", x.size())
+        # 35 x 35 x 288
+        x = self.Mixed_6a(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[3](x))
-            # print("Mixed_6a size: ", x.size())
-            # 17 x 17 x 768
-            x = self.Mixed_6b(x)
+        # print("Mixed_6a size: ", x.size())
+        # 17 x 17 x 768
+        x = self.Mixed_6b(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[4](x))
-            # print("Mixed_6b size: ", x.size())
-            # 17 x 17 x 768
-            x = self.Mixed_6c(x)
+        # print("Mixed_6b size: ", x.size())
+        # 17 x 17 x 768
+        x = self.Mixed_6c(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[5](x))
-            # print("Mixed_6c size: ", x.size())
-            # 17 x 17 x 768
-            x = self.Mixed_6d(x)
+        # print("Mixed_6c size: ", x.size())
+        # 17 x 17 x 768
+        x = self.Mixed_6d(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[6](x))
-            # 17 x 17 x 768
-            x = self.Mixed_6e(x)
-            # 17 x 17 x 768
-            if self.training and self.aux_logits:
-                aux = self.AuxLogits(x)
-            # 17 x 17 x 768
-            x = self.Mixed_7a(x)
+
+        x = self.Mixed_6e(x)
+        if self.training and self.aux_logits:
+            aux = self.AuxLogits(x)
+
+        x = self.Mixed_7a(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[7](x))
-            # 8 x 8 x 1280
-            x = self.Mixed_7b(x)
+
+        x = self.Mixed_7b(x)
+        if self.add_intermediate_layers == 2:
             intermediate_outputs.append(self.intermediate_CLF[8](x))
-            # print("Mixed_7b size: ", x.size())
-            # 8 x 8 x 2048
-            x = self.Mixed_7c(x)
-            # print("Mixed_7c size: ", x.size())
-            # 8 x 8 x 2048
-            x = F.avg_pool2d(x, kernel_size=8)
-            # 1 x 1 x 2048
-            x = F.dropout(x, training=self.training)
-            # 1 x 1 x 2048
+
+        x = self.Mixed_7c(x)
+
+        x = F.avg_pool2d(x, kernel_size=8)
+        x = F.dropout(x, training=self.training)
         x = x.view(x.size(0), -1)
         # 2048
         x = self.fc(x)
         # 1000 (num_classes)
         if self.training and self.aux_logits:
-            return  intermediate_outputs[:7] + [aux] + intermediate_outputs[7:]+ [x] 
-        return intermediate_outputs + [x]
+            # print("intermediate_outputs + aux + x:,  ", len(intermediate_outputs)+1+1)
+            return  intermediate_outputs[:7] + [aux] + intermediate_outputs[7:]+ [x]
+        else:
+            return intermediate_outputs + [x]
 
 
 class InceptionA(nn.Module):
@@ -416,7 +400,7 @@ class IntermediateClassifier(nn.Module):
         #     kernel_size = int(14336/self.num_channels)
         # else:
         #     NotImplementedError
-        
+
         kernel_size = global_pooling_size
 
         print("kernel_size for global pooling: ", kernel_size)
@@ -450,12 +434,10 @@ def Elastic_InceptionV3(args, logfile):
 
     model = Inception3(num_classes, add_intermediate_layers, aux_logits=True)
 
-    # model = Inception3
     if pretrained_weight == 1:
-        
         model.load_state_dict(model_zoo.load_url(model_urls['inception_v3_google']))
         LOG("loaded ImageNet pretrained weights", logfile)
-        
+
     elif pretrained_weight == 0:
         LOG("not loading ImageNet pretrained weights", logfile)
 
@@ -465,11 +447,10 @@ def Elastic_InceptionV3(args, logfile):
 
     fc_features = model.fc.in_features
     model.fc = nn.Linear(fc_features, num_classes)
-    # print("=====> InceptionV3, successfully load pretrained imagenet weight")
 
     for param in model.parameters():
         param.requires_grad = False
-    
+
     if add_intermediate_layers == 2:
         LOG("add intermediate layer classifiers", logfile)
 
@@ -477,18 +458,14 @@ def Elastic_InceptionV3(args, logfile):
         for inter_clf in model.intermediate_CLF:
             for param in inter_clf.parameters():
                 param.requires_grad = True
-        
-        for param in model.fc.parameters():
-            param.requires_grad = True 
-    
+
     elif add_intermediate_layers == 0:
         LOG("not adding any intermediate layer classifiers", logfile)
-
-        for param in model.fc.parameters():
-            param.requires_grad = True         
     else:
         NotImplementedError
 
+    for param in model.fc.parameters():
+        param.requires_grad = True
+
     return model
 
-    

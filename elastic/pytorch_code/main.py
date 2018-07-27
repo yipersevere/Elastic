@@ -1,7 +1,6 @@
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from ignite.handlers import EarlyStopping
 from torchsummary import summary
@@ -77,56 +76,57 @@ def train(train_loader, model, criterion, optimizer, epoch):
         all_acc.append(AverageMeter())
 
     LOG("==> train ", logFile)
-    for i, (input, target) in enumerate(train_loader):
+    # print("num_outputs: ", num_outputs)
+    for ix in range(num_outputs):
+        for i, (input, target) in enumerate(train_loader):
 
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
-        
+            target = target.cuda(async=True)
+            input_var = torch.autograd.Variable(input)
+            target_var = torch.autograd.Variable(target)
 
-        # losses = 0
-        # optimizer.zero_grad()
-
-        # outputs = model(input_var)
-
-        
-        # # 这里应该要再封装一下， 变成只有一个变量loss
-        # for ix in range(len(outputs)):
-        #     loss = criterion(outputs[ix], target_var)
-        #     all_loss[ix].update(loss.item(), input.size(0))
-
-        #     losses += loss
-        #     print("loss: ", ix, ": ", loss.item())
-        #     prec1 = accuracy(outputs[ix].data, target)
-        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-        #     # print("precision_", i, ": ", prec1[0].data[0].item())
-        
-        # losses.backward()
-        # optimizer.step()
-
-        ### Measure elapsed time
-        # batch_time.update(time.time() - end)
-        # end = time.time()
-
-        # losses = 0
-        
-
-        outputs = model(input_var)
-
-        # 这里应该要再封装一下， 变成只有一个变量loss
-        for ix in range(len(outputs)):
+            outputs = model(input_var)
             optimizer.zero_grad()
 
             loss = criterion(outputs[ix], target_var)
+
+            # temp_loss += loss
+            # temp_loss.backward(retain_graph=True)
+            loss.backward()
+            optimizer.step()
+
             all_loss[ix].update(loss.item(), input.size(0))
 
             # losses += loss
             # print("loss: ", i, ": ", loss.item())
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-            # print("precision_", i, ": ", prec1[0].data[0].item())        
-            loss.backward(retain_graph=True)
-            optimizer.step()
+
+    # for i, (input, target) in enumerate(train_loader):
+    #
+    #     target = target.cuda(async=True)
+    #     input_var = torch.autograd.Variable(input)
+    #     target_var = torch.autograd.Variable(target)
+    #
+    #     optimizer.zero_grad()
+    #
+    #     outputs = model(input_var)
+    #
+    #
+    #     for ix in range(len(outputs)):
+    #         print(ix)
+    #         loss = criterion(outputs[ix], target_var)
+    #         loss.backward()
+    #         optimizer.step()
+    #
+    #         all_loss[ix].update(loss.item(), input.size(0))
+    #
+    #         # losses += loss
+    #         # print("loss: ", i, ": ", loss.item())
+    #         prec1 = accuracy(outputs[ix].data, target)
+    #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+    #         optimizer.zero_grad()
+    #         # print("precision_", i, ": ", prec1[0].data[0].item())
+
         
     accs = []
     ls = []
@@ -163,7 +163,7 @@ def main(**kwargs):
     writer = SummaryWriter(tensorboard_folder)
 
     global logFile
-    logFile = path + os.sep + "log.txt"    
+    logFile = path + os.sep + "log.txt"
     args.filename = logFile
     global num_outputs
     

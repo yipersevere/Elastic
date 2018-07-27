@@ -50,7 +50,7 @@ python main.py --model Elastic_ResNet50 --data cifar10 --num_classes 10 --batch_
 
     # cifar100
 python main.py --model Elastic_ResNet50 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_classifiers_Elastic_ResNet50
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_classifiers_Elastic_ResNet50_diff_BP_two_loops
 
 python main.py --model Elastic_ResNet50 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_classifiers_Elastic_ResNet50
@@ -99,10 +99,10 @@ python main.py --model Elastic_ResNet18 --data cifar100 --num_classes 100 --batc
 
 # VGG16_bn
 python main.py --model Elastic_VGG16 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_VGG16_diff_BP
 
 python main.py --model Elastic_VGG16 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_VGG16_diff_BP
 
 python main.py --model Elastic_VGG16 --data cifar10 --num_classes 10 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR10_all_intermediate_Elastic_VGG16_include_pretrain_skip_last_interCLF
@@ -114,7 +114,7 @@ python main.py --model Elastic_VGG16 --data cifar10 --num_classes 10 --batch_siz
 # InceptionV3
     #CIFAR100
 python main.py --model Elastic_InceptionV3 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 2 \
---layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_InceptionV3_include_pretrain_skip_last_interCLF
+--layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_InceptionV3_diff_BP_two_loop
 
 python main.py --model Elastic_InceptionV3 --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_InceptionV3_include_pretrain_skip_last_interCLF
@@ -131,6 +131,8 @@ python main.py --model Elastic_InceptionV3 --data cifar10 --num_classes 10 --bat
 #SqueezeNet
     #CIFAR100
 python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --learning_rate　1e-3 --add_intermediate_layers 2 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF_LR
+
+python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --learning_rate　1e-3 --add_intermediate_layers 2 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_all_intermediate_Elastic_SqueezeNet_diff_BP_two_loop
 
 python main.py --model Elastic_SqueezeNet --data cifar100 --num_classes 100 --batch_size 16 --epochs 100 --add_intermediate_layers 0 \
 --layers_weight_change 0 --pretrained_weight 1 --model_name pytorch_CIFAR100_0_intermediate_Elastic_SqueezeNet_include_pretrain_skip_last_interCLF
