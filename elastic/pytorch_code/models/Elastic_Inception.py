@@ -449,7 +449,8 @@ def Elastic_InceptionV3(args, logfile):
     model.fc = nn.Linear(fc_features, num_classes)
 
     for param in model.parameters():
-        param.requires_grad = False
+        param.requires_grad = True
+        LOG("*********************set all parameters as trainable, all params are requires_grad == True*********************", logfile)
 
     if add_intermediate_layers == 2:
         LOG("add intermediate layer classifiers", logfile)
