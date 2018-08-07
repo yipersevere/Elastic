@@ -15,6 +15,8 @@ Lua version: lua 5.3.3
 gcc --version  6.4.0
 gfortran-6 (6.4.0-17ubuntu1~16.04)
 
+chainer 4.2.0  
+
 GPU Nvidia TITAN Xp 12GB  
 
 
@@ -61,7 +63,11 @@ sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 '''
 # request allocation resource
 ## srun
-srun --pty -J torch --gres=gpu:1 --partition=gpu --time=2-23:59:00 --mem=10240 --ntasks=1 --cpus-per-task=4 /bin/bash -i
+srun --pty -J torch --gres=gpu:1 --partition=gpu --time=2-23:59:00 --mem=30720 --ntasks=1 --cpus-per-task=4 /bin/bash -i
+
+30720, 24576
+
+
 module load CUDA
 source activate dl
 /bin/bash MobileNets_alpha_0_75.sh

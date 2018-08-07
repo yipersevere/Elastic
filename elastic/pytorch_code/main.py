@@ -77,29 +77,32 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
     LOG("==> train ", logFile)
     # print("num_outputs: ", num_outputs)
-    for ix in range(num_outputs):
-        for i, (input, target) in enumerate(train_loader):
+    
+    # for i, (input, target) in enumerate(train_loader):
 
-            target = target.cuda(async=True)
-            input_var = torch.autograd.Variable(input)
-            target_var = torch.autograd.Variable(target)
+    #     target = target.cuda(async=True)
+    #     input_var = torch.autograd.Variable(input)
+    #     target_var = torch.autograd.Variable(target)
 
-            outputs = model(input_var)
-            optimizer.zero_grad()
+    #     optimizer.zero_grad()
+    #     outputs = model(input_var)
 
-            loss = criterion(outputs[ix], target_var)
+    #     for ix in range(num_outputs):
 
-            # temp_loss += loss
-            # temp_loss.backward(retain_graph=True)
-            loss.backward()
-            optimizer.step()
+    #         loss = criterion(outputs[ix], target_var)
 
-            all_loss[ix].update(loss.item(), input.size(0))
+    #         # temp_loss += loss
+    #         # temp_loss.backward(retain_graph=True)
+    #         loss.backward()
+    #         optimizer.step()
+    #         # optimizer.zero_grad()
 
-            # losses += loss
-            # print("loss: ", i, ": ", loss.item())
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+    #         all_loss[ix].update(loss.item(), input.size(0))
+
+    #         # losses += loss
+    #         # print("loss: ", i, ": ", loss.item())
+    #         prec1 = accuracy(outputs[ix].data, target)
+    #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
 
     # for i, (input, target) in enumerate(train_loader):
     #
@@ -126,6 +129,31 @@ def train(train_loader, model, criterion, optimizer, epoch):
     #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
     #         optimizer.zero_grad()
     #         # print("precision_", i, ": ", prec1[0].data[0].item())
+
+
+    for i, (input, target) in enumerate(train_loader):
+
+        target = target.cuda(async=True)
+        input_var = torch.autograd.Variable(input)
+        target_var = torch.autograd.Variable(target)
+        
+        losses = 0
+        optimizer.zero_grad()
+        outputs = model(input_var)
+
+        for ix in range(len(outputs)):
+            loss = criterion(outputs[ix], target_var)
+            losses += loss
+
+            all_loss[ix].update(loss.item(), input.size(0))
+        
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        
+        losses.backward()
+        optimizer.step()
+
+
 
         
     accs = []
@@ -262,7 +290,7 @@ def main(**kwargs):
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
 
-    LOG("==> Pretraining for 10 epoches    \n", logFile)
+    LOG("==> Pretraining for **1** epoches    \n", logFile)
     for pretrain_epoch in range(0, 1):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
@@ -277,7 +305,7 @@ def main(**kwargs):
                                 weight_decay=args.weight_decay)
     # optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
 
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=5)
     
     # implement early stop by own
     EarlyStopping_epoch_count = 0
@@ -359,7 +387,7 @@ def main(**kwargs):
         else:
             if total_loss >= prev_epoch_loss: # means this current epoch doesn't reduce test losses
                 EarlyStopping_epoch_count += 1
-        if EarlyStopping_epoch_count > 20:
+        if EarlyStopping_epoch_count > 10:
             LOG("No improving test_loss for more than 10 epochs, stop running model", logFile)
             break
 
