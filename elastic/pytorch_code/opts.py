@@ -19,12 +19,12 @@ parser.add_argument('--gpu', default="0", help='gpu available')
 parser.add_argument('--add_intermediate_layers', type=int, 
                     help="add intermediate layers, 2: all intermediate layers; "
                                                     "1: skip early intermediate layers output;"
-                                                    "0 : not any intermediate layers. (default: 0)", default=0)
+                                                    "0 : not any intermediate layers. (default: 0)", default=2)
 parser.add_argument('--layers_weight_change', type=int, default=0, 
                     help="1 for giving different weights for different intermediate layers output classifiers, 0 for setting all weights are 1")
 
 parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_InceptionV3")
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_0_intermediate_classifiers_Elastic_InceptionV3_same_params")
+parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_all_intermediate_classifiers_Elastic_InceptionV3_other_way")
 parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')
                     
