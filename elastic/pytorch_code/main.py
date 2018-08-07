@@ -78,83 +78,53 @@ def train(train_loader, model, criterion, optimizer, epoch):
     LOG("==> train ", logFile)
     # print("num_outputs: ", num_outputs)
     
-    # for i, (input, target) in enumerate(train_loader):
-
-    #     target = target.cuda(async=True)
-    #     input_var = torch.autograd.Variable(input)
-    #     target_var = torch.autograd.Variable(target)
-
-    #     optimizer.zero_grad()
-    #     outputs = model(input_var)
-
-    #     for ix in range(num_outputs):
-
-    #         loss = criterion(outputs[ix], target_var)
-
-    #         # temp_loss += loss
-    #         # temp_loss.backward(retain_graph=True)
-    #         loss.backward()
-    #         optimizer.step()
-    #         # optimizer.zero_grad()
-
-    #         all_loss[ix].update(loss.item(), input.size(0))
-
-    #         # losses += loss
-    #         # print("loss: ", i, ": ", loss.item())
-    #         prec1 = accuracy(outputs[ix].data, target)
-    #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-
-    # for i, (input, target) in enumerate(train_loader):
-    #
-    #     target = target.cuda(async=True)
-    #     input_var = torch.autograd.Variable(input)
-    #     target_var = torch.autograd.Variable(target)
-    #
-    #     optimizer.zero_grad()
-    #
-    #     outputs = model(input_var)
-    #
-    #
-    #     for ix in range(len(outputs)):
-    #         print(ix)
-    #         loss = criterion(outputs[ix], target_var)
-    #         loss.backward()
-    #         optimizer.step()
-    #
-    #         all_loss[ix].update(loss.item(), input.size(0))
-    #
-    #         # losses += loss
-    #         # print("loss: ", i, ": ", loss.item())
-    #         prec1 = accuracy(outputs[ix].data, target)
-    #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-    #         optimizer.zero_grad()
-    #         # print("precision_", i, ": ", prec1[0].data[0].item())
-
-
     for i, (input, target) in enumerate(train_loader):
 
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
-        
-        losses = 0
+
+        # bp_1
         optimizer.zero_grad()
-        outputs = model(input_var)
+        outputs = model(input_var)        
+        for ix in range(num_outputs):
 
-        for ix in range(len(outputs)):
             loss = criterion(outputs[ix], target_var)
-            losses += loss
-
-            all_loss[ix].update(loss.item(), input.size(0))
-        
+            loss.backward(retain_graph=True)
+            optimizer.step()
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+
+
+        # #　bp_2 
+        # for ix in range(len(num_outputs)):
+        #     optimizer.zero_grad()
+        #     outputs = model(input_var)
+        #     loss = criterion(outputs[ix], target_var)
+        #     loss.backward()
+        #     optimizer.step()
+    
+        #     all_loss[ix].update(loss.item(), input.size(0))
+    
+        #     prec1 = accuracy(outputs[ix].data, target)
+        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+
+
+        # # bp_3
+        # optimizer.zero_grad()
+        # outputs = model(input_var)
+        # losses = 0
+        # for ix in range(len(outputs)):
+        #     loss = criterion(outputs[ix], target_var)
+        #     losses += loss
+
+        #     all_loss[ix].update(loss.item(), input.size(0))
         
-        losses.backward()
-        optimizer.step()
-
-
-
+        #     prec1 = accuracy(outputs[ix].data, target)
+        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        
+        # losses.backward()
+        # optimizer.step()
         
     accs = []
     ls = []

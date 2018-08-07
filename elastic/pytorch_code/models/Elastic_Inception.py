@@ -411,8 +411,12 @@ class IntermediateClassifier(nn.Module):
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
         self.classifier = torch.nn.Sequential(
+<<<<<<< HEAD
             nn.Linear(num_channels, num_classes),
             nn.Softmax()
+=======
+            nn.Linear(num_channels, num_classes)
+>>>>>>> f47f1c1f1fa7259481a1a0254ba4798212bd03fa
         ).to(self.device)
 
     def forward(self, x):
