@@ -410,7 +410,10 @@ class IntermediateClassifier(nn.Module):
             nn.Dropout(p=0.2, inplace=False)
         ).to(self.device)
         # print("num_channels: ", num_channels, "\n")
-        self.classifier = torch.nn.Sequential(nn.Linear(num_channels, num_classes)).to(self.device)
+        self.classifier = torch.nn.Sequential(
+            nn.Linear(num_channels, num_classes),
+            nn.Softmax()
+        ).to(self.device)
 
     def forward(self, x):
         """
@@ -450,7 +453,7 @@ def Elastic_InceptionV3(args, logfile):
 
     for param in model.parameters():
         param.requires_grad = True
-        LOG("*********************set all parameters as trainable, all params are requires_grad == True*********************", logfile)
+    LOG("*********************set all parameters as trainable, all params are requires_grad == True*********************", logfile)
 
     if add_intermediate_layers == 2:
         LOG("add intermediate layer classifiers", logfile)
