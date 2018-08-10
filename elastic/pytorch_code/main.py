@@ -84,16 +84,17 @@ def train(train_loader, model, criterion, optimizer, epoch):
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
 
-        # bp_1
-        optimizer.zero_grad()
-        outputs = model(input_var)        
-        for ix in range(num_outputs):
+        # # bp_1
+        # optimizer.zero_grad()
+        # outputs = model(input_var)        
+        # for ix in range(num_outputs):
 
-            loss = criterion(outputs[ix], target_var)
-            loss.backward(retain_graph=True)
-            optimizer.step()
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        #     loss = criterion(outputs[ix], target_var)
+        #     loss.backward(retain_graph=True)
+        #     optimizer.step()
+        #     all_loss[ix].update(loss.item(), input.size(0))
+        #     prec1 = accuracy(outputs[ix].data, target)
+        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
 
 
         # #　bp_2 
@@ -110,21 +111,22 @@ def train(train_loader, model, criterion, optimizer, epoch):
         #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
 
 
-        # # bp_3
-        # optimizer.zero_grad()
-        # outputs = model(input_var)
-        # losses = 0
-        # for ix in range(len(outputs)):
-        #     loss = criterion(outputs[ix], target_var)
-        #     losses += loss
+        # bp_3
+        optimizer.zero_grad()
+        outputs = model(input_var)
+        losses = 0
+        for ix in range(len(outputs)):
+            loss = criterion(outputs[ix], target_var)
+            losses += loss
 
-        #     all_loss[ix].update(loss.item(), input.size(0))
+            all_loss[ix].update(loss.item(), input.size(0))
         
-        #     prec1 = accuracy(outputs[ix].data, target)
-        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+            prec1 = accuracy(outputs[ix].data, target)
+            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
         
-        # losses.backward()
-        # optimizer.step()
+        # losses = losses/len(outputs)
+        losses.backward()
+        optimizer.step()
         
     accs = []
     ls = []
@@ -265,7 +267,9 @@ def main(**kwargs):
         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         LOG(epoch_result, logFile)
-    
+
+    summary(model, (3,224,224))
+
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
         param.requires_grad = True
@@ -274,8 +278,9 @@ def main(**kwargs):
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
     # optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
-
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=5)
+    summary(model, (3,224,224))
+    
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
     # implement early stop by own
     EarlyStopping_epoch_count = 0
@@ -357,7 +362,7 @@ def main(**kwargs):
         else:
             if total_loss >= prev_epoch_loss: # means this current epoch doesn't reduce test losses
                 EarlyStopping_epoch_count += 1
-        if EarlyStopping_epoch_count > 10:
+        if EarlyStopping_epoch_count > 20:
             LOG("No improving test_loss for more than 10 epochs, stop running model", logFile)
             break
 

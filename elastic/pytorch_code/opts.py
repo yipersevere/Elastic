@@ -23,12 +23,8 @@ parser.add_argument('--add_intermediate_layers', type=int,
 parser.add_argument('--layers_weight_change', type=int, default=0, 
                     help="1 for giving different weights for different intermediate layers output classifiers, 0 for setting all weights are 1")
 
-parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_InceptionV3")
-<<<<<<< HEAD
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_0_intermediate_classifiers_Elastic_InceptionV3_same_params")
-=======
-parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_all_intermediate_classifiers_Elastic_InceptionV3_other_way")
->>>>>>> f47f1c1f1fa7259481a1a0254ba4798212bd03fa
+parser.add_argument('--model', type=str, help="model folder, like ElasticNN-ResNet50", default="Elastic_ResNet50")
+parser.add_argument('--model_name', type=str, help="exact model name", default="pytorch_CIFAR100_0_intermediate_classifiers_Elastic_ResNet50_bp３")
 parser.add_argument('--manual-seed', default=0, type=int, metavar='N',
                     help='Manual seed (default: 0)')
                     

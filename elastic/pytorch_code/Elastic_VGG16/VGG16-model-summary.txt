@@ -1,0 +1,418 @@
+---------------------------------------------------------------------------------------------------------> cifar 100 with adding intermediate layers
+
+[10.08.2018 18:57:59] add intermediate layer classifiers
+[10.08.2018 18:57:59] num_outputs: 5
+[10.08.2018 18:51:19] successfully create model: Elastic_VGG16
+[10.08.2018 18:51:19] Namespace(add_intermediate_layers=2, batch_size=16, data='cifar100', dropout_rate=0.2, epochs=100, filename='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-18-51-09/log.txt', gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_VGG16', model_name='pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３', momentum=0.9, num_classes=100, pretrain_learning_rate=0.001, pretrained_weight=1, save_model=False, savedir='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-18-51-09', target_size=(224, 224, 3), weight_decay=0.0001)
+Files already downloaded and verified
+===========================use CIFAR100 dataset===========================
+Files already downloaded and verified
+test data, CIFAR100
+[10.08.2018 18:51:22] ==> Pretraining for **1** epoches    
+
+[10.08.2018 18:51:22] ==> train 
+main.py:125: UserWarning: invalid index of a 0-dim tensor. This will be an error in PyTorch 0.5. Use tensor.item() to convert a 0-dim tensor to a Python number
+  all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+[10.08.2018 18:54:56]     pretrain epoch: 0, pretrain error: [98.872, 99.044, 99.146, 99.14, 57.908], pretrain loss: [4.621092336273193, 4.61322903930664, 4.608534636383057, 4.606894421081543, 2.209737292480469], pretrain learning rate: 0.001, pretrain total train sum loss: 20.6594877255249
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                  [-1, 100]         409,700
+              VGG-52  [[-1, 100], [-1, 100], [-1, 100], [-1, 100], [-1, 100]]               0
+================================================================
+Total params: 134,678,692
+Trainable params: 119,955,556
+Non-trainable params: 14,723,136
+----------------------------------------------------------------
+[10.08.2018 18:54:57] ==> Full training    
+
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                  [-1, 100]         409,700
+              VGG-52  [[-1, 100], [-1, 100], [-1, 100], [-1, 100], [-1, 100]]               0
+================================================================
+Total params: 134,678,692
+Trainable params: 134,678,692
+Non-trainable params: 0
+----------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------> cifar 10 with adding intermediate layers
+
+[10.08.2018 18:57:59] add intermediate layer classifiers
+[10.08.2018 18:57:59] num_outputs: 5
+[10.08.2018 18:57:59] successfully create model: Elastic_VGG16
+[10.08.2018 18:57:59] Namespace(add_intermediate_layers=2, batch_size=16, data='cifar10', dropout_rate=0.2, epochs=100, filename='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-18-57-52/log.txt', gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_VGG16', model_name='pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３', momentum=0.9, num_classes=10, pretrain_learning_rate=0.001, pretrained_weight=1, save_model=False, savedir='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_all_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-18-57-52', target_size=(224, 224, 3), weight_decay=0.0001)
+Files already downloaded and verified
+===========================use CIFAR10 dataset===========================
+Files already downloaded and verified
+test data, CIFAR10
+[10.08.2018 18:58:03] ==> Pretraining for **1** epoches    
+
+[10.08.2018 18:58:03] ==> train 
+main.py:125: UserWarning: invalid index of a 0-dim tensor. This will be an error in PyTorch 0.5. Use tensor.item() to convert a 0-dim tensor to a Python number
+  all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+[10.08.2018 19:01:46]     pretrain epoch: 0, pretrain error: [90.478, 88.536, 89.35, 90.35, 23.941999999999993], pretrain loss: [2.3205506274414063, 2.3051720351409912, 2.307867467803955, 2.304195437011719, 0.6893076535272599], pretrain learning rate: 0.001, pretrain total train sum loss: 9.927093220925332
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                   [-1, 10]          40,970
+              VGG-52  [[-1, 10], [-1, 10], [-1, 10], [-1, 10], [-1, 10]]               0
+================================================================
+Total params: 134,309,962
+Trainable params: 119,586,826
+Non-trainable params: 14,723,136
+----------------------------------------------------------------
+[10.08.2018 19:01:46] ==> Full training    
+
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                   [-1, 10]          40,970
+              VGG-52  [[-1, 10], [-1, 10], [-1, 10], [-1, 10], [-1, 10]]               0
+================================================================
+Total params: 134,309,962
+Trainable params: 134,309,962
+Non-trainable params: 0
+----------------------------------------------------------------
+
+
+
+-------------------------------------------------------------------------------------------------CIFAR100 with no addding intermediate layers
+[10.08.2018 19:07:39] not adding any intermediate layer classifiers
+[10.08.2018 19:07:39] num_outputs: 1
+[10.08.2018 19:07:39] successfully create model: Elastic_VGG16
+[10.08.2018 19:07:39] Namespace(add_intermediate_layers=0, batch_size=16, data='cifar100', dropout_rate=0.2, epochs=100, filename='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_0_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-19-07-35/log.txt', gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_VGG16', model_name='pytorch_CIFAR100_0_intermediate_classifiers_Elastic_VGG16_bp３', momentum=0.9, num_classes=100, pretrain_learning_rate=0.001, pretrained_weight=1, save_model=False, savedir='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_VGG16/Classification_Accuracy/pytorch_CIFAR100_0_intermediate_classifiers_Elastic_VGG16_bp３/2018-08-10-19-07-35', target_size=(224, 224, 3), weight_decay=0.0001)
+Files already downloaded and verified
+===========================use CIFAR100 dataset===========================
+Files already downloaded and verified
+test data, CIFAR100
+[10.08.2018 19:07:45] ==> Pretraining for **1** epoches    
+
+[10.08.2018 19:07:45] ==> train 
+main.py:125: UserWarning: invalid index of a 0-dim tensor. This will be an error in PyTorch 0.5. Use tensor.item() to convert a 0-dim tensor to a Python number
+  all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+[10.08.2018 19:10:53]     pretrain epoch: 0, pretrain error: [57.764], pretrain loss: [2.209790795097351], pretrain learning rate: 0.001, pretrain total train sum loss: 2.209790795097351
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                  [-1, 100]         409,700
+              VGG-52                [[-1, 100]]               0
+================================================================
+Total params: 134,678,692
+Trainable params: 119,955,556
+Non-trainable params: 14,723,136
+----------------------------------------------------------------
+[10.08.2018 19:10:53] ==> Full training    
+
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 64, 224, 224]           1,792
+       BatchNorm2d-2         [-1, 64, 224, 224]             128
+              ReLU-3         [-1, 64, 224, 224]               0
+            Conv2d-4         [-1, 64, 224, 224]          36,928
+       BatchNorm2d-5         [-1, 64, 224, 224]             128
+              ReLU-6         [-1, 64, 224, 224]               0
+         MaxPool2d-7         [-1, 64, 112, 112]               0
+            Conv2d-8        [-1, 128, 112, 112]          73,856
+       BatchNorm2d-9        [-1, 128, 112, 112]             256
+             ReLU-10        [-1, 128, 112, 112]               0
+           Conv2d-11        [-1, 128, 112, 112]         147,584
+      BatchNorm2d-12        [-1, 128, 112, 112]             256
+             ReLU-13        [-1, 128, 112, 112]               0
+        MaxPool2d-14          [-1, 128, 56, 56]               0
+           Conv2d-15          [-1, 256, 56, 56]         295,168
+      BatchNorm2d-16          [-1, 256, 56, 56]             512
+             ReLU-17          [-1, 256, 56, 56]               0
+           Conv2d-18          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-19          [-1, 256, 56, 56]             512
+             ReLU-20          [-1, 256, 56, 56]               0
+           Conv2d-21          [-1, 256, 56, 56]         590,080
+      BatchNorm2d-22          [-1, 256, 56, 56]             512
+             ReLU-23          [-1, 256, 56, 56]               0
+        MaxPool2d-24          [-1, 256, 28, 28]               0
+           Conv2d-25          [-1, 512, 28, 28]       1,180,160
+      BatchNorm2d-26          [-1, 512, 28, 28]           1,024
+             ReLU-27          [-1, 512, 28, 28]               0
+           Conv2d-28          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-29          [-1, 512, 28, 28]           1,024
+             ReLU-30          [-1, 512, 28, 28]               0
+           Conv2d-31          [-1, 512, 28, 28]       2,359,808
+      BatchNorm2d-32          [-1, 512, 28, 28]           1,024
+             ReLU-33          [-1, 512, 28, 28]               0
+        MaxPool2d-34          [-1, 512, 14, 14]               0
+           Conv2d-35          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-36          [-1, 512, 14, 14]           1,024
+             ReLU-37          [-1, 512, 14, 14]               0
+           Conv2d-38          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-39          [-1, 512, 14, 14]           1,024
+             ReLU-40          [-1, 512, 14, 14]               0
+           Conv2d-41          [-1, 512, 14, 14]       2,359,808
+      BatchNorm2d-42          [-1, 512, 14, 14]           1,024
+             ReLU-43          [-1, 512, 14, 14]               0
+        MaxPool2d-44            [-1, 512, 7, 7]               0
+           Linear-45                 [-1, 4096]     102,764,544
+             ReLU-46                 [-1, 4096]               0
+          Dropout-47                 [-1, 4096]               0
+           Linear-48                 [-1, 4096]      16,781,312
+             ReLU-49                 [-1, 4096]               0
+          Dropout-50                 [-1, 4096]               0
+           Linear-51                  [-1, 100]         409,700
+              VGG-52                [[-1, 100]]               0
+================================================================
+Total params: 134,678,692
+Trainable params: 134,678,692
+Non-trainable params: 0
+----------------------------------------------------------------
