@@ -16,6 +16,7 @@ from opts import args
 from helper import LOG, log_summary, log_stats, AverageMeter, accuracy, save_checkpoint, plot_figs
 from data_loader import get_train_loader, get_test_loader
 from models import *
+from tiny_imagenet_data_loader import tiny_image_data_loader
 
 # Init Torch/Cuda
 torch.manual_seed(args.manual_seed)
@@ -79,6 +80,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
     # print("num_outputs: ", num_outputs)
     
     for i, (input, target) in enumerate(train_loader):
+        # print("input: ", input, input.shape)
+        # print("target: ", target, target.shape)
 
         target = target.cuda(async=True)
         input_var = torch.autograd.Variable(input)
@@ -116,6 +119,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         outputs = model(input_var)
         losses = 0
         for ix in range(len(outputs)):
+            # print("outputs[ix]: ", outputs[ix])
             loss = criterion(outputs[ix], target_var)
             losses += loss
 
@@ -176,6 +180,8 @@ def main(**kwargs):
 
     elif args.data == "cifar10" or args.data == "CIFAR10":
         fig_title_str = " on CIFAR-10"
+    elif args.data == "tiny_imagenet":
+        fig_title_str = " on tiny_imagenet"
     else:
         LOG("ERROR =============================dataset should be CIFAR10 or CIFAR100", logFile)
         NotImplementedError
@@ -250,25 +256,32 @@ def main(**kwargs):
 
     # summary(model, (3,224,224))
 
-    train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
-                                                    random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
-                                                    num_workers=4,pin_memory=True)
-    test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
-                                    num_workers=4,pin_memory=True)
+
+    if args.data == "tiny_imagenet":
+        train_loader, test_loader, tiny_class = tiny_image_data_loader(data_folder)
+    else:
+        train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
+                                                        random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
+                                                        num_workers=4,pin_memory=True, debug=args.debug)
+
+
+        test_loader = get_test_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, shuffle=True, target_size = args.target_size,
+                                        num_workers=4,pin_memory=True, debug = args.debug)
     
     criterion = nn.CrossEntropyLoss().cuda()
 
-    pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    if args.data != "tiny_imagenet":
+        pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
+                                    momentum=args.momentum,
+                                    weight_decay=args.weight_decay)
 
-    LOG("==> Pretraining for **1** epoches    \n", logFile)
-    for pretrain_epoch in range(0, 1):
-        accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
-        epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-        LOG(epoch_result, logFile)
+        LOG("==> Pretraining for **1** epoches    \n", logFile)
+        for pretrain_epoch in range(0, 1):
+            accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
+            epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            LOG(epoch_result, logFile)
 
-    summary(model, (3,224,224))
+        summary(model, (3,224,224))
 
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
