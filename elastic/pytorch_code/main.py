@@ -69,7 +69,7 @@ def validate(val_loader, model, criterion):
         ls.append(j.avg)
         accs_top5.append(float(100-k.avg))
     print("validation top 5 error: ", accs_top5)
-    return accs, ls
+    return accs, ls, accs_top5
 
 
 def train(train_loader, model, criterion, optimizers, epoch):
@@ -201,12 +201,12 @@ def train(train_loader, model, criterion, optimizers, epoch):
         accs_top5.append(float(100-k.avg))
 
     try:
-        lr = float(str(optimizer).split("\n")[-5].split(" ")[-1])
+        lr = float(str(optimizers[-1]).split("\n")[-5].split(" ")[-1])
     except:
         lr = 100
     
     print("train epoch top 5 error: ", accs_top5)
-    return accs, ls, lr
+    return accs, ls, lr, accs_top5
 
 
 def main(**kwargs):
@@ -374,27 +374,32 @@ def main(**kwargs):
     EarlyStopping_epoch_count = 0
 
     epochs_train_accs = []
+    epochs_train_top5_accs = []
     epochs_train_losses = []
     epochs_test_accs = []
     epochs_test_losses = []
     epochs_lr = []
+    epochs_test_top5_accs = []
 
     for epoch in range(0, args.epochs):
         
         epoch_str = "==================================== epoch %d ==============================" % epoch
         LOG(epoch_str, logFile)
         # Train for one epoch
-        accs, losses, lr = train(train_loader, model, criterion, optimizers, epoch)
+        accs, losses, lr, accs_top5 = train(train_loader, model, criterion, optimizers, epoch)
         epochs_train_accs.append(accs)
         epochs_train_losses.append(losses)
         epochs_lr.append(lr)
+        epochs_train_top5_accs.append(accs_top5)
+
 
         writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'lr', lr, epoch)
-        for i, a, l in zip(range(len(accs)), accs, losses):
+        for i, a, l, k in zip(range(len(accs)), accs, losses, accs_top5):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_losses_' + str(i), l, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'train_top5_error_' + str(i), k, epoch)
         
-        epoch_result = "\ntrain error: " + str(accs) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", \ntotal train sum loss " + str(sum(losses))
+        epoch_result = "\ntrain error: " + str(accs) + "top 5 error: " + str(accs_top5) + ", \nloss: " + str(losses) + ", \nlearning rate " + str(lr) + ", \ntotal train sum loss " + str(sum(losses))
         LOG(epoch_result, logFile)
 
         if num_outputs > 1:
@@ -404,16 +409,18 @@ def main(**kwargs):
         
         # run on test dataset
         LOG("==> test \n", logFile)
-        test_accs, test_losses = validate(test_loader, model, criterion)
+        test_accs, test_losses, test_top5_accs = validate(test_loader, model, criterion)
         
         epochs_test_accs.append(test_accs)
         epochs_test_losses.append(test_losses)
+        epochs_test_top5_accs.append(test_top5_accs)
 
-        for i, a, l in zip(range(len(test_accs)), test_accs, test_losses):
+        for i, a, l, k in zip(range(len(test_accs)), test_accs, test_losses, test_top5_accs):
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_error_' + str(i), a, epoch)
             writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_losses_' + str(i), l, epoch)
+            writer.add_scalar(tensorboard_folder + os.sep + "data" + os.sep + 'test_top5_losses_' + str(i), k, epoch)
 
-        test_result_str = "==> Test epoch: \nfinal output classifier error: " + str(test_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
+        test_result_str = "==> Test epoch: \nfinal output classifier error: " + str(test_accs) + "test top 5 error: " + str(test_top5_accs) + ", \ntest_loss" +str(test_losses) + ", \ntotal test sum loss " + str(sum(test_losses))
         LOG(test_result_str, logFile)
         
         total_loss = sum(test_losses)
@@ -423,7 +430,7 @@ def main(**kwargs):
             test_losses.append(total_loss) # add the total sum loss
             LOG("test_total_sum_losses: " + str(total_loss), logFile)   
         
-        log_stats(path, accs, losses, lr, test_accs, test_losses)
+        log_stats(path, accs, losses, lr, test_accs, test_losses, accs_top5, test_top5_accs)
 
         # Remember best prec@1 and save checkpoint
         is_best = test_accs[-1] < lowest_error1 #error not accuracy, but i don't want to change variable names

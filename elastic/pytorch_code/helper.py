@@ -126,7 +126,7 @@ def log_summary(model, logFile):
         LOG(line, logFile) 
 
 
-def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_loss_test):
+def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_test, epochs_loss_test, accs_top5, test_top5_accs):
 
     with open(path + os.sep + "train_errors.txt", "a") as fp:
         for a in epochs_acc_train:
@@ -149,6 +149,16 @@ def log_stats(path, epochs_acc_train, epochs_loss_train, epochs_lr, epochs_acc_t
     
     with open(path + os.sep + "test_losses.txt", "a") as fp:
         for loss in epochs_loss_test:
+            fp.write("%.4f " % loss)
+        fp.write("\n")
+
+    with open(path + os.sep + "train_top5_errors.txt", "a") as fp:
+        for a in accs_top5:
+            fp.write("%.4f " % a)
+        fp.write("\n")
+    
+    with open(path + os.sep + "test_top5_errors.txt", "a") as fp:
+        for loss in test_top5_accs:
             fp.write("%.4f " % loss)
         fp.write("\n")
     
