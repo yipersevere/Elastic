@@ -83,9 +83,9 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # print("input: ", input, input.shape)
         # print("target: ", target, target.shape)
 
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input)
-        target_var = torch.autograd.Variable(target)
+        # target = target.cuda(async=True)
+        # input_var = torch.autograd.Variable(input)
+        # target_var = torch.autograd.Variable(target)
 
         # # bp_1
         # optimizer.zero_grad()
@@ -100,37 +100,43 @@ def train(train_loader, model, criterion, optimizer, epoch):
         #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
 
 
-        # #　bp_2 
-        # for ix in range(len(num_outputs)):
-        #     optimizer.zero_grad()
-        #     outputs = model(input_var)
-        #     loss = criterion(outputs[ix], target_var)
-        #     loss.backward()
-        #     optimizer.step()
-    
-        #     all_loss[ix].update(loss.item(), input.size(0))
-    
-        #     prec1 = accuracy(outputs[ix].data, target)
-        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        #　bp_2 
 
 
-        # bp_3
-        optimizer.zero_grad()
-        outputs = model(input_var)
-        losses = 0
-        for ix in range(len(outputs)):
-            # print("outputs[ix]: ", outputs[ix])
+        for ix in range(num_outputs):
+            target = target.cuda(async=True)
+            input_var = torch.autograd.Variable(input)
+            target_var = torch.autograd.Variable(target)
+            
+            optimizer.zero_grad()
+            outputs = model(input_var)
             loss = criterion(outputs[ix], target_var)
-            losses += loss
-
+            loss.backward()
+            optimizer.step()
+    
             all_loss[ix].update(loss.item(), input.size(0))
-        
+    
             prec1 = accuracy(outputs[ix].data, target)
             all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+
+
+        # # bp_3
+        # optimizer.zero_grad()
+        # outputs = model(input_var)
+        # losses = 0
+        # for ix in range(len(outputs)):
+        #     # print("outputs[ix]: ", outputs[ix])
+        #     loss = criterion(outputs[ix], target_var)
+        #     losses += loss
+
+        #     all_loss[ix].update(loss.item(), input.size(0))
         
-        # losses = losses/len(outputs)
-        losses.backward()
-        optimizer.step()
+        #     prec1 = accuracy(outputs[ix].data, target)
+        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        
+        # # losses = losses/len(outputs)
+        # losses.backward()
+        # optimizer.step()
         
     accs = []
     ls = []
@@ -244,10 +250,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/data"
+    data_folder = "/home/zhouy/data/tiny-imagenet-200"
 
     # narvi data folder path
-    # data_folder = "/home/zhouy/Elastic/data"
+    # data_folder = "/home/zhouy/data/tiny-imagenet-200"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
@@ -291,7 +297,7 @@ def main(**kwargs):
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
     # optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
-    summary(model, (3,224,224))
+    # summary(model, (3,224,224))
     
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', threshold=1e-4, patience=10)
     
