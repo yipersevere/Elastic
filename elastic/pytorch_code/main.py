@@ -358,7 +358,9 @@ def main(**kwargs):
         childs.append(child)
         k += 1
     
-    childs_params = [childs[:25], childs[:43], childs[:61], childs]
+    childs_params = [childs[:9], childs[:15], childs[:21], childs[:27], 
+                        childs[:33], childs[:39], childs[:45], childs[:51],
+                        childs[:57], childs[:63], childs[:69], childs[:75], childs]
 
     for i in range(num_outputs):
         optimizer = torch.optim.SGD(childs_params[i], args.learning_rate,
