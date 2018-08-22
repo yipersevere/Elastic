@@ -201,7 +201,7 @@ def train(train_loader, model, criterion, optimizers, epoch):
         accs_top5.append(float(100-k.avg))
 
     try:
-        lr = float(str(optimizer).split("\n")[-5].split(" ")[-1])
+        lr = float(str(optimizers[-1]).split("\n")[-5].split(" ")[-1])
     except:
         lr = 100
     
