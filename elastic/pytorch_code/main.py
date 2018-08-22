@@ -27,16 +27,19 @@ os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 def validate(val_loader, model, criterion):
     model.eval()
     all_acc = []
+    all_acc_top5 = []
     all_loss = []
     
     if args.model == "Elastic_InceptionV3":
         for ix in range((num_outputs-1)):
             all_loss.append(AverageMeter())
             all_acc.append(AverageMeter())
+            all_acc_top5.append(AverageMeter())
     else:
         for ix in range(num_outputs):
             all_loss.append(AverageMeter())
-            all_acc.append(AverageMeter())        
+            all_acc.append(AverageMeter())      
+            all_acc_top5.append(AverageMeter())  
     
     for i, (input, target) in enumerate(val_loader):
         target = target.cuda(async=True)
@@ -51,30 +54,37 @@ def validate(val_loader, model, criterion):
                 loss = criterion(outputs[ix], target_var)
                 all_loss[ix].update(loss.item(), input.size(0))
                 losses += loss
-                # print("loss: ", i, ": ", loss.item())
+                
                 prec1 = accuracy(outputs[ix].data, target)
                 all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
-                # print("precision_", i, ": ", prec1[0].data[0].item())
+
+                # top 5 accuracy
+                prec5 = accuracy(outputs[ix].data, target, topk=(5,))
+                all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
     accs = []
     ls = []
-    for i, j in zip(all_acc, all_loss):
+    accs_top5 = []
+    for i, j, k in zip(all_acc, all_loss, all_acc_top5):
         accs.append(float(100-i.avg))
         ls.append(j.avg)
-        
+        accs_top5.append(float(100-k.avg))
+    print("validation top 5 error: ", accs_top5)
     return accs, ls
 
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizers, epoch):
 
     model.train()
 
     lr = None
     all_acc = []
+    all_acc_top5 = []
     all_loss = []
 
     for ix in range(num_outputs):
         all_loss.append(AverageMeter())
         all_acc.append(AverageMeter())
+        all_acc_top5.append(AverageMeter())
 
     LOG("==> train ", logFile)
     # print("num_outputs: ", num_outputs)
@@ -83,71 +93,119 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # print("input: ", input, input.shape)
         # print("target: ", target, target.shape)
 
-        # target = target.cuda(async=True)
-        # input_var = torch.autograd.Variable(input)
-        # target_var = torch.autograd.Variable(target)
-
-        # # bp_1
-        # optimizer.zero_grad()
-        # outputs = model(input_var)        
-        # for ix in range(num_outputs):
-
-        #     loss = criterion(outputs[ix], target_var)
-        #     loss.backward(retain_graph=True)
-        #     optimizer.step()
-        #     all_loss[ix].update(loss.item(), input.size(0))
-        #     prec1 = accuracy(outputs[ix].data, target)
-        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
 
 
-        #　bp_2 
+        # bp_1
+        if args.backpropagation == 1:
+            # LOG("enter backpropagation method : " + str(args.backpropagation) +"\n", logFile)
 
-
-        for ix in range(num_outputs):
             target = target.cuda(async=True)
             input_var = torch.autograd.Variable(input)
             target_var = torch.autograd.Variable(target)
+
             
-            optimizer.zero_grad()
-            outputs = model(input_var)
-            loss = criterion(outputs[ix], target_var)
-            loss.backward()
-            optimizer.step()
-    
-            all_loss[ix].update(loss.item(), input.size(0))
-    
-            prec1 = accuracy(outputs[ix].data, target)
-            all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+              
+            for ix in range(num_outputs):
+                outputs = model(input_var)      
+                # 
+                optimizers[ix].zero_grad()
 
+                loss = criterion(outputs[ix], target_var)
 
-        # # bp_3
-        # optimizer.zero_grad()
-        # outputs = model(input_var)
-        # losses = 0
-        # for ix in range(len(outputs)):
-        #     # print("outputs[ix]: ", outputs[ix])
-        #     loss = criterion(outputs[ix], target_var)
-        #     losses += loss
+                loss.backward()
+                
+                optimizers[ix].step()
 
-        #     all_loss[ix].update(loss.item(), input.size(0))
+                # optimizer.zero_grad()
+                # if ix == (num_outputs - 1):
+                #     loss.backward()
+                # else:
+                #     loss.backward(retain_graph=True)
+
+                # optimizer.step()
+                all_loss[ix].update(loss.item(), input.size(0))
+
+                # top 1 accuracy
+                prec1 = accuracy(outputs[ix].data, target)
+                all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+
+                # # top 5 accuracy
+                prec5 = accuracy(outputs[ix].data, target, topk=(5,))
+                # print("prec top 5-1: ", prec5)
+                # print("prec top 5-2: ", prec5[0])
+                # print("prec top 5-3: ", prec5[0].data[0].item())
+                all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))            
+
+        # elif args.backpropagation == 2:
+        #     # LOG("enter backpropagation method : " + str(args.backpropagation) +"\n", logFile)
+        #     #　bp_2 
+        #     for ix in range(num_outputs):
+                
+        #         target = target.cuda(async=True)
+        #         input_var = torch.autograd.Variable(input)
+        #         target_var = torch.autograd.Variable(target)
+        #         optimizer.zero_grad()
+        #         outputs = model(input_var)
+        #         loss = criterion(outputs[ix], target_var)
+        #         loss.backward()
+        #         optimizer.step()
         
-        #     prec1 = accuracy(outputs[ix].data, target)
-        #     all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        #         all_loss[ix].update(loss.item(), input.size(0))
         
-        # # losses = losses/len(outputs)
-        # losses.backward()
-        # optimizer.step()
+        #         # top 1 accuracy
+        #         prec1 = accuracy(outputs[ix].data, target)
+        #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+        
+        #         # top 5 accuracy
+        #         prec5 = accuracy(outputs[ix].data, target, topk=(5,))
+        #         all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
+
+        # elif args.backpropagation == 3:
+        #     # LOG("enter backpropagation method : " + str(args.backpropagation) +"\n", logFile)
+        #     # bp_3
+        #     target = target.cuda(async=True)
+        #     input_var = torch.autograd.Variable(input)
+        #     target_var = torch.autograd.Variable(target)
+
+        #     optimizer.zero_grad()
+        #     outputs = model(input_var)
+        #     losses = 0
+        #     for ix in range(len(outputs)):
+        #         # print("outputs[ix]: ", outputs[ix])
+        #         loss = criterion(outputs[ix], target_var)
+        #         losses += loss
+
+        #         all_loss[ix].update(loss.item(), input.size(0))
+            
+        #         # top 1 accuracy
+        #         prec1 = accuracy(outputs[ix].data, target)
+        #         all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+
+        #         # top 5 accuracy
+        #         prec5 = accuracy(outputs[ix].data, target, topk=(5,))
+        #         all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
+            
+        #     # losses = losses/len(outputs)
+        #     losses.backward()
+        #     optimizer.step()
+        else:
+            NotImplementedError
+
         
     accs = []
+    accs_top5 = []
     ls = []
-    for i, j in zip(all_acc, all_loss):
+    for i, j, k in zip(all_acc, all_loss, all_acc_top5):
         accs.append(float(100-i.avg))
         ls.append(j.avg)
+        accs_top5.append(float(100-k.avg))
 
     try:
         lr = float(str(optimizer).split("\n")[-5].split(" ")[-1])
     except:
         lr = 100
+    
+    print("train epoch top 5 error: ", accs_top5)
     return accs, ls, lr
 
 
@@ -250,21 +308,21 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    data_folder = "/home/zhouy/data/tiny-imagenet-200"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
 
     # narvi data folder path
-    # data_folder = "/home/zhouy/data/tiny-imagenet-200"
+    data_folder = "/home/zhouy/data/tiny-imagenet-200"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
     # args.batch_size = 1
 
 
-    # summary(model, (3,224,224))
+    summary(model, (3,224,224))
 
 
     if args.data == "tiny_imagenet":
-        train_loader, test_loader, tiny_class = tiny_image_data_loader(data_folder)
+        train_loader, test_loader = tiny_image_data_loader(data_folder, args)
     else:
         train_loader = get_train_loader(args.data, data_dir=data_folder, batch_size=args.batch_size, augment=False, target_size = args.target_size,
                                                         random_seed=20180614, valid_size=0.2, shuffle=True,show_sample=False,
@@ -293,9 +351,20 @@ def main(**kwargs):
     for param in model.parameters():
         param.requires_grad = True
     
-    optimizer = torch.optim.SGD(model.parameters(), args.learning_rate,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    optimizers = []
+    childs = []
+    k = 0
+    for child in model.parameters():
+        childs.append(child)
+        k += 1
+    
+    childs_params = [childs[:25], childs[:43], childs[:61], childs]
+
+    for i in range(num_outputs):
+        optimizer = torch.optim.SGD(childs_params[i], args.learning_rate,
+                                    momentum=args.momentum,
+                                    weight_decay=args.weight_decay)
+        optimizers.append(optimizer)
     # optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=args.weight_decay)
     # summary(model, (3,224,224))
     
@@ -315,7 +384,7 @@ def main(**kwargs):
         epoch_str = "==================================== epoch %d ==============================" % epoch
         LOG(epoch_str, logFile)
         # Train for one epoch
-        accs, losses, lr = train(train_loader, model, criterion, optimizer, epoch)
+        accs, losses, lr = train(train_loader, model, criterion, optimizers, epoch)
         epochs_train_accs.append(accs)
         epochs_train_losses.append(losses)
         epochs_lr.append(lr)

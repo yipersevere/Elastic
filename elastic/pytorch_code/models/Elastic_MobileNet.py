@@ -103,8 +103,8 @@ class MobileNet(nn.Module):
             # self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
             # self.num_outputs += 1     
 
-            self.intermediate_CLF.append(IntermediateClassifier(7, 1024, self.num_categories))
-            self.num_outputs += 1     
+            # self.intermediate_CLF.append(IntermediateClassifier(7, 1024, self.num_categories))
+            # self.num_outputs += 1     
 
         self.fc = nn.Linear(1024, 1000)
 
@@ -147,7 +147,7 @@ class MobileNet(nn.Module):
             # intermediate_outputs.append(self.intermediate_CLF[10](x10))
 
             x11 = self.model[12](x10)
-            intermediate_outputs.append(self.intermediate_CLF[3](x11))
+            # intermediate_outputs.append(self.intermediate_CLF[3](x11))
 
             x = self.model[13:](x11)
 
