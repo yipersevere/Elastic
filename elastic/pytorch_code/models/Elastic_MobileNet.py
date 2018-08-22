@@ -70,41 +70,41 @@ class MobileNet(nn.Module):
             nn.AvgPool2d(7),
         )
         if self.add_intermediate_layers == 2:                
-            # self.intermediate_CLF.append(IntermediateClassifier(112, 64, self.num_categories))
-            # self.num_outputs += 1     
+            self.intermediate_CLF.append(IntermediateClassifier(112, 64, self.num_categories))
+            self.num_outputs += 1     
 
-            # self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
-            # self.num_outputs += 1
+            self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
+            self.num_outputs += 1
 
-            # self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
-            # self.num_outputs += 1     
+            self.intermediate_CLF.append(IntermediateClassifier(56, 128, self.num_categories))
+            self.num_outputs += 1     
             
             self.intermediate_CLF.append(IntermediateClassifier(28, 256, self.num_categories))
             self.num_outputs += 1     
 
-            # self.intermediate_CLF.append(IntermediateClassifier(28, 256, self.num_categories))
-            # self.num_outputs += 1                     
-
-            # self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
-            # self.num_outputs += 1        
-
-            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
-            self.num_outputs += 1     
-
-            # self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
-            # self.num_outputs += 1        
-
-            # self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
-            # self.num_outputs += 1     
+            self.intermediate_CLF.append(IntermediateClassifier(28, 256, self.num_categories))
+            self.num_outputs += 1                     
 
             self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
             self.num_outputs += 1        
 
-            # self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
-            # self.num_outputs += 1     
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
 
-            # self.intermediate_CLF.append(IntermediateClassifier(7, 1024, self.num_categories))
-            # self.num_outputs += 1     
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1        
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1        
+
+            self.intermediate_CLF.append(IntermediateClassifier(14, 512, self.num_categories))
+            self.num_outputs += 1     
+
+            self.intermediate_CLF.append(IntermediateClassifier(7, 1024, self.num_categories))
+            self.num_outputs += 1     
 
         self.fc = nn.Linear(1024, 1000)
 
@@ -114,40 +114,40 @@ class MobileNet(nn.Module):
         
         if self.add_intermediate_layers == 2:
             x0 = self.model[:2](x)
-            # intermediate_outputs.append(self.intermediate_CLF[0](x0))
+            intermediate_outputs.append(self.intermediate_CLF[0](x0))
 
             x1 = self.model[2](x0)
-            # intermediate_outputs.append(self.intermediate_CLF[1](x1))
+            intermediate_outputs.append(self.intermediate_CLF[1](x1))
 
             x2 = self.model[3](x1)
-            # intermediate_outputs.append(self.intermediate_CLF[2](x2))
+            intermediate_outputs.append(self.intermediate_CLF[2](x2))
 
             x3 = self.model[4](x2)
-            intermediate_outputs.append(self.intermediate_CLF[0](x3)) 
+            intermediate_outputs.append(self.intermediate_CLF[3](x3)) 
 
             x4 = self.model[5](x3)
-            # intermediate_outputs.append(self.intermediate_CLF[4](x4))
+            intermediate_outputs.append(self.intermediate_CLF[4](x4))
 
             x5 = self.model[6](x4)
-            # intermediate_outputs.append(self.intermediate_CLF[5](x5))
+            intermediate_outputs.append(self.intermediate_CLF[5](x5))
 
             x6 = self.model[7](x5)
-            intermediate_outputs.append(self.intermediate_CLF[1](x6))
+            intermediate_outputs.append(self.intermediate_CLF[6](x6))
 
             x7 = self.model[8](x6)
-            # intermediate_outputs.append(self.intermediate_CLF[7](x7))
+            intermediate_outputs.append(self.intermediate_CLF[7](x7))
 
             x8 = self.model[9](x7)
-            # intermediate_outputs.append(self.intermediate_CLF[8](x8))
+            intermediate_outputs.append(self.intermediate_CLF[8](x8))
 
             x9 = self.model[10](x8)
-            intermediate_outputs.append(self.intermediate_CLF[2](x9))
+            intermediate_outputs.append(self.intermediate_CLF[9](x9))
 
             x10 = self.model[11](x9)
-            # intermediate_outputs.append(self.intermediate_CLF[10](x10))
+            intermediate_outputs.append(self.intermediate_CLF[10](x10))
 
             x11 = self.model[12](x10)
-            # intermediate_outputs.append(self.intermediate_CLF[3](x11))
+            intermediate_outputs.append(self.intermediate_CLF[11](x11))
 
             x = self.model[13:](x11)
 
