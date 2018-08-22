@@ -308,10 +308,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
 
     # narvi data folder path
-    # data_folder = "/home/zhouy/Elastic/data"
+    data_folder = "/home/zhouy/data/tiny-imagenet-200"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
