@@ -8,19 +8,18 @@
 
 ### experiments
 
-#### experimental environment
-''''
-conda env create xxx.yml
-''''
-
-
-#### repeat experimental results
+#### run experiments
 ```
+# create the experimental environment
+conda env create xxx.yml
+
+# repeat experimental results
 conda activate xx
 cd elastic/pytorch_code
 python main.py
 ```
 
-#### experiments result
+#### experimental result
 
+<img src="https://raw.githubusercontent.com/yipersevere/Elastic-Neural-Networks-for-Classification_PyTorch/edit/master/elastic_neural_networks_experimental_result.png" alt="elastic_neural_networks_experimental_result" width="700"/>
 
