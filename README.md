@@ -20,11 +20,6 @@ To cite our work, please use the following bibtex entry.
 
 #### run experiments
 ```
-# create the experimental environment
-conda env create xxx.yml
-
-# repeat experimental results
-conda activate xxx
 cd elastic/pytorch_code
 python main.py
 ```
