@@ -308,10 +308,10 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
+    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
 
     # narvi data folder path
-    data_folder = "/home/zhouy/data/tiny-imagenet-200"
+    # data_folder = "/home/zhouy/data/tiny-imagenet-200"
 
     # XPS 15 laptop data folder path
     # data_folder = "D:\Elastic\data"
@@ -358,9 +358,10 @@ def main(**kwargs):
         childs.append(child)
         k += 1
     
-    childs_params = [childs[:9], childs[:15], childs[:21], childs[:27], 
-                        childs[:33], childs[:39], childs[:45], childs[:51],
-                        childs[:57], childs[:63], childs[:69], childs[:75], childs]
+    # childs_params = [childs[:9], childs[:15], childs[:21], childs[:27], 
+    #                     childs[:33], childs[:39], childs[:45], childs[:51],
+    #                     childs[:57], childs[:63], childs[:69], childs[:75], childs]
+    childs_params = [childs[:25], childs[:43], childs[:61], childs]
 
     for i in range(num_outputs):
         optimizer = torch.optim.SGD(childs_params[i], args.learning_rate,
