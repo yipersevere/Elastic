@@ -1,0 +1,1502 @@
+[27.06.2018 00:35:10] Namespace(add_intermediate_layers_number=2, batch_size=16, data='cifar10', dropout_rate=0.2, epochs=100, filename='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/pytorch_CIFAR10_3_intermediate_classifiers_Elastic_ResNet50/2018-06-27-00-35-10/log.txt', gpu='0', layers_weight_change=0, learning_rate=0.001, manual_seed=0, model='Elastic_ResNet50', model_name='pytorch_CIFAR10_3_intermediate_classifiers_Elastic_ResNet50', momentum=0.9, no_save_model=False, num_classes=10, print_freq=10, savedir='/media/yi/e7036176-287c-4b18-9609-9811b8e33769/Elastic/elastic/pytorch_code/Elastic_ResNet50/Classification_Accuracy/pytorch_CIFAR10_3_intermediate_classifiers_Elastic_ResNet50/2018-06-27-00-35-10', target_size=(224, 224, 3), weight_decay=1e-05)
+[27.06.2018 00:35:10] weights for intermediate layers: 1, giving same weights for different intermediate layers output as  1
+[27.06.2018 00:35:19] =============================== train ===============================
+[27.06.2018 00:39:20] ==================================== epoch 0 ==============================
+[27.06.2018 00:39:20] accuracy tensor(87.5475, device='cuda:0'), x1_out accuracy tensor(10.1975, device='cuda:0'), x2_out accuracy tensor(10.0150, device='cuda:0'), x3_out accuracy tensor(9.8200, device='cuda:0'), loss tensor(7.2943, device='cuda:0'), learning rate 0.001
+[27.06.2018 00:39:20] =============================== validate ===============================
+[27.06.2018 00:39:40]  * Prec@1 94.150
+[27.06.2018 00:39:40]  * x1_out_Prec@1 9.840
+[27.06.2018 00:39:40]  * x2_out_Prec@1 9.820
+[27.06.2018 00:39:40]  * x3_out_Prec@1 9.690
+[27.06.2018 00:39:40] validation accuracy: tensor(94.1500, device='cuda:0'), val_x1_out_prec1: tensor(9.8400, device='cuda:0'), val_x2_out_prec1: tensor(9.8200, device='cuda:0'), val_x3_out_prec1: tensor(9.6900, device='cuda:0'), val_losstensor(7.0888, device='cuda:0')
+[27.06.2018 00:39:40] =============================== validate ===============================
+[27.06.2018 00:40:00]  * Prec@1 94.050
+[27.06.2018 00:40:00]  * x1_out_Prec@1 9.700
+[27.06.2018 00:40:00]  * x2_out_Prec@1 9.510
+[27.06.2018 00:40:00]  * x3_out_Prec@1 9.850
+[27.06.2018 00:40:00] =============> Test epoch, final output classifier acc: tensor(94.0500, device='cuda:0'), x1 out classifier acc: tensor(9.7000, device='cuda:0'), x1 out classifier acc: tensor(9.5100, device='cuda:0'), x3 out classifier acc: tensor(9.8500, device='cuda:0'), test_losstensor(7.0883, device='cuda:0')
+[27.06.2018 00:40:00] =============================== train ===============================
+[27.06.2018 00:43:59] ==================================== epoch 1 ==============================
+[27.06.2018 00:43:59] accuracy tensor(95.1675, device='cuda:0'), x1_out accuracy tensor(9.9300, device='cuda:0'), x2_out accuracy tensor(9.8050, device='cuda:0'), x3_out accuracy tensor(10.1550, device='cuda:0'), loss tensor(7.0616, device='cuda:0'), learning rate 0.001
+[27.06.2018 00:43:59] =============================== validate ===============================
+[27.06.2018 00:44:19]  * Prec@1 93.540
+[27.06.2018 00:44:19]  * x1_out_Prec@1 10.010
+[27.06.2018 00:44:19]  * x2_out_Prec@1 9.800
+[27.06.2018 00:44:19]  * x3_out_Prec@1 10.180
+[27.06.2018 00:44:19] validation accuracy: tensor(93.5400, device='cuda:0'), val_x1_out_prec1: tensor(10.0100, device='cuda:0'), val_x2_out_prec1: tensor(9.8000, device='cuda:0'), val_x3_out_prec1: tensor(10.1800, device='cuda:0'), val_losstensor(7.1085, device='cuda:0')
+[27.06.2018 00:44:19] =============================== validate ===============================
+[27.06.2018 00:44:39]  * Prec@1 93.770
+[27.06.2018 00:44:39]  * x1_out_Prec@1 10.120
+[27.06.2018 00:44:39]  * x2_out_Prec@1 10.270
+[27.06.2018 00:44:39]  * x3_out_Prec@1 10.120
+[27.06.2018 00:44:39] =============> Test epoch, final output classifier acc: tensor(93.7700, device='cuda:0'), x1 out classifier acc: tensor(10.1200, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x3 out classifier acc: tensor(10.1200, device='cuda:0'), test_losstensor(7.0950, device='cuda:0')
+[27.06.2018 00:44:39] =============================== train ===============================
+[27.06.2018 00:48:39] ==================================== epoch 2 ==============================
+[27.06.2018 00:48:39] accuracy tensor(97.3800, device='cuda:0'), x1_out accuracy tensor(10.0075, device='cuda:0'), x2_out accuracy tensor(9.6575, device='cuda:0'), x3_out accuracy tensor(10.0975, device='cuda:0'), loss tensor(6.9947, device='cuda:0'), learning rate 0.001
+[27.06.2018 00:48:39] =============================== validate ===============================
+[27.06.2018 00:48:59]  * Prec@1 95.170
+[27.06.2018 00:48:59]  * x1_out_Prec@1 9.750
+[27.06.2018 00:48:59]  * x2_out_Prec@1 10.030
+[27.06.2018 00:48:59]  * x3_out_Prec@1 10.450
+[27.06.2018 00:48:59] validation accuracy: tensor(95.1700, device='cuda:0'), val_x1_out_prec1: tensor(9.7500, device='cuda:0'), val_x2_out_prec1: tensor(10.0300, device='cuda:0'), val_x3_out_prec1: tensor(10.4500, device='cuda:0'), val_losstensor(7.0639, device='cuda:0')
+[27.06.2018 00:48:59] =============================== validate ===============================
+[27.06.2018 00:49:19]  * Prec@1 94.990
+[27.06.2018 00:49:19]  * x1_out_Prec@1 9.760
+[27.06.2018 00:49:19]  * x2_out_Prec@1 10.070
+[27.06.2018 00:49:19]  * x3_out_Prec@1 10.350
+[27.06.2018 00:49:19] =============> Test epoch, final output classifier acc: tensor(94.9900, device='cuda:0'), x1 out classifier acc: tensor(9.7600, device='cuda:0'), x1 out classifier acc: tensor(10.0700, device='cuda:0'), x3 out classifier acc: tensor(10.3500, device='cuda:0'), test_losstensor(7.0691, device='cuda:0')
+[27.06.2018 00:49:19] =============================== train ===============================
+[27.06.2018 00:53:17] ==================================== epoch 3 ==============================
+[27.06.2018 00:53:17] accuracy tensor(98.2025, device='cuda:0'), x1_out accuracy tensor(10.2400, device='cuda:0'), x2_out accuracy tensor(9.8400, device='cuda:0'), x3_out accuracy tensor(9.7850, device='cuda:0'), loss tensor(6.9681, device='cuda:0'), learning rate 0.001
+[27.06.2018 00:53:17] =============================== validate ===============================
+[27.06.2018 00:53:37]  * Prec@1 95.680
+[27.06.2018 00:53:37]  * x1_out_Prec@1 10.040
+[27.06.2018 00:53:37]  * x2_out_Prec@1 9.980
+[27.06.2018 00:53:37]  * x3_out_Prec@1 9.830
+[27.06.2018 00:53:37] validation accuracy: tensor(95.6800, device='cuda:0'), val_x1_out_prec1: tensor(10.0400, device='cuda:0'), val_x2_out_prec1: tensor(9.9800, device='cuda:0'), val_x3_out_prec1: tensor(9.8300, device='cuda:0'), val_losstensor(7.0541, device='cuda:0')
+[27.06.2018 00:53:37] =============================== validate ===============================
+[27.06.2018 00:53:57]  * Prec@1 95.400
+[27.06.2018 00:53:57]  * x1_out_Prec@1 10.240
+[27.06.2018 00:53:57]  * x2_out_Prec@1 10.050
+[27.06.2018 00:53:57]  * x3_out_Prec@1 10.300
+[27.06.2018 00:53:57] =============> Test epoch, final output classifier acc: tensor(95.4000, device='cuda:0'), x1 out classifier acc: tensor(10.2400, device='cuda:0'), x1 out classifier acc: tensor(10.0500, device='cuda:0'), x3 out classifier acc: tensor(10.3000, device='cuda:0'), test_losstensor(7.0679, device='cuda:0')
+[27.06.2018 00:53:57] =============================== train ===============================
+[27.06.2018 00:57:55] ==================================== epoch 4 ==============================
+[27.06.2018 00:57:55] accuracy tensor(98.9575, device='cuda:0'), x1_out accuracy tensor(9.8500, device='cuda:0'), x2_out accuracy tensor(10.0975, device='cuda:0'), x3_out accuracy tensor(10.0550, device='cuda:0'), loss tensor(6.9487, device='cuda:0'), learning rate 0.001
+[27.06.2018 00:57:55] =============================== validate ===============================
+[27.06.2018 00:58:15]  * Prec@1 95.500
+[27.06.2018 00:58:15]  * x1_out_Prec@1 10.170
+[27.06.2018 00:58:15]  * x2_out_Prec@1 9.700
+[27.06.2018 00:58:15]  * x3_out_Prec@1 10.000
+[27.06.2018 00:58:15] validation accuracy: tensor(95.5000, device='cuda:0'), val_x1_out_prec1: tensor(10.1700, device='cuda:0'), val_x2_out_prec1: tensor(9.7000, device='cuda:0'), val_x3_out_prec1: tensor(10., device='cuda:0'), val_losstensor(7.0601, device='cuda:0')
+[27.06.2018 00:58:15] =============================== validate ===============================
+[27.06.2018 00:58:36]  * Prec@1 95.700
+[27.06.2018 00:58:36]  * x1_out_Prec@1 9.820
+[27.06.2018 00:58:36]  * x2_out_Prec@1 10.450
+[27.06.2018 00:58:36]  * x3_out_Prec@1 10.380
+[27.06.2018 00:58:36] =============> Test epoch, final output classifier acc: tensor(95.7000, device='cuda:0'), x1 out classifier acc: tensor(9.8200, device='cuda:0'), x1 out classifier acc: tensor(10.4500, device='cuda:0'), x3 out classifier acc: tensor(10.3800, device='cuda:0'), test_losstensor(7.0621, device='cuda:0')
+[27.06.2018 00:58:36] =============================== train ===============================
+[27.06.2018 01:02:36] ==================================== epoch 5 ==============================
+[27.06.2018 01:02:36] accuracy tensor(99.4950, device='cuda:0'), x1_out accuracy tensor(10.1375, device='cuda:0'), x2_out accuracy tensor(10.0750, device='cuda:0'), x3_out accuracy tensor(10.1125, device='cuda:0'), loss tensor(6.9309, device='cuda:0'), learning rate 0.0001
+[27.06.2018 01:02:36] =============================== validate ===============================
+[27.06.2018 01:02:56]  * Prec@1 96.530
+[27.06.2018 01:02:56]  * x1_out_Prec@1 10.200
+[27.06.2018 01:02:56]  * x2_out_Prec@1 9.680
+[27.06.2018 01:02:56]  * x3_out_Prec@1 10.510
+[27.06.2018 01:02:56] validation accuracy: tensor(96.5300, device='cuda:0'), val_x1_out_prec1: tensor(10.2000, device='cuda:0'), val_x2_out_prec1: tensor(9.6800, device='cuda:0'), val_x3_out_prec1: tensor(10.5100, device='cuda:0'), val_losstensor(7.0274, device='cuda:0')
+[27.06.2018 01:02:56] =============================== validate ===============================
+[27.06.2018 01:03:16]  * Prec@1 96.510
+[27.06.2018 01:03:16]  * x1_out_Prec@1 9.860
+[27.06.2018 01:03:16]  * x2_out_Prec@1 9.770
+[27.06.2018 01:03:16]  * x3_out_Prec@1 9.400
+[27.06.2018 01:03:16] =============> Test epoch, final output classifier acc: tensor(96.5100, device='cuda:0'), x1 out classifier acc: tensor(9.8600, device='cuda:0'), x1 out classifier acc: tensor(9.7700, device='cuda:0'), x3 out classifier acc: tensor(9.4000, device='cuda:0'), test_losstensor(7.0303, device='cuda:0')
+[27.06.2018 01:03:16] =============================== train ===============================
+[27.06.2018 01:07:16] ==================================== epoch 6 ==============================
+[27.06.2018 01:07:16] accuracy tensor(99.7775, device='cuda:0'), x1_out accuracy tensor(10.0150, device='cuda:0'), x2_out accuracy tensor(9.8900, device='cuda:0'), x3_out accuracy tensor(10.1850, device='cuda:0'), loss tensor(6.9231, device='cuda:0'), learning rate 0.0001
+[27.06.2018 01:07:16] =============================== validate ===============================
+[27.06.2018 01:07:36]  * Prec@1 96.680
+[27.06.2018 01:07:36]  * x1_out_Prec@1 9.960
+[27.06.2018 01:07:36]  * x2_out_Prec@1 9.780
+[27.06.2018 01:07:36]  * x3_out_Prec@1 9.870
+[27.06.2018 01:07:36] validation accuracy: tensor(96.6800, device='cuda:0'), val_x1_out_prec1: tensor(9.9600, device='cuda:0'), val_x2_out_prec1: tensor(9.7800, device='cuda:0'), val_x3_out_prec1: tensor(9.8700, device='cuda:0'), val_losstensor(7.0271, device='cuda:0')
+[27.06.2018 01:07:36] =============================== validate ===============================
+[27.06.2018 01:07:56]  * Prec@1 96.520
+[27.06.2018 01:07:56]  * x1_out_Prec@1 9.620
+[27.06.2018 01:07:56]  * x2_out_Prec@1 10.360
+[27.06.2018 01:07:56]  * x3_out_Prec@1 9.640
+[27.06.2018 01:07:56] =============> Test epoch, final output classifier acc: tensor(96.5200, device='cuda:0'), x1 out classifier acc: tensor(9.6200, device='cuda:0'), x1 out classifier acc: tensor(10.3600, device='cuda:0'), x3 out classifier acc: tensor(9.6400, device='cuda:0'), test_losstensor(7.0339, device='cuda:0')
+[27.06.2018 01:07:56] =============================== train ===============================
+[27.06.2018 01:11:55] ==================================== epoch 7 ==============================
+[27.06.2018 01:11:55] accuracy tensor(99.8625, device='cuda:0'), x1_out accuracy tensor(9.9775, device='cuda:0'), x2_out accuracy tensor(10.0350, device='cuda:0'), x3_out accuracy tensor(9.9625, device='cuda:0'), loss tensor(6.9211, device='cuda:0'), learning rate 0.0001
+[27.06.2018 01:11:55] =============================== validate ===============================
+[27.06.2018 01:12:15]  * Prec@1 96.790
+[27.06.2018 01:12:15]  * x1_out_Prec@1 9.780
+[27.06.2018 01:12:15]  * x2_out_Prec@1 10.290
+[27.06.2018 01:12:15]  * x3_out_Prec@1 9.260
+[27.06.2018 01:12:15] validation accuracy: tensor(96.7900, device='cuda:0'), val_x1_out_prec1: tensor(9.7800, device='cuda:0'), val_x2_out_prec1: tensor(10.2900, device='cuda:0'), val_x3_out_prec1: tensor(9.2600, device='cuda:0'), val_losstensor(7.0264, device='cuda:0')
+[27.06.2018 01:12:15] =============================== validate ===============================
+[27.06.2018 01:12:35]  * Prec@1 96.690
+[27.06.2018 01:12:35]  * x1_out_Prec@1 10.380
+[27.06.2018 01:12:35]  * x2_out_Prec@1 9.840
+[27.06.2018 01:12:35]  * x3_out_Prec@1 10.110
+[27.06.2018 01:12:35] =============> Test epoch, final output classifier acc: tensor(96.6900, device='cuda:0'), x1 out classifier acc: tensor(10.3800, device='cuda:0'), x1 out classifier acc: tensor(9.8400, device='cuda:0'), x3 out classifier acc: tensor(10.1100, device='cuda:0'), test_losstensor(7.0273, device='cuda:0')
+[27.06.2018 01:12:35] =============================== train ===============================
+[27.06.2018 01:16:35] ==================================== epoch 8 ==============================
+[27.06.2018 01:16:35] accuracy tensor(99.8675, device='cuda:0'), x1_out accuracy tensor(10.0450, device='cuda:0'), x2_out accuracy tensor(10.0400, device='cuda:0'), x3_out accuracy tensor(9.9475, device='cuda:0'), loss tensor(6.9201, device='cuda:0'), learning rate 0.0001
+[27.06.2018 01:16:35] =============================== validate ===============================
+[27.06.2018 01:16:55]  * Prec@1 96.890
+[27.06.2018 01:16:55]  * x1_out_Prec@1 10.440
+[27.06.2018 01:16:55]  * x2_out_Prec@1 9.540
+[27.06.2018 01:16:55]  * x3_out_Prec@1 10.400
+[27.06.2018 01:16:55] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(10.4400, device='cuda:0'), val_x2_out_prec1: tensor(9.5400, device='cuda:0'), val_x3_out_prec1: tensor(10.4000, device='cuda:0'), val_losstensor(7.0233, device='cuda:0')
+[27.06.2018 01:16:55] =============================== validate ===============================
+[27.06.2018 01:17:15]  * Prec@1 96.680
+[27.06.2018 01:17:15]  * x1_out_Prec@1 10.130
+[27.06.2018 01:17:15]  * x2_out_Prec@1 9.640
+[27.06.2018 01:17:15]  * x3_out_Prec@1 9.820
+[27.06.2018 01:17:15] =============> Test epoch, final output classifier acc: tensor(96.6800, device='cuda:0'), x1 out classifier acc: tensor(10.1300, device='cuda:0'), x1 out classifier acc: tensor(9.6400, device='cuda:0'), x3 out classifier acc: tensor(9.8200, device='cuda:0'), test_losstensor(7.0248, device='cuda:0')
+[27.06.2018 01:17:15] =============================== train ===============================
+[27.06.2018 01:21:14] ==================================== epoch 9 ==============================
+[27.06.2018 01:21:14] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(10.0825, device='cuda:0'), x2_out accuracy tensor(9.9900, device='cuda:0'), x3_out accuracy tensor(9.9725, device='cuda:0'), loss tensor(6.9202, device='cuda:0'), learning rate 0.0001
+[27.06.2018 01:21:14] =============================== validate ===============================
+[27.06.2018 01:21:32]  * Prec@1 96.880
+[27.06.2018 01:21:32]  * x1_out_Prec@1 9.650
+[27.06.2018 01:21:32]  * x2_out_Prec@1 9.970
+[27.06.2018 01:21:32]  * x3_out_Prec@1 10.210
+[27.06.2018 01:21:32] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(9.6500, device='cuda:0'), val_x2_out_prec1: tensor(9.9700, device='cuda:0'), val_x3_out_prec1: tensor(10.2100, device='cuda:0'), val_losstensor(7.0208, device='cuda:0')
+[27.06.2018 01:21:32] =============================== validate ===============================
+[27.06.2018 01:21:50]  * Prec@1 96.740
+[27.06.2018 01:21:50]  * x1_out_Prec@1 10.350
+[27.06.2018 01:21:50]  * x2_out_Prec@1 10.300
+[27.06.2018 01:21:50]  * x3_out_Prec@1 10.180
+[27.06.2018 01:21:50] =============> Test epoch, final output classifier acc: tensor(96.7400, device='cuda:0'), x1 out classifier acc: tensor(10.3500, device='cuda:0'), x1 out classifier acc: tensor(10.3000, device='cuda:0'), x3 out classifier acc: tensor(10.1800, device='cuda:0'), test_losstensor(7.0264, device='cuda:0')
+[27.06.2018 01:21:50] =============================== train ===============================
+[27.06.2018 01:25:39] ==================================== epoch 10 ==============================
+[27.06.2018 01:25:39] accuracy tensor(99.9025, device='cuda:0'), x1_out accuracy tensor(10.0850, device='cuda:0'), x2_out accuracy tensor(9.9275, device='cuda:0'), x3_out accuracy tensor(9.9950, device='cuda:0'), loss tensor(6.9189, device='cuda:0'), learning rate 1.0000000000000003e-05
+[27.06.2018 01:25:39] =============================== validate ===============================
+[27.06.2018 01:25:57]  * Prec@1 96.890
+[27.06.2018 01:25:57]  * x1_out_Prec@1 9.920
+[27.06.2018 01:25:57]  * x2_out_Prec@1 9.790
+[27.06.2018 01:25:57]  * x3_out_Prec@1 10.250
+[27.06.2018 01:25:57] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.9200, device='cuda:0'), val_x2_out_prec1: tensor(9.7900, device='cuda:0'), val_x3_out_prec1: tensor(10.2500, device='cuda:0'), val_losstensor(7.0187, device='cuda:0')
+[27.06.2018 01:25:57] =============================== validate ===============================
+[27.06.2018 01:26:14]  * Prec@1 96.800
+[27.06.2018 01:26:14]  * x1_out_Prec@1 9.350
+[27.06.2018 01:26:14]  * x2_out_Prec@1 9.720
+[27.06.2018 01:26:14]  * x3_out_Prec@1 10.460
+[27.06.2018 01:26:14] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(9.3500, device='cuda:0'), x1 out classifier acc: tensor(9.7200, device='cuda:0'), x3 out classifier acc: tensor(10.4600, device='cuda:0'), test_losstensor(7.0265, device='cuda:0')
+[27.06.2018 01:26:14] =============================== train ===============================
+[27.06.2018 01:30:03] ==================================== epoch 11 ==============================
+[27.06.2018 01:30:03] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(9.7600, device='cuda:0'), x2_out accuracy tensor(9.8250, device='cuda:0'), x3_out accuracy tensor(9.8925, device='cuda:0'), loss tensor(6.9193, device='cuda:0'), learning rate 1.0000000000000003e-05
+[27.06.2018 01:30:03] =============================== validate ===============================
+[27.06.2018 01:30:21]  * Prec@1 96.830
+[27.06.2018 01:30:21]  * x1_out_Prec@1 9.870
+[27.06.2018 01:30:21]  * x2_out_Prec@1 10.100
+[27.06.2018 01:30:21]  * x3_out_Prec@1 10.080
+[27.06.2018 01:30:21] validation accuracy: tensor(96.8300, device='cuda:0'), val_x1_out_prec1: tensor(9.8700, device='cuda:0'), val_x2_out_prec1: tensor(10.1000, device='cuda:0'), val_x3_out_prec1: tensor(10.0800, device='cuda:0'), val_losstensor(7.0236, device='cuda:0')
+[27.06.2018 01:30:21] =============================== validate ===============================
+[27.06.2018 01:30:38]  * Prec@1 96.820
+[27.06.2018 01:30:38]  * x1_out_Prec@1 9.880
+[27.06.2018 01:30:38]  * x2_out_Prec@1 10.210
+[27.06.2018 01:30:38]  * x3_out_Prec@1 9.860
+[27.06.2018 01:30:38] =============> Test epoch, final output classifier acc: tensor(96.8200, device='cuda:0'), x1 out classifier acc: tensor(9.8800, device='cuda:0'), x1 out classifier acc: tensor(10.2100, device='cuda:0'), x3 out classifier acc: tensor(9.8600, device='cuda:0'), test_losstensor(7.0297, device='cuda:0')
+[27.06.2018 01:30:38] =============================== train ===============================
+[27.06.2018 01:34:27] ==================================== epoch 12 ==============================
+[27.06.2018 01:34:27] accuracy tensor(99.9175, device='cuda:0'), x1_out accuracy tensor(10.3100, device='cuda:0'), x2_out accuracy tensor(9.7425, device='cuda:0'), x3_out accuracy tensor(10.0550, device='cuda:0'), loss tensor(6.9190, device='cuda:0'), learning rate 1.0000000000000003e-05
+[27.06.2018 01:34:27] =============================== validate ===============================
+[27.06.2018 01:34:44]  * Prec@1 96.900
+[27.06.2018 01:34:44]  * x1_out_Prec@1 9.690
+[27.06.2018 01:34:44]  * x2_out_Prec@1 9.990
+[27.06.2018 01:34:44]  * x3_out_Prec@1 10.050
+[27.06.2018 01:34:44] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(9.6900, device='cuda:0'), val_x2_out_prec1: tensor(9.9900, device='cuda:0'), val_x3_out_prec1: tensor(10.0500, device='cuda:0'), val_losstensor(7.0230, device='cuda:0')
+[27.06.2018 01:34:44] =============================== validate ===============================
+[27.06.2018 01:35:01]  * Prec@1 96.770
+[27.06.2018 01:35:01]  * x1_out_Prec@1 9.860
+[27.06.2018 01:35:01]  * x2_out_Prec@1 10.050
+[27.06.2018 01:35:01]  * x3_out_Prec@1 9.980
+[27.06.2018 01:35:01] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(9.8600, device='cuda:0'), x1 out classifier acc: tensor(10.0500, device='cuda:0'), x3 out classifier acc: tensor(9.9800, device='cuda:0'), test_losstensor(7.0236, device='cuda:0')
+[27.06.2018 01:35:01] =============================== train ===============================
+[27.06.2018 01:38:51] ==================================== epoch 13 ==============================
+[27.06.2018 01:38:51] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(9.9025, device='cuda:0'), x2_out accuracy tensor(9.7900, device='cuda:0'), x3_out accuracy tensor(9.9075, device='cuda:0'), loss tensor(6.9192, device='cuda:0'), learning rate 1.0000000000000003e-05
+[27.06.2018 01:38:51] =============================== validate ===============================
+[27.06.2018 01:39:08]  * Prec@1 96.760
+[27.06.2018 01:39:08]  * x1_out_Prec@1 9.510
+[27.06.2018 01:39:08]  * x2_out_Prec@1 9.740
+[27.06.2018 01:39:08]  * x3_out_Prec@1 9.770
+[27.06.2018 01:39:08] validation accuracy: tensor(96.7600, device='cuda:0'), val_x1_out_prec1: tensor(9.5100, device='cuda:0'), val_x2_out_prec1: tensor(9.7400, device='cuda:0'), val_x3_out_prec1: tensor(9.7700, device='cuda:0'), val_losstensor(7.0283, device='cuda:0')
+[27.06.2018 01:39:08] =============================== validate ===============================
+[27.06.2018 01:39:26]  * Prec@1 96.690
+[27.06.2018 01:39:26]  * x1_out_Prec@1 9.810
+[27.06.2018 01:39:26]  * x2_out_Prec@1 10.280
+[27.06.2018 01:39:26]  * x3_out_Prec@1 9.820
+[27.06.2018 01:39:26] =============> Test epoch, final output classifier acc: tensor(96.6900, device='cuda:0'), x1 out classifier acc: tensor(9.8100, device='cuda:0'), x1 out classifier acc: tensor(10.2800, device='cuda:0'), x3 out classifier acc: tensor(9.8200, device='cuda:0'), test_losstensor(7.0261, device='cuda:0')
+[27.06.2018 01:39:26] =============================== train ===============================
+[27.06.2018 01:43:16] ==================================== epoch 14 ==============================
+[27.06.2018 01:43:16] accuracy tensor(99.8975, device='cuda:0'), x1_out accuracy tensor(9.9250, device='cuda:0'), x2_out accuracy tensor(9.9025, device='cuda:0'), x3_out accuracy tensor(10.2350, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000003e-05
+[27.06.2018 01:43:16] =============================== validate ===============================
+[27.06.2018 01:43:34]  * Prec@1 96.790
+[27.06.2018 01:43:34]  * x1_out_Prec@1 9.970
+[27.06.2018 01:43:34]  * x2_out_Prec@1 9.610
+[27.06.2018 01:43:34]  * x3_out_Prec@1 9.800
+[27.06.2018 01:43:34] validation accuracy: tensor(96.7900, device='cuda:0'), val_x1_out_prec1: tensor(9.9700, device='cuda:0'), val_x2_out_prec1: tensor(9.6100, device='cuda:0'), val_x3_out_prec1: tensor(9.8000, device='cuda:0'), val_losstensor(7.0290, device='cuda:0')
+[27.06.2018 01:43:34] =============================== validate ===============================
+[27.06.2018 01:43:51]  * Prec@1 96.650
+[27.06.2018 01:43:51]  * x1_out_Prec@1 10.450
+[27.06.2018 01:43:51]  * x2_out_Prec@1 9.860
+[27.06.2018 01:43:51]  * x3_out_Prec@1 9.320
+[27.06.2018 01:43:51] =============> Test epoch, final output classifier acc: tensor(96.6500, device='cuda:0'), x1 out classifier acc: tensor(10.4500, device='cuda:0'), x1 out classifier acc: tensor(9.8600, device='cuda:0'), x3 out classifier acc: tensor(9.3200, device='cuda:0'), test_losstensor(7.0281, device='cuda:0')
+[27.06.2018 01:43:51] =============================== train ===============================
+[27.06.2018 01:47:41] ==================================== epoch 15 ==============================
+[27.06.2018 01:47:41] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(10.1825, device='cuda:0'), x2_out accuracy tensor(10.1200, device='cuda:0'), x3_out accuracy tensor(9.8250, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.0000000000000002e-06
+[27.06.2018 01:47:41] =============================== validate ===============================
+[27.06.2018 01:47:59]  * Prec@1 96.840
+[27.06.2018 01:47:59]  * x1_out_Prec@1 9.810
+[27.06.2018 01:47:59]  * x2_out_Prec@1 9.690
+[27.06.2018 01:47:59]  * x3_out_Prec@1 9.700
+[27.06.2018 01:47:59] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(9.8100, device='cuda:0'), val_x2_out_prec1: tensor(9.6900, device='cuda:0'), val_x3_out_prec1: tensor(9.7000, device='cuda:0'), val_losstensor(7.0249, device='cuda:0')
+[27.06.2018 01:47:59] =============================== validate ===============================
+[27.06.2018 01:48:17]  * Prec@1 96.760
+[27.06.2018 01:48:17]  * x1_out_Prec@1 10.060
+[27.06.2018 01:48:17]  * x2_out_Prec@1 9.920
+[27.06.2018 01:48:17]  * x3_out_Prec@1 9.640
+[27.06.2018 01:48:17] =============> Test epoch, final output classifier acc: tensor(96.7600, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x1 out classifier acc: tensor(9.9200, device='cuda:0'), x3 out classifier acc: tensor(9.6400, device='cuda:0'), test_losstensor(7.0259, device='cuda:0')
+[27.06.2018 01:48:17] =============================== train ===============================
+[27.06.2018 01:52:06] ==================================== epoch 16 ==============================
+[27.06.2018 01:52:06] accuracy tensor(99.9050, device='cuda:0'), x1_out accuracy tensor(10.0075, device='cuda:0'), x2_out accuracy tensor(10.0900, device='cuda:0'), x3_out accuracy tensor(10.0375, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000002e-06
+[27.06.2018 01:52:06] =============================== validate ===============================
+[27.06.2018 01:52:23]  * Prec@1 96.860
+[27.06.2018 01:52:23]  * x1_out_Prec@1 10.320
+[27.06.2018 01:52:23]  * x2_out_Prec@1 10.360
+[27.06.2018 01:52:23]  * x3_out_Prec@1 10.120
+[27.06.2018 01:52:23] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.3200, device='cuda:0'), val_x2_out_prec1: tensor(10.3600, device='cuda:0'), val_x3_out_prec1: tensor(10.1200, device='cuda:0'), val_losstensor(7.0240, device='cuda:0')
+[27.06.2018 01:52:23] =============================== validate ===============================
+[27.06.2018 01:52:40]  * Prec@1 96.780
+[27.06.2018 01:52:40]  * x1_out_Prec@1 10.270
+[27.06.2018 01:52:40]  * x2_out_Prec@1 10.440
+[27.06.2018 01:52:40]  * x3_out_Prec@1 9.900
+[27.06.2018 01:52:40] =============> Test epoch, final output classifier acc: tensor(96.7800, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x1 out classifier acc: tensor(10.4400, device='cuda:0'), x3 out classifier acc: tensor(9.9000, device='cuda:0'), test_losstensor(7.0242, device='cuda:0')
+[27.06.2018 01:52:40] =============================== train ===============================
+[27.06.2018 01:56:27] ==================================== epoch 17 ==============================
+[27.06.2018 01:56:27] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(9.8150, device='cuda:0'), x2_out accuracy tensor(10.1475, device='cuda:0'), x3_out accuracy tensor(9.9025, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000002e-06
+[27.06.2018 01:56:27] =============================== validate ===============================
+[27.06.2018 01:56:44]  * Prec@1 96.860
+[27.06.2018 01:56:44]  * x1_out_Prec@1 10.200
+[27.06.2018 01:56:44]  * x2_out_Prec@1 9.930
+[27.06.2018 01:56:44]  * x3_out_Prec@1 10.070
+[27.06.2018 01:56:44] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.2000, device='cuda:0'), val_x2_out_prec1: tensor(9.9300, device='cuda:0'), val_x3_out_prec1: tensor(10.0700, device='cuda:0'), val_losstensor(7.0216, device='cuda:0')
+[27.06.2018 01:56:44] =============================== validate ===============================
+[27.06.2018 01:57:02]  * Prec@1 96.800
+[27.06.2018 01:57:02]  * x1_out_Prec@1 10.050
+[27.06.2018 01:57:02]  * x2_out_Prec@1 9.920
+[27.06.2018 01:57:02]  * x3_out_Prec@1 10.010
+[27.06.2018 01:57:02] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.0500, device='cuda:0'), x1 out classifier acc: tensor(9.9200, device='cuda:0'), x3 out classifier acc: tensor(10.0100, device='cuda:0'), test_losstensor(7.0266, device='cuda:0')
+[27.06.2018 01:57:02] =============================== train ===============================
+[27.06.2018 02:00:49] ==================================== epoch 18 ==============================
+[27.06.2018 02:00:49] accuracy tensor(99.8950, device='cuda:0'), x1_out accuracy tensor(10.3475, device='cuda:0'), x2_out accuracy tensor(10.0100, device='cuda:0'), x3_out accuracy tensor(10.1675, device='cuda:0'), loss tensor(6.9187, device='cuda:0'), learning rate 1.0000000000000002e-06
+[27.06.2018 02:00:49] =============================== validate ===============================
+[27.06.2018 02:01:07]  * Prec@1 96.860
+[27.06.2018 02:01:07]  * x1_out_Prec@1 9.950
+[27.06.2018 02:01:07]  * x2_out_Prec@1 9.060
+[27.06.2018 02:01:07]  * x3_out_Prec@1 10.590
+[27.06.2018 02:01:07] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(9.9500, device='cuda:0'), val_x2_out_prec1: tensor(9.0600, device='cuda:0'), val_x3_out_prec1: tensor(10.5900, device='cuda:0'), val_losstensor(7.0220, device='cuda:0')
+[27.06.2018 02:01:07] =============================== validate ===============================
+[27.06.2018 02:01:24]  * Prec@1 96.710
+[27.06.2018 02:01:24]  * x1_out_Prec@1 9.870
+[27.06.2018 02:01:24]  * x2_out_Prec@1 10.170
+[27.06.2018 02:01:24]  * x3_out_Prec@1 10.260
+[27.06.2018 02:01:24] =============> Test epoch, final output classifier acc: tensor(96.7100, device='cuda:0'), x1 out classifier acc: tensor(9.8700, device='cuda:0'), x1 out classifier acc: tensor(10.1700, device='cuda:0'), x3 out classifier acc: tensor(10.2600, device='cuda:0'), test_losstensor(7.0286, device='cuda:0')
+[27.06.2018 02:01:24] =============================== train ===============================
+[27.06.2018 02:05:11] ==================================== epoch 19 ==============================
+[27.06.2018 02:05:11] accuracy tensor(99.9225, device='cuda:0'), x1_out accuracy tensor(9.6525, device='cuda:0'), x2_out accuracy tensor(10.2125, device='cuda:0'), x3_out accuracy tensor(9.9350, device='cuda:0'), loss tensor(6.9186, device='cuda:0'), learning rate 1.0000000000000002e-06
+[27.06.2018 02:05:11] =============================== validate ===============================
+[27.06.2018 02:05:28]  * Prec@1 96.860
+[27.06.2018 02:05:28]  * x1_out_Prec@1 9.680
+[27.06.2018 02:05:28]  * x2_out_Prec@1 10.000
+[27.06.2018 02:05:28]  * x3_out_Prec@1 10.010
+[27.06.2018 02:05:28] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(9.6800, device='cuda:0'), val_x2_out_prec1: tensor(10., device='cuda:0'), val_x3_out_prec1: tensor(10.0100, device='cuda:0'), val_losstensor(7.0246, device='cuda:0')
+[27.06.2018 02:05:28] =============================== validate ===============================
+[27.06.2018 02:05:45]  * Prec@1 96.790
+[27.06.2018 02:05:45]  * x1_out_Prec@1 10.340
+[27.06.2018 02:05:45]  * x2_out_Prec@1 9.850
+[27.06.2018 02:05:45]  * x3_out_Prec@1 10.650
+[27.06.2018 02:05:45] =============> Test epoch, final output classifier acc: tensor(96.7900, device='cuda:0'), x1 out classifier acc: tensor(10.3400, device='cuda:0'), x1 out classifier acc: tensor(9.8500, device='cuda:0'), x3 out classifier acc: tensor(10.6500, device='cuda:0'), test_losstensor(7.0266, device='cuda:0')
+[27.06.2018 02:05:45] =============================== train ===============================
+[27.06.2018 02:09:32] ==================================== epoch 20 ==============================
+[27.06.2018 02:09:32] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(10.0675, device='cuda:0'), x2_out accuracy tensor(10.0100, device='cuda:0'), x3_out accuracy tensor(10.1175, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000002e-07
+[27.06.2018 02:09:32] =============================== validate ===============================
+[27.06.2018 02:09:49]  * Prec@1 96.940
+[27.06.2018 02:09:49]  * x1_out_Prec@1 9.870
+[27.06.2018 02:09:49]  * x2_out_Prec@1 9.440
+[27.06.2018 02:09:49]  * x3_out_Prec@1 10.420
+[27.06.2018 02:09:49] validation accuracy: tensor(96.9400, device='cuda:0'), val_x1_out_prec1: tensor(9.8700, device='cuda:0'), val_x2_out_prec1: tensor(9.4400, device='cuda:0'), val_x3_out_prec1: tensor(10.4200, device='cuda:0'), val_losstensor(7.0223, device='cuda:0')
+[27.06.2018 02:09:49] =============================== validate ===============================
+[27.06.2018 02:10:06]  * Prec@1 96.800
+[27.06.2018 02:10:06]  * x1_out_Prec@1 10.240
+[27.06.2018 02:10:06]  * x2_out_Prec@1 10.060
+[27.06.2018 02:10:06]  * x3_out_Prec@1 9.950
+[27.06.2018 02:10:06] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.2400, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x3 out classifier acc: tensor(9.9500, device='cuda:0'), test_losstensor(7.0244, device='cuda:0')
+[27.06.2018 02:10:06] =============================== train ===============================
+[27.06.2018 02:13:53] ==================================== epoch 21 ==============================
+[27.06.2018 02:13:53] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(9.8725, device='cuda:0'), x2_out accuracy tensor(10.0875, device='cuda:0'), x3_out accuracy tensor(9.9950, device='cuda:0'), loss tensor(6.9195, device='cuda:0'), learning rate 1.0000000000000002e-07
+[27.06.2018 02:13:53] =============================== validate ===============================
+[27.06.2018 02:14:10]  * Prec@1 96.790
+[27.06.2018 02:14:10]  * x1_out_Prec@1 10.060
+[27.06.2018 02:14:10]  * x2_out_Prec@1 10.480
+[27.06.2018 02:14:10]  * x3_out_Prec@1 10.220
+[27.06.2018 02:14:10] validation accuracy: tensor(96.7900, device='cuda:0'), val_x1_out_prec1: tensor(10.0600, device='cuda:0'), val_x2_out_prec1: tensor(10.4800, device='cuda:0'), val_x3_out_prec1: tensor(10.2200, device='cuda:0'), val_losstensor(7.0202, device='cuda:0')
+[27.06.2018 02:14:10] =============================== validate ===============================
+[27.06.2018 02:14:28]  * Prec@1 96.770
+[27.06.2018 02:14:28]  * x1_out_Prec@1 10.040
+[27.06.2018 02:14:28]  * x2_out_Prec@1 9.930
+[27.06.2018 02:14:28]  * x3_out_Prec@1 9.980
+[27.06.2018 02:14:28] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(10.0400, device='cuda:0'), x1 out classifier acc: tensor(9.9300, device='cuda:0'), x3 out classifier acc: tensor(9.9800, device='cuda:0'), test_losstensor(7.0259, device='cuda:0')
+[27.06.2018 02:14:28] =============================== train ===============================
+[27.06.2018 02:18:15] ==================================== epoch 22 ==============================
+[27.06.2018 02:18:15] accuracy tensor(99.9175, device='cuda:0'), x1_out accuracy tensor(9.6250, device='cuda:0'), x2_out accuracy tensor(9.9225, device='cuda:0'), x3_out accuracy tensor(9.5950, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000002e-07
+[27.06.2018 02:18:15] =============================== validate ===============================
+[27.06.2018 02:18:32]  * Prec@1 96.860
+[27.06.2018 02:18:32]  * x1_out_Prec@1 10.110
+[27.06.2018 02:18:32]  * x2_out_Prec@1 10.280
+[27.06.2018 02:18:32]  * x3_out_Prec@1 10.200
+[27.06.2018 02:18:32] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.1100, device='cuda:0'), val_x2_out_prec1: tensor(10.2800, device='cuda:0'), val_x3_out_prec1: tensor(10.2000, device='cuda:0'), val_losstensor(7.0213, device='cuda:0')
+[27.06.2018 02:18:32] =============================== validate ===============================
+[27.06.2018 02:18:49]  * Prec@1 96.660
+[27.06.2018 02:18:49]  * x1_out_Prec@1 10.230
+[27.06.2018 02:18:49]  * x2_out_Prec@1 10.380
+[27.06.2018 02:18:49]  * x3_out_Prec@1 9.780
+[27.06.2018 02:18:49] =============> Test epoch, final output classifier acc: tensor(96.6600, device='cuda:0'), x1 out classifier acc: tensor(10.2300, device='cuda:0'), x1 out classifier acc: tensor(10.3800, device='cuda:0'), x3 out classifier acc: tensor(9.7800, device='cuda:0'), test_losstensor(7.0257, device='cuda:0')
+[27.06.2018 02:18:49] =============================== train ===============================
+[27.06.2018 02:22:37] ==================================== epoch 23 ==============================
+[27.06.2018 02:22:37] accuracy tensor(99.9050, device='cuda:0'), x1_out accuracy tensor(10.2425, device='cuda:0'), x2_out accuracy tensor(9.6750, device='cuda:0'), x3_out accuracy tensor(9.7425, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000002e-07
+[27.06.2018 02:22:37] =============================== validate ===============================
+[27.06.2018 02:22:54]  * Prec@1 96.870
+[27.06.2018 02:22:54]  * x1_out_Prec@1 9.710
+[27.06.2018 02:22:54]  * x2_out_Prec@1 9.550
+[27.06.2018 02:22:54]  * x3_out_Prec@1 9.320
+[27.06.2018 02:22:54] validation accuracy: tensor(96.8700, device='cuda:0'), val_x1_out_prec1: tensor(9.7100, device='cuda:0'), val_x2_out_prec1: tensor(9.5500, device='cuda:0'), val_x3_out_prec1: tensor(9.3200, device='cuda:0'), val_losstensor(7.0230, device='cuda:0')
+[27.06.2018 02:22:54] =============================== validate ===============================
+[27.06.2018 02:23:11]  * Prec@1 96.700
+[27.06.2018 02:23:11]  * x1_out_Prec@1 10.060
+[27.06.2018 02:23:11]  * x2_out_Prec@1 10.110
+[27.06.2018 02:23:11]  * x3_out_Prec@1 9.930
+[27.06.2018 02:23:11] =============> Test epoch, final output classifier acc: tensor(96.7000, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x1 out classifier acc: tensor(10.1100, device='cuda:0'), x3 out classifier acc: tensor(9.9300, device='cuda:0'), test_losstensor(7.0282, device='cuda:0')
+[27.06.2018 02:23:11] =============================== train ===============================
+[27.06.2018 02:26:58] ==================================== epoch 24 ==============================
+[27.06.2018 02:26:58] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(10.1025, device='cuda:0'), x2_out accuracy tensor(10.0950, device='cuda:0'), x3_out accuracy tensor(9.9875, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000002e-07
+[27.06.2018 02:26:58] =============================== validate ===============================
+[27.06.2018 02:27:16]  * Prec@1 96.810
+[27.06.2018 02:27:16]  * x1_out_Prec@1 9.570
+[27.06.2018 02:27:16]  * x2_out_Prec@1 10.010
+[27.06.2018 02:27:16]  * x3_out_Prec@1 10.600
+[27.06.2018 02:27:16] validation accuracy: tensor(96.8100, device='cuda:0'), val_x1_out_prec1: tensor(9.5700, device='cuda:0'), val_x2_out_prec1: tensor(10.0100, device='cuda:0'), val_x3_out_prec1: tensor(10.6000, device='cuda:0'), val_losstensor(7.0221, device='cuda:0')
+[27.06.2018 02:27:16] =============================== validate ===============================
+[27.06.2018 02:27:33]  * Prec@1 96.750
+[27.06.2018 02:27:33]  * x1_out_Prec@1 9.770
+[27.06.2018 02:27:33]  * x2_out_Prec@1 10.000
+[27.06.2018 02:27:33]  * x3_out_Prec@1 10.020
+[27.06.2018 02:27:33] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(9.7700, device='cuda:0'), x1 out classifier acc: tensor(10., device='cuda:0'), x3 out classifier acc: tensor(10.0200, device='cuda:0'), test_losstensor(7.0249, device='cuda:0')
+[27.06.2018 02:27:33] =============================== train ===============================
+[27.06.2018 02:31:19] ==================================== epoch 25 ==============================
+[27.06.2018 02:31:19] accuracy tensor(99.9550, device='cuda:0'), x1_out accuracy tensor(10.2025, device='cuda:0'), x2_out accuracy tensor(9.8075, device='cuda:0'), x3_out accuracy tensor(9.9825, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000004e-08
+[27.06.2018 02:31:19] =============================== validate ===============================
+[27.06.2018 02:31:37]  * Prec@1 96.910
+[27.06.2018 02:31:37]  * x1_out_Prec@1 9.920
+[27.06.2018 02:31:37]  * x2_out_Prec@1 9.850
+[27.06.2018 02:31:37]  * x3_out_Prec@1 9.870
+[27.06.2018 02:31:37] validation accuracy: tensor(96.9100, device='cuda:0'), val_x1_out_prec1: tensor(9.9200, device='cuda:0'), val_x2_out_prec1: tensor(9.8500, device='cuda:0'), val_x3_out_prec1: tensor(9.8700, device='cuda:0'), val_losstensor(7.0194, device='cuda:0')
+[27.06.2018 02:31:37] =============================== validate ===============================
+[27.06.2018 02:31:54]  * Prec@1 96.830
+[27.06.2018 02:31:54]  * x1_out_Prec@1 10.100
+[27.06.2018 02:31:54]  * x2_out_Prec@1 10.060
+[27.06.2018 02:31:54]  * x3_out_Prec@1 10.250
+[27.06.2018 02:31:54] =============> Test epoch, final output classifier acc: tensor(96.8300, device='cuda:0'), x1 out classifier acc: tensor(10.1000, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x3 out classifier acc: tensor(10.2500, device='cuda:0'), test_losstensor(7.0250, device='cuda:0')
+[27.06.2018 02:31:54] =============================== train ===============================
+[27.06.2018 02:35:41] ==================================== epoch 26 ==============================
+[27.06.2018 02:35:41] accuracy tensor(99.9375, device='cuda:0'), x1_out accuracy tensor(9.8075, device='cuda:0'), x2_out accuracy tensor(9.8750, device='cuda:0'), x3_out accuracy tensor(10.1600, device='cuda:0'), loss tensor(6.9193, device='cuda:0'), learning rate 1.0000000000000004e-08
+[27.06.2018 02:35:41] =============================== validate ===============================
+[27.06.2018 02:35:58]  * Prec@1 96.850
+[27.06.2018 02:35:58]  * x1_out_Prec@1 9.880
+[27.06.2018 02:35:58]  * x2_out_Prec@1 9.830
+[27.06.2018 02:35:58]  * x3_out_Prec@1 9.980
+[27.06.2018 02:35:58] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(9.8800, device='cuda:0'), val_x2_out_prec1: tensor(9.8300, device='cuda:0'), val_x3_out_prec1: tensor(9.9800, device='cuda:0'), val_losstensor(7.0223, device='cuda:0')
+[27.06.2018 02:35:58] =============================== validate ===============================
+[27.06.2018 02:36:15]  * Prec@1 96.780
+[27.06.2018 02:36:15]  * x1_out_Prec@1 9.530
+[27.06.2018 02:36:15]  * x2_out_Prec@1 10.010
+[27.06.2018 02:36:15]  * x3_out_Prec@1 10.270
+[27.06.2018 02:36:15] =============> Test epoch, final output classifier acc: tensor(96.7800, device='cuda:0'), x1 out classifier acc: tensor(9.5300, device='cuda:0'), x1 out classifier acc: tensor(10.0100, device='cuda:0'), x3 out classifier acc: tensor(10.2700, device='cuda:0'), test_losstensor(7.0273, device='cuda:0')
+[27.06.2018 02:36:15] =============================== train ===============================
+[27.06.2018 02:40:02] ==================================== epoch 27 ==============================
+[27.06.2018 02:40:02] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(9.7150, device='cuda:0'), x2_out accuracy tensor(9.9975, device='cuda:0'), x3_out accuracy tensor(10.1275, device='cuda:0'), loss tensor(6.9189, device='cuda:0'), learning rate 1.0000000000000004e-08
+[27.06.2018 02:40:02] =============================== validate ===============================
+[27.06.2018 02:40:20]  * Prec@1 96.940
+[27.06.2018 02:40:20]  * x1_out_Prec@1 9.980
+[27.06.2018 02:40:20]  * x2_out_Prec@1 9.260
+[27.06.2018 02:40:20]  * x3_out_Prec@1 10.320
+[27.06.2018 02:40:20] validation accuracy: tensor(96.9400, device='cuda:0'), val_x1_out_prec1: tensor(9.9800, device='cuda:0'), val_x2_out_prec1: tensor(9.2600, device='cuda:0'), val_x3_out_prec1: tensor(10.3200, device='cuda:0'), val_losstensor(7.0222, device='cuda:0')
+[27.06.2018 02:40:20] =============================== validate ===============================
+[27.06.2018 02:40:37]  * Prec@1 96.840
+[27.06.2018 02:40:37]  * x1_out_Prec@1 9.350
+[27.06.2018 02:40:37]  * x2_out_Prec@1 10.360
+[27.06.2018 02:40:37]  * x3_out_Prec@1 10.770
+[27.06.2018 02:40:37] =============> Test epoch, final output classifier acc: tensor(96.8400, device='cuda:0'), x1 out classifier acc: tensor(9.3500, device='cuda:0'), x1 out classifier acc: tensor(10.3600, device='cuda:0'), x3 out classifier acc: tensor(10.7700, device='cuda:0'), test_losstensor(7.0255, device='cuda:0')
+[27.06.2018 02:40:37] =============================== train ===============================
+[27.06.2018 02:44:24] ==================================== epoch 28 ==============================
+[27.06.2018 02:44:24] accuracy tensor(99.9425, device='cuda:0'), x1_out accuracy tensor(9.7950, device='cuda:0'), x2_out accuracy tensor(10.1200, device='cuda:0'), x3_out accuracy tensor(9.9650, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000004e-08
+[27.06.2018 02:44:24] =============================== validate ===============================
+[27.06.2018 02:44:42]  * Prec@1 96.890
+[27.06.2018 02:44:42]  * x1_out_Prec@1 10.250
+[27.06.2018 02:44:42]  * x2_out_Prec@1 9.940
+[27.06.2018 02:44:42]  * x3_out_Prec@1 10.370
+[27.06.2018 02:44:42] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(10.2500, device='cuda:0'), val_x2_out_prec1: tensor(9.9400, device='cuda:0'), val_x3_out_prec1: tensor(10.3700, device='cuda:0'), val_losstensor(7.0209, device='cuda:0')
+[27.06.2018 02:44:42] =============================== validate ===============================
+[27.06.2018 02:45:00]  * Prec@1 96.620
+[27.06.2018 02:45:00]  * x1_out_Prec@1 9.980
+[27.06.2018 02:45:00]  * x2_out_Prec@1 10.060
+[27.06.2018 02:45:00]  * x3_out_Prec@1 9.910
+[27.06.2018 02:45:00] =============> Test epoch, final output classifier acc: tensor(96.6200, device='cuda:0'), x1 out classifier acc: tensor(9.9800, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x3 out classifier acc: tensor(9.9100, device='cuda:0'), test_losstensor(7.0291, device='cuda:0')
+[27.06.2018 02:45:00] =============================== train ===============================
+[27.06.2018 02:48:46] ==================================== epoch 29 ==============================
+[27.06.2018 02:48:46] accuracy tensor(99.9100, device='cuda:0'), x1_out accuracy tensor(9.8800, device='cuda:0'), x2_out accuracy tensor(9.9775, device='cuda:0'), x3_out accuracy tensor(10.1075, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000004e-08
+[27.06.2018 02:48:46] =============================== validate ===============================
+[27.06.2018 02:49:04]  * Prec@1 96.850
+[27.06.2018 02:49:04]  * x1_out_Prec@1 9.910
+[27.06.2018 02:49:04]  * x2_out_Prec@1 10.570
+[27.06.2018 02:49:04]  * x3_out_Prec@1 10.310
+[27.06.2018 02:49:04] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(9.9100, device='cuda:0'), val_x2_out_prec1: tensor(10.5700, device='cuda:0'), val_x3_out_prec1: tensor(10.3100, device='cuda:0'), val_losstensor(7.0200, device='cuda:0')
+[27.06.2018 02:49:04] =============================== validate ===============================
+[27.06.2018 02:49:21]  * Prec@1 96.670
+[27.06.2018 02:49:21]  * x1_out_Prec@1 9.940
+[27.06.2018 02:49:21]  * x2_out_Prec@1 10.000
+[27.06.2018 02:49:21]  * x3_out_Prec@1 9.970
+[27.06.2018 02:49:21] =============> Test epoch, final output classifier acc: tensor(96.6700, device='cuda:0'), x1 out classifier acc: tensor(9.9400, device='cuda:0'), x1 out classifier acc: tensor(10., device='cuda:0'), x3 out classifier acc: tensor(9.9700, device='cuda:0'), test_losstensor(7.0285, device='cuda:0')
+[27.06.2018 02:49:21] =============================== train ===============================
+[27.06.2018 02:53:09] ==================================== epoch 30 ==============================
+[27.06.2018 02:53:09] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(9.8225, device='cuda:0'), x2_out accuracy tensor(9.9900, device='cuda:0'), x3_out accuracy tensor(9.9050, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000005e-09
+[27.06.2018 02:53:09] =============================== validate ===============================
+[27.06.2018 02:53:26]  * Prec@1 96.920
+[27.06.2018 02:53:26]  * x1_out_Prec@1 10.100
+[27.06.2018 02:53:26]  * x2_out_Prec@1 9.700
+[27.06.2018 02:53:26]  * x3_out_Prec@1 10.730
+[27.06.2018 02:53:26] validation accuracy: tensor(96.9200, device='cuda:0'), val_x1_out_prec1: tensor(10.1000, device='cuda:0'), val_x2_out_prec1: tensor(9.7000, device='cuda:0'), val_x3_out_prec1: tensor(10.7300, device='cuda:0'), val_losstensor(7.0212, device='cuda:0')
+[27.06.2018 02:53:26] =============================== validate ===============================
+[27.06.2018 02:53:44]  * Prec@1 96.770
+[27.06.2018 02:53:44]  * x1_out_Prec@1 10.130
+[27.06.2018 02:53:44]  * x2_out_Prec@1 9.940
+[27.06.2018 02:53:44]  * x3_out_Prec@1 9.380
+[27.06.2018 02:53:44] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(10.1300, device='cuda:0'), x1 out classifier acc: tensor(9.9400, device='cuda:0'), x3 out classifier acc: tensor(9.3800, device='cuda:0'), test_losstensor(7.0246, device='cuda:0')
+[27.06.2018 02:53:44] =============================== train ===============================
+[27.06.2018 02:57:30] ==================================== epoch 31 ==============================
+[27.06.2018 02:57:30] accuracy tensor(99.8925, device='cuda:0'), x1_out accuracy tensor(9.9350, device='cuda:0'), x2_out accuracy tensor(10.0425, device='cuda:0'), x3_out accuracy tensor(9.9400, device='cuda:0'), loss tensor(6.9185, device='cuda:0'), learning rate 1.0000000000000005e-09
+[27.06.2018 02:57:30] =============================== validate ===============================
+[27.06.2018 02:57:48]  * Prec@1 96.850
+[27.06.2018 02:57:48]  * x1_out_Prec@1 9.800
+[27.06.2018 02:57:48]  * x2_out_Prec@1 9.950
+[27.06.2018 02:57:48]  * x3_out_Prec@1 10.410
+[27.06.2018 02:57:48] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(9.8000, device='cuda:0'), val_x2_out_prec1: tensor(9.9500, device='cuda:0'), val_x3_out_prec1: tensor(10.4100, device='cuda:0'), val_losstensor(7.0209, device='cuda:0')
+[27.06.2018 02:57:48] =============================== validate ===============================
+[27.06.2018 02:58:05]  * Prec@1 96.810
+[27.06.2018 02:58:05]  * x1_out_Prec@1 10.030
+[27.06.2018 02:58:05]  * x2_out_Prec@1 9.810
+[27.06.2018 02:58:05]  * x3_out_Prec@1 10.200
+[27.06.2018 02:58:05] =============> Test epoch, final output classifier acc: tensor(96.8100, device='cuda:0'), x1 out classifier acc: tensor(10.0300, device='cuda:0'), x1 out classifier acc: tensor(9.8100, device='cuda:0'), x3 out classifier acc: tensor(10.2000, device='cuda:0'), test_losstensor(7.0275, device='cuda:0')
+[27.06.2018 02:58:05] =============================== train ===============================
+[27.06.2018 03:01:52] ==================================== epoch 32 ==============================
+[27.06.2018 03:01:52] accuracy tensor(99.9500, device='cuda:0'), x1_out accuracy tensor(9.8450, device='cuda:0'), x2_out accuracy tensor(10.2250, device='cuda:0'), x3_out accuracy tensor(9.8300, device='cuda:0'), loss tensor(6.9179, device='cuda:0'), learning rate 1.0000000000000005e-09
+[27.06.2018 03:01:52] =============================== validate ===============================
+[27.06.2018 03:02:09]  * Prec@1 96.840
+[27.06.2018 03:02:09]  * x1_out_Prec@1 10.160
+[27.06.2018 03:02:09]  * x2_out_Prec@1 10.510
+[27.06.2018 03:02:09]  * x3_out_Prec@1 9.810
+[27.06.2018 03:02:09] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10.1600, device='cuda:0'), val_x2_out_prec1: tensor(10.5100, device='cuda:0'), val_x3_out_prec1: tensor(9.8100, device='cuda:0'), val_losstensor(7.0236, device='cuda:0')
+[27.06.2018 03:02:09] =============================== validate ===============================
+[27.06.2018 03:02:26]  * Prec@1 96.800
+[27.06.2018 03:02:26]  * x1_out_Prec@1 10.390
+[27.06.2018 03:02:26]  * x2_out_Prec@1 9.940
+[27.06.2018 03:02:26]  * x3_out_Prec@1 9.870
+[27.06.2018 03:02:26] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.3900, device='cuda:0'), x1 out classifier acc: tensor(9.9400, device='cuda:0'), x3 out classifier acc: tensor(9.8700, device='cuda:0'), test_losstensor(7.0250, device='cuda:0')
+[27.06.2018 03:02:26] =============================== train ===============================
+[27.06.2018 03:06:13] ==================================== epoch 33 ==============================
+[27.06.2018 03:06:13] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.9400, device='cuda:0'), x2_out accuracy tensor(10.2200, device='cuda:0'), x3_out accuracy tensor(10.3200, device='cuda:0'), loss tensor(6.9180, device='cuda:0'), learning rate 1.0000000000000005e-09
+[27.06.2018 03:06:13] =============================== validate ===============================
+[27.06.2018 03:06:31]  * Prec@1 96.830
+[27.06.2018 03:06:31]  * x1_out_Prec@1 10.140
+[27.06.2018 03:06:31]  * x2_out_Prec@1 10.170
+[27.06.2018 03:06:31]  * x3_out_Prec@1 10.050
+[27.06.2018 03:06:31] validation accuracy: tensor(96.8300, device='cuda:0'), val_x1_out_prec1: tensor(10.1400, device='cuda:0'), val_x2_out_prec1: tensor(10.1700, device='cuda:0'), val_x3_out_prec1: tensor(10.0500, device='cuda:0'), val_losstensor(7.0231, device='cuda:0')
+[27.06.2018 03:06:31] =============================== validate ===============================
+[27.06.2018 03:06:48]  * Prec@1 96.720
+[27.06.2018 03:06:48]  * x1_out_Prec@1 10.270
+[27.06.2018 03:06:48]  * x2_out_Prec@1 10.020
+[27.06.2018 03:06:48]  * x3_out_Prec@1 9.690
+[27.06.2018 03:06:48] =============> Test epoch, final output classifier acc: tensor(96.7200, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x1 out classifier acc: tensor(10.0200, device='cuda:0'), x3 out classifier acc: tensor(9.6900, device='cuda:0'), test_losstensor(7.0249, device='cuda:0')
+[27.06.2018 03:06:48] =============================== train ===============================
+[27.06.2018 03:10:35] ==================================== epoch 34 ==============================
+[27.06.2018 03:10:35] accuracy tensor(99.9450, device='cuda:0'), x1_out accuracy tensor(9.9075, device='cuda:0'), x2_out accuracy tensor(10.2600, device='cuda:0'), x3_out accuracy tensor(10.1850, device='cuda:0'), loss tensor(6.9174, device='cuda:0'), learning rate 1.0000000000000005e-09
+[27.06.2018 03:10:35] =============================== validate ===============================
+[27.06.2018 03:10:52]  * Prec@1 96.830
+[27.06.2018 03:10:52]  * x1_out_Prec@1 10.480
+[27.06.2018 03:10:52]  * x2_out_Prec@1 9.710
+[27.06.2018 03:10:52]  * x3_out_Prec@1 9.660
+[27.06.2018 03:10:52] validation accuracy: tensor(96.8300, device='cuda:0'), val_x1_out_prec1: tensor(10.4800, device='cuda:0'), val_x2_out_prec1: tensor(9.7100, device='cuda:0'), val_x3_out_prec1: tensor(9.6600, device='cuda:0'), val_losstensor(7.0223, device='cuda:0')
+[27.06.2018 03:10:52] =============================== validate ===============================
+[27.06.2018 03:11:09]  * Prec@1 96.650
+[27.06.2018 03:11:09]  * x1_out_Prec@1 10.270
+[27.06.2018 03:11:09]  * x2_out_Prec@1 10.350
+[27.06.2018 03:11:09]  * x3_out_Prec@1 10.320
+[27.06.2018 03:11:09] =============> Test epoch, final output classifier acc: tensor(96.6500, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x1 out classifier acc: tensor(10.3500, device='cuda:0'), x3 out classifier acc: tensor(10.3200, device='cuda:0'), test_losstensor(7.0255, device='cuda:0')
+[27.06.2018 03:11:09] =============================== train ===============================
+[27.06.2018 03:14:56] ==================================== epoch 35 ==============================
+[27.06.2018 03:14:56] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(9.9825, device='cuda:0'), x2_out accuracy tensor(9.8525, device='cuda:0'), x3_out accuracy tensor(10.0475, device='cuda:0'), loss tensor(6.9187, device='cuda:0'), learning rate 1.0000000000000004e-10
+[27.06.2018 03:14:56] =============================== validate ===============================
+[27.06.2018 03:15:14]  * Prec@1 96.800
+[27.06.2018 03:15:14]  * x1_out_Prec@1 10.280
+[27.06.2018 03:15:14]  * x2_out_Prec@1 9.530
+[27.06.2018 03:15:14]  * x3_out_Prec@1 9.360
+[27.06.2018 03:15:14] validation accuracy: tensor(96.8000, device='cuda:0'), val_x1_out_prec1: tensor(10.2800, device='cuda:0'), val_x2_out_prec1: tensor(9.5300, device='cuda:0'), val_x3_out_prec1: tensor(9.3600, device='cuda:0'), val_losstensor(7.0201, device='cuda:0')
+[27.06.2018 03:15:14] =============================== validate ===============================
+[27.06.2018 03:15:31]  * Prec@1 96.760
+[27.06.2018 03:15:31]  * x1_out_Prec@1 10.450
+[27.06.2018 03:15:31]  * x2_out_Prec@1 10.300
+[27.06.2018 03:15:31]  * x3_out_Prec@1 10.250
+[27.06.2018 03:15:31] =============> Test epoch, final output classifier acc: tensor(96.7600, device='cuda:0'), x1 out classifier acc: tensor(10.4500, device='cuda:0'), x1 out classifier acc: tensor(10.3000, device='cuda:0'), x3 out classifier acc: tensor(10.2500, device='cuda:0'), test_losstensor(7.0257, device='cuda:0')
+[27.06.2018 03:15:31] =============================== train ===============================
+[27.06.2018 03:19:18] ==================================== epoch 36 ==============================
+[27.06.2018 03:19:18] accuracy tensor(99.9400, device='cuda:0'), x1_out accuracy tensor(9.9275, device='cuda:0'), x2_out accuracy tensor(9.7775, device='cuda:0'), x3_out accuracy tensor(9.9575, device='cuda:0'), loss tensor(6.9186, device='cuda:0'), learning rate 1.0000000000000004e-10
+[27.06.2018 03:19:18] =============================== validate ===============================
+[27.06.2018 03:19:35]  * Prec@1 96.840
+[27.06.2018 03:19:35]  * x1_out_Prec@1 10.100
+[27.06.2018 03:19:35]  * x2_out_Prec@1 10.210
+[27.06.2018 03:19:35]  * x3_out_Prec@1 9.440
+[27.06.2018 03:19:35] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10.1000, device='cuda:0'), val_x2_out_prec1: tensor(10.2100, device='cuda:0'), val_x3_out_prec1: tensor(9.4400, device='cuda:0'), val_losstensor(7.0222, device='cuda:0')
+[27.06.2018 03:19:35] =============================== validate ===============================
+[27.06.2018 03:19:53]  * Prec@1 96.720
+[27.06.2018 03:19:53]  * x1_out_Prec@1 10.000
+[27.06.2018 03:19:53]  * x2_out_Prec@1 9.940
+[27.06.2018 03:19:53]  * x3_out_Prec@1 10.460
+[27.06.2018 03:19:53] =============> Test epoch, final output classifier acc: tensor(96.7200, device='cuda:0'), x1 out classifier acc: tensor(10., device='cuda:0'), x1 out classifier acc: tensor(9.9400, device='cuda:0'), x3 out classifier acc: tensor(10.4600, device='cuda:0'), test_losstensor(7.0248, device='cuda:0')
+[27.06.2018 03:19:53] =============================== train ===============================
+[27.06.2018 03:23:40] ==================================== epoch 37 ==============================
+[27.06.2018 03:23:40] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(9.8250, device='cuda:0'), x2_out accuracy tensor(10.1075, device='cuda:0'), x3_out accuracy tensor(9.7550, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000004e-10
+[27.06.2018 03:23:40] =============================== validate ===============================
+[27.06.2018 03:23:57]  * Prec@1 96.890
+[27.06.2018 03:23:57]  * x1_out_Prec@1 9.940
+[27.06.2018 03:23:57]  * x2_out_Prec@1 10.240
+[27.06.2018 03:23:57]  * x3_out_Prec@1 10.420
+[27.06.2018 03:23:57] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.9400, device='cuda:0'), val_x2_out_prec1: tensor(10.2400, device='cuda:0'), val_x3_out_prec1: tensor(10.4200, device='cuda:0'), val_losstensor(7.0221, device='cuda:0')
+[27.06.2018 03:23:57] =============================== validate ===============================
+[27.06.2018 03:24:15]  * Prec@1 96.800
+[27.06.2018 03:24:15]  * x1_out_Prec@1 9.890
+[27.06.2018 03:24:15]  * x2_out_Prec@1 10.100
+[27.06.2018 03:24:15]  * x3_out_Prec@1 10.110
+[27.06.2018 03:24:15] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(9.8900, device='cuda:0'), x1 out classifier acc: tensor(10.1000, device='cuda:0'), x3 out classifier acc: tensor(10.1100, device='cuda:0'), test_losstensor(7.0253, device='cuda:0')
+[27.06.2018 03:24:15] =============================== train ===============================
+[27.06.2018 03:28:02] ==================================== epoch 38 ==============================
+[27.06.2018 03:28:02] accuracy tensor(99.9225, device='cuda:0'), x1_out accuracy tensor(10.0600, device='cuda:0'), x2_out accuracy tensor(10.0550, device='cuda:0'), x3_out accuracy tensor(10.2350, device='cuda:0'), loss tensor(6.9176, device='cuda:0'), learning rate 1.0000000000000004e-10
+[27.06.2018 03:28:02] =============================== validate ===============================
+[27.06.2018 03:28:20]  * Prec@1 96.830
+[27.06.2018 03:28:20]  * x1_out_Prec@1 10.370
+[27.06.2018 03:28:20]  * x2_out_Prec@1 9.700
+[27.06.2018 03:28:20]  * x3_out_Prec@1 9.960
+[27.06.2018 03:28:20] validation accuracy: tensor(96.8300, device='cuda:0'), val_x1_out_prec1: tensor(10.3700, device='cuda:0'), val_x2_out_prec1: tensor(9.7000, device='cuda:0'), val_x3_out_prec1: tensor(9.9600, device='cuda:0'), val_losstensor(7.0245, device='cuda:0')
+[27.06.2018 03:28:20] =============================== validate ===============================
+[27.06.2018 03:28:37]  * Prec@1 96.800
+[27.06.2018 03:28:37]  * x1_out_Prec@1 10.050
+[27.06.2018 03:28:37]  * x2_out_Prec@1 10.460
+[27.06.2018 03:28:37]  * x3_out_Prec@1 10.080
+[27.06.2018 03:28:37] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.0500, device='cuda:0'), x1 out classifier acc: tensor(10.4600, device='cuda:0'), x3 out classifier acc: tensor(10.0800, device='cuda:0'), test_losstensor(7.0246, device='cuda:0')
+[27.06.2018 03:28:37] =============================== train ===============================
+[27.06.2018 03:32:24] ==================================== epoch 39 ==============================
+[27.06.2018 03:32:24] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(10.0100, device='cuda:0'), x2_out accuracy tensor(10.0700, device='cuda:0'), x3_out accuracy tensor(9.7225, device='cuda:0'), loss tensor(6.9197, device='cuda:0'), learning rate 1.0000000000000004e-10
+[27.06.2018 03:32:24] =============================== validate ===============================
+[27.06.2018 03:32:42]  * Prec@1 96.950
+[27.06.2018 03:32:42]  * x1_out_Prec@1 10.330
+[27.06.2018 03:32:42]  * x2_out_Prec@1 10.000
+[27.06.2018 03:32:42]  * x3_out_Prec@1 9.660
+[27.06.2018 03:32:42] validation accuracy: tensor(96.9500, device='cuda:0'), val_x1_out_prec1: tensor(10.3300, device='cuda:0'), val_x2_out_prec1: tensor(10., device='cuda:0'), val_x3_out_prec1: tensor(9.6600, device='cuda:0'), val_losstensor(7.0190, device='cuda:0')
+[27.06.2018 03:32:42] =============================== validate ===============================
+[27.06.2018 03:32:59]  * Prec@1 96.770
+[27.06.2018 03:32:59]  * x1_out_Prec@1 10.090
+[27.06.2018 03:32:59]  * x2_out_Prec@1 9.730
+[27.06.2018 03:32:59]  * x3_out_Prec@1 9.450
+[27.06.2018 03:32:59] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(10.0900, device='cuda:0'), x1 out classifier acc: tensor(9.7300, device='cuda:0'), x3 out classifier acc: tensor(9.4500, device='cuda:0'), test_losstensor(7.0240, device='cuda:0')
+[27.06.2018 03:32:59] =============================== train ===============================
+[27.06.2018 03:36:45] ==================================== epoch 40 ==============================
+[27.06.2018 03:36:45] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(9.8925, device='cuda:0'), x2_out accuracy tensor(10.0425, device='cuda:0'), x3_out accuracy tensor(9.8750, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000006e-11
+[27.06.2018 03:36:45] =============================== validate ===============================
+[27.06.2018 03:37:03]  * Prec@1 96.820
+[27.06.2018 03:37:03]  * x1_out_Prec@1 10.080
+[27.06.2018 03:37:03]  * x2_out_Prec@1 10.280
+[27.06.2018 03:37:03]  * x3_out_Prec@1 9.890
+[27.06.2018 03:37:03] validation accuracy: tensor(96.8200, device='cuda:0'), val_x1_out_prec1: tensor(10.0800, device='cuda:0'), val_x2_out_prec1: tensor(10.2800, device='cuda:0'), val_x3_out_prec1: tensor(9.8900, device='cuda:0'), val_losstensor(7.0253, device='cuda:0')
+[27.06.2018 03:37:03] =============================== validate ===============================
+[27.06.2018 03:37:21]  * Prec@1 96.570
+[27.06.2018 03:37:21]  * x1_out_Prec@1 10.410
+[27.06.2018 03:37:21]  * x2_out_Prec@1 10.580
+[27.06.2018 03:37:21]  * x3_out_Prec@1 9.820
+[27.06.2018 03:37:21] =============> Test epoch, final output classifier acc: tensor(96.5700, device='cuda:0'), x1 out classifier acc: tensor(10.4100, device='cuda:0'), x1 out classifier acc: tensor(10.5800, device='cuda:0'), x3 out classifier acc: tensor(9.8200, device='cuda:0'), test_losstensor(7.0286, device='cuda:0')
+[27.06.2018 03:37:21] =============================== train ===============================
+[27.06.2018 03:41:08] ==================================== epoch 41 ==============================
+[27.06.2018 03:41:08] accuracy tensor(99.9100, device='cuda:0'), x1_out accuracy tensor(9.9525, device='cuda:0'), x2_out accuracy tensor(10.1825, device='cuda:0'), x3_out accuracy tensor(10.0650, device='cuda:0'), loss tensor(6.9179, device='cuda:0'), learning rate 1.0000000000000006e-11
+[27.06.2018 03:41:08] =============================== validate ===============================
+[27.06.2018 03:41:26]  * Prec@1 96.850
+[27.06.2018 03:41:26]  * x1_out_Prec@1 10.190
+[27.06.2018 03:41:26]  * x2_out_Prec@1 10.210
+[27.06.2018 03:41:26]  * x3_out_Prec@1 10.300
+[27.06.2018 03:41:26] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(10.1900, device='cuda:0'), val_x2_out_prec1: tensor(10.2100, device='cuda:0'), val_x3_out_prec1: tensor(10.3000, device='cuda:0'), val_losstensor(7.0220, device='cuda:0')
+[27.06.2018 03:41:26] =============================== validate ===============================
+[27.06.2018 03:41:43]  * Prec@1 96.750
+[27.06.2018 03:41:43]  * x1_out_Prec@1 9.720
+[27.06.2018 03:41:43]  * x2_out_Prec@1 9.930
+[27.06.2018 03:41:43]  * x3_out_Prec@1 9.920
+[27.06.2018 03:41:43] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(9.7200, device='cuda:0'), x1 out classifier acc: tensor(9.9300, device='cuda:0'), x3 out classifier acc: tensor(9.9200, device='cuda:0'), test_losstensor(7.0267, device='cuda:0')
+[27.06.2018 03:41:43] =============================== train ===============================
+[27.06.2018 03:45:30] ==================================== epoch 42 ==============================
+[27.06.2018 03:45:30] accuracy tensor(99.8925, device='cuda:0'), x1_out accuracy tensor(10.1350, device='cuda:0'), x2_out accuracy tensor(9.7375, device='cuda:0'), x3_out accuracy tensor(10.0275, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000006e-11
+[27.06.2018 03:45:30] =============================== validate ===============================
+[27.06.2018 03:45:48]  * Prec@1 96.880
+[27.06.2018 03:45:48]  * x1_out_Prec@1 10.210
+[27.06.2018 03:45:48]  * x2_out_Prec@1 10.150
+[27.06.2018 03:45:48]  * x3_out_Prec@1 9.740
+[27.06.2018 03:45:48] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(10.2100, device='cuda:0'), val_x2_out_prec1: tensor(10.1500, device='cuda:0'), val_x3_out_prec1: tensor(9.7400, device='cuda:0'), val_losstensor(7.0215, device='cuda:0')
+[27.06.2018 03:45:48] =============================== validate ===============================
+[27.06.2018 03:46:05]  * Prec@1 96.740
+[27.06.2018 03:46:05]  * x1_out_Prec@1 9.970
+[27.06.2018 03:46:05]  * x2_out_Prec@1 10.030
+[27.06.2018 03:46:05]  * x3_out_Prec@1 10.280
+[27.06.2018 03:46:05] =============> Test epoch, final output classifier acc: tensor(96.7400, device='cuda:0'), x1 out classifier acc: tensor(9.9700, device='cuda:0'), x1 out classifier acc: tensor(10.0300, device='cuda:0'), x3 out classifier acc: tensor(10.2800, device='cuda:0'), test_losstensor(7.0287, device='cuda:0')
+[27.06.2018 03:46:05] =============================== train ===============================
+[27.06.2018 03:49:53] ==================================== epoch 43 ==============================
+[27.06.2018 03:49:53] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(10.2300, device='cuda:0'), x2_out accuracy tensor(10.2900, device='cuda:0'), x3_out accuracy tensor(10.3925, device='cuda:0'), loss tensor(6.9175, device='cuda:0'), learning rate 1.0000000000000006e-11
+[27.06.2018 03:49:53] =============================== validate ===============================
+[27.06.2018 03:50:10]  * Prec@1 96.940
+[27.06.2018 03:50:10]  * x1_out_Prec@1 10.950
+[27.06.2018 03:50:10]  * x2_out_Prec@1 9.900
+[27.06.2018 03:50:10]  * x3_out_Prec@1 9.740
+[27.06.2018 03:50:10] validation accuracy: tensor(96.9400, device='cuda:0'), val_x1_out_prec1: tensor(10.9500, device='cuda:0'), val_x2_out_prec1: tensor(9.9000, device='cuda:0'), val_x3_out_prec1: tensor(9.7400, device='cuda:0'), val_losstensor(7.0221, device='cuda:0')
+[27.06.2018 03:50:10] =============================== validate ===============================
+[27.06.2018 03:50:28]  * Prec@1 96.810
+[27.06.2018 03:50:28]  * x1_out_Prec@1 9.810
+[27.06.2018 03:50:28]  * x2_out_Prec@1 9.780
+[27.06.2018 03:50:28]  * x3_out_Prec@1 9.830
+[27.06.2018 03:50:28] =============> Test epoch, final output classifier acc: tensor(96.8100, device='cuda:0'), x1 out classifier acc: tensor(9.8100, device='cuda:0'), x1 out classifier acc: tensor(9.7800, device='cuda:0'), x3 out classifier acc: tensor(9.8300, device='cuda:0'), test_losstensor(7.0228, device='cuda:0')
+[27.06.2018 03:50:28] =============================== train ===============================
+[27.06.2018 03:54:14] ==================================== epoch 44 ==============================
+[27.06.2018 03:54:14] accuracy tensor(99.9050, device='cuda:0'), x1_out accuracy tensor(10.2350, device='cuda:0'), x2_out accuracy tensor(9.7700, device='cuda:0'), x3_out accuracy tensor(10.2650, device='cuda:0'), loss tensor(6.9174, device='cuda:0'), learning rate 1.0000000000000006e-11
+[27.06.2018 03:54:14] =============================== validate ===============================
+[27.06.2018 03:54:31]  * Prec@1 96.850
+[27.06.2018 03:54:31]  * x1_out_Prec@1 9.710
+[27.06.2018 03:54:31]  * x2_out_Prec@1 10.140
+[27.06.2018 03:54:31]  * x3_out_Prec@1 10.280
+[27.06.2018 03:54:31] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(9.7100, device='cuda:0'), val_x2_out_prec1: tensor(10.1400, device='cuda:0'), val_x3_out_prec1: tensor(10.2800, device='cuda:0'), val_losstensor(7.0249, device='cuda:0')
+[27.06.2018 03:54:31] =============================== validate ===============================
+[27.06.2018 03:54:49]  * Prec@1 96.730
+[27.06.2018 03:54:49]  * x1_out_Prec@1 9.290
+[27.06.2018 03:54:49]  * x2_out_Prec@1 10.550
+[27.06.2018 03:54:49]  * x3_out_Prec@1 9.950
+[27.06.2018 03:54:49] =============> Test epoch, final output classifier acc: tensor(96.7300, device='cuda:0'), x1 out classifier acc: tensor(9.2900, device='cuda:0'), x1 out classifier acc: tensor(10.5500, device='cuda:0'), x3 out classifier acc: tensor(9.9500, device='cuda:0'), test_losstensor(7.0270, device='cuda:0')
+[27.06.2018 03:54:49] =============================== train ===============================
+[27.06.2018 03:58:36] ==================================== epoch 45 ==============================
+[27.06.2018 03:58:36] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(10.1825, device='cuda:0'), x2_out accuracy tensor(10.3325, device='cuda:0'), x3_out accuracy tensor(10.0875, device='cuda:0'), loss tensor(6.9176, device='cuda:0'), learning rate 1.0000000000000006e-12
+[27.06.2018 03:58:36] =============================== validate ===============================
+[27.06.2018 03:58:54]  * Prec@1 96.840
+[27.06.2018 03:58:54]  * x1_out_Prec@1 10.000
+[27.06.2018 03:58:54]  * x2_out_Prec@1 10.180
+[27.06.2018 03:58:54]  * x3_out_Prec@1 10.030
+[27.06.2018 03:58:54] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10., device='cuda:0'), val_x2_out_prec1: tensor(10.1800, device='cuda:0'), val_x3_out_prec1: tensor(10.0300, device='cuda:0'), val_losstensor(7.0226, device='cuda:0')
+[27.06.2018 03:58:54] =============================== validate ===============================
+[27.06.2018 03:59:11]  * Prec@1 96.710
+[27.06.2018 03:59:11]  * x1_out_Prec@1 9.880
+[27.06.2018 03:59:11]  * x2_out_Prec@1 10.270
+[27.06.2018 03:59:11]  * x3_out_Prec@1 10.200
+[27.06.2018 03:59:11] =============> Test epoch, final output classifier acc: tensor(96.7100, device='cuda:0'), x1 out classifier acc: tensor(9.8800, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x3 out classifier acc: tensor(10.2000, device='cuda:0'), test_losstensor(7.0286, device='cuda:0')
+[27.06.2018 03:59:11] =============================== train ===============================
+[27.06.2018 04:02:58] ==================================== epoch 46 ==============================
+[27.06.2018 04:02:58] accuracy tensor(99.9225, device='cuda:0'), x1_out accuracy tensor(10.0050, device='cuda:0'), x2_out accuracy tensor(10.2000, device='cuda:0'), x3_out accuracy tensor(10.0075, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000006e-12
+[27.06.2018 04:02:58] =============================== validate ===============================
+[27.06.2018 04:03:16]  * Prec@1 96.890
+[27.06.2018 04:03:16]  * x1_out_Prec@1 9.810
+[27.06.2018 04:03:16]  * x2_out_Prec@1 10.210
+[27.06.2018 04:03:16]  * x3_out_Prec@1 10.700
+[27.06.2018 04:03:16] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.8100, device='cuda:0'), val_x2_out_prec1: tensor(10.2100, device='cuda:0'), val_x3_out_prec1: tensor(10.7000, device='cuda:0'), val_losstensor(7.0224, device='cuda:0')
+[27.06.2018 04:03:16] =============================== validate ===============================
+[27.06.2018 04:03:33]  * Prec@1 96.690
+[27.06.2018 04:03:33]  * x1_out_Prec@1 9.870
+[27.06.2018 04:03:33]  * x2_out_Prec@1 9.590
+[27.06.2018 04:03:33]  * x3_out_Prec@1 9.760
+[27.06.2018 04:03:33] =============> Test epoch, final output classifier acc: tensor(96.6900, device='cuda:0'), x1 out classifier acc: tensor(9.8700, device='cuda:0'), x1 out classifier acc: tensor(9.5900, device='cuda:0'), x3 out classifier acc: tensor(9.7600, device='cuda:0'), test_losstensor(7.0292, device='cuda:0')
+[27.06.2018 04:03:33] =============================== train ===============================
+[27.06.2018 04:07:20] ==================================== epoch 47 ==============================
+[27.06.2018 04:07:20] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(9.9600, device='cuda:0'), x2_out accuracy tensor(9.9525, device='cuda:0'), x3_out accuracy tensor(9.9950, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000006e-12
+[27.06.2018 04:07:20] =============================== validate ===============================
+[27.06.2018 04:07:38]  * Prec@1 96.900
+[27.06.2018 04:07:38]  * x1_out_Prec@1 10.300
+[27.06.2018 04:07:38]  * x2_out_Prec@1 10.270
+[27.06.2018 04:07:38]  * x3_out_Prec@1 9.650
+[27.06.2018 04:07:38] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(10.3000, device='cuda:0'), val_x2_out_prec1: tensor(10.2700, device='cuda:0'), val_x3_out_prec1: tensor(9.6500, device='cuda:0'), val_losstensor(7.0211, device='cuda:0')
+[27.06.2018 04:07:38] =============================== validate ===============================
+[27.06.2018 04:07:56]  * Prec@1 96.830
+[27.06.2018 04:07:56]  * x1_out_Prec@1 10.210
+[27.06.2018 04:07:56]  * x2_out_Prec@1 10.540
+[27.06.2018 04:07:56]  * x3_out_Prec@1 9.500
+[27.06.2018 04:07:56] =============> Test epoch, final output classifier acc: tensor(96.8300, device='cuda:0'), x1 out classifier acc: tensor(10.2100, device='cuda:0'), x1 out classifier acc: tensor(10.5400, device='cuda:0'), x3 out classifier acc: tensor(9.5000, device='cuda:0'), test_losstensor(7.0256, device='cuda:0')
+[27.06.2018 04:07:56] =============================== train ===============================
+[27.06.2018 04:11:43] ==================================== epoch 48 ==============================
+[27.06.2018 04:11:43] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(10.1700, device='cuda:0'), x2_out accuracy tensor(10.0750, device='cuda:0'), x3_out accuracy tensor(10.0625, device='cuda:0'), loss tensor(6.9179, device='cuda:0'), learning rate 1.0000000000000006e-12
+[27.06.2018 04:11:43] =============================== validate ===============================
+[27.06.2018 04:12:00]  * Prec@1 96.890
+[27.06.2018 04:12:00]  * x1_out_Prec@1 10.100
+[27.06.2018 04:12:00]  * x2_out_Prec@1 10.090
+[27.06.2018 04:12:00]  * x3_out_Prec@1 9.920
+[27.06.2018 04:12:00] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(10.1000, device='cuda:0'), val_x2_out_prec1: tensor(10.0900, device='cuda:0'), val_x3_out_prec1: tensor(9.9200, device='cuda:0'), val_losstensor(7.0228, device='cuda:0')
+[27.06.2018 04:12:00] =============================== validate ===============================
+[27.06.2018 04:12:17]  * Prec@1 96.720
+[27.06.2018 04:12:17]  * x1_out_Prec@1 10.190
+[27.06.2018 04:12:17]  * x2_out_Prec@1 10.010
+[27.06.2018 04:12:17]  * x3_out_Prec@1 9.720
+[27.06.2018 04:12:17] =============> Test epoch, final output classifier acc: tensor(96.7200, device='cuda:0'), x1 out classifier acc: tensor(10.1900, device='cuda:0'), x1 out classifier acc: tensor(10.0100, device='cuda:0'), x3 out classifier acc: tensor(9.7200, device='cuda:0'), test_losstensor(7.0240, device='cuda:0')
+[27.06.2018 04:12:17] =============================== train ===============================
+[27.06.2018 04:16:04] ==================================== epoch 49 ==============================
+[27.06.2018 04:16:04] accuracy tensor(99.9300, device='cuda:0'), x1_out accuracy tensor(10.1000, device='cuda:0'), x2_out accuracy tensor(9.9025, device='cuda:0'), x3_out accuracy tensor(9.7200, device='cuda:0'), loss tensor(6.9185, device='cuda:0'), learning rate 1.0000000000000006e-12
+[27.06.2018 04:16:04] =============================== validate ===============================
+[27.06.2018 04:16:22]  * Prec@1 96.880
+[27.06.2018 04:16:22]  * x1_out_Prec@1 10.070
+[27.06.2018 04:16:22]  * x2_out_Prec@1 10.320
+[27.06.2018 04:16:22]  * x3_out_Prec@1 9.650
+[27.06.2018 04:16:22] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(10.0700, device='cuda:0'), val_x2_out_prec1: tensor(10.3200, device='cuda:0'), val_x3_out_prec1: tensor(9.6500, device='cuda:0'), val_losstensor(7.0217, device='cuda:0')
+[27.06.2018 04:16:22] =============================== validate ===============================
+[27.06.2018 04:16:39]  * Prec@1 96.820
+[27.06.2018 04:16:39]  * x1_out_Prec@1 10.450
+[27.06.2018 04:16:39]  * x2_out_Prec@1 9.970
+[27.06.2018 04:16:39]  * x3_out_Prec@1 9.770
+[27.06.2018 04:16:39] =============> Test epoch, final output classifier acc: tensor(96.8200, device='cuda:0'), x1 out classifier acc: tensor(10.4500, device='cuda:0'), x1 out classifier acc: tensor(9.9700, device='cuda:0'), x3 out classifier acc: tensor(9.7700, device='cuda:0'), test_losstensor(7.0255, device='cuda:0')
+[27.06.2018 04:16:39] =============================== train ===============================
+[27.06.2018 04:20:26] ==================================== epoch 50 ==============================
+[27.06.2018 04:20:26] accuracy tensor(99.9000, device='cuda:0'), x1_out accuracy tensor(10.1525, device='cuda:0'), x2_out accuracy tensor(10.1800, device='cuda:0'), x3_out accuracy tensor(9.7225, device='cuda:0'), loss tensor(6.9185, device='cuda:0'), learning rate 1.0000000000000005e-13
+[27.06.2018 04:20:26] =============================== validate ===============================
+[27.06.2018 04:20:44]  * Prec@1 96.790
+[27.06.2018 04:20:44]  * x1_out_Prec@1 10.540
+[27.06.2018 04:20:44]  * x2_out_Prec@1 9.880
+[27.06.2018 04:20:44]  * x3_out_Prec@1 10.120
+[27.06.2018 04:20:44] validation accuracy: tensor(96.7900, device='cuda:0'), val_x1_out_prec1: tensor(10.5400, device='cuda:0'), val_x2_out_prec1: tensor(9.8800, device='cuda:0'), val_x3_out_prec1: tensor(10.1200, device='cuda:0'), val_losstensor(7.0268, device='cuda:0')
+[27.06.2018 04:20:44] =============================== validate ===============================
+[27.06.2018 04:21:01]  * Prec@1 96.600
+[27.06.2018 04:21:01]  * x1_out_Prec@1 9.980
+[27.06.2018 04:21:01]  * x2_out_Prec@1 10.110
+[27.06.2018 04:21:01]  * x3_out_Prec@1 9.990
+[27.06.2018 04:21:01] =============> Test epoch, final output classifier acc: tensor(96.6000, device='cuda:0'), x1 out classifier acc: tensor(9.9800, device='cuda:0'), x1 out classifier acc: tensor(10.1100, device='cuda:0'), x3 out classifier acc: tensor(9.9900, device='cuda:0'), test_losstensor(7.0300, device='cuda:0')
+[27.06.2018 04:21:01] =============================== train ===============================
+[27.06.2018 04:24:48] ==================================== epoch 51 ==============================
+[27.06.2018 04:24:48] accuracy tensor(99.9400, device='cuda:0'), x1_out accuracy tensor(10.1800, device='cuda:0'), x2_out accuracy tensor(9.6050, device='cuda:0'), x3_out accuracy tensor(9.9975, device='cuda:0'), loss tensor(6.9190, device='cuda:0'), learning rate 1.0000000000000005e-13
+[27.06.2018 04:24:48] =============================== validate ===============================
+[27.06.2018 04:25:06]  * Prec@1 96.910
+[27.06.2018 04:25:06]  * x1_out_Prec@1 10.450
+[27.06.2018 04:25:06]  * x2_out_Prec@1 9.610
+[27.06.2018 04:25:06]  * x3_out_Prec@1 9.580
+[27.06.2018 04:25:06] validation accuracy: tensor(96.9100, device='cuda:0'), val_x1_out_prec1: tensor(10.4500, device='cuda:0'), val_x2_out_prec1: tensor(9.6100, device='cuda:0'), val_x3_out_prec1: tensor(9.5800, device='cuda:0'), val_losstensor(7.0217, device='cuda:0')
+[27.06.2018 04:25:06] =============================== validate ===============================
+[27.06.2018 04:25:23]  * Prec@1 96.800
+[27.06.2018 04:25:23]  * x1_out_Prec@1 9.880
+[27.06.2018 04:25:23]  * x2_out_Prec@1 10.040
+[27.06.2018 04:25:23]  * x3_out_Prec@1 9.790
+[27.06.2018 04:25:23] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(9.8800, device='cuda:0'), x1 out classifier acc: tensor(10.0400, device='cuda:0'), x3 out classifier acc: tensor(9.7900, device='cuda:0'), test_losstensor(7.0273, device='cuda:0')
+[27.06.2018 04:25:23] =============================== train ===============================
+[27.06.2018 04:29:10] ==================================== epoch 52 ==============================
+[27.06.2018 04:29:10] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.9350, device='cuda:0'), x2_out accuracy tensor(10.1200, device='cuda:0'), x3_out accuracy tensor(9.8600, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000005e-13
+[27.06.2018 04:29:10] =============================== validate ===============================
+[27.06.2018 04:29:28]  * Prec@1 96.910
+[27.06.2018 04:29:28]  * x1_out_Prec@1 9.950
+[27.06.2018 04:29:28]  * x2_out_Prec@1 9.700
+[27.06.2018 04:29:28]  * x3_out_Prec@1 9.640
+[27.06.2018 04:29:28] validation accuracy: tensor(96.9100, device='cuda:0'), val_x1_out_prec1: tensor(9.9500, device='cuda:0'), val_x2_out_prec1: tensor(9.7000, device='cuda:0'), val_x3_out_prec1: tensor(9.6400, device='cuda:0'), val_losstensor(7.0226, device='cuda:0')
+[27.06.2018 04:29:28] =============================== validate ===============================
+[27.06.2018 04:29:45]  * Prec@1 96.780
+[27.06.2018 04:29:45]  * x1_out_Prec@1 9.930
+[27.06.2018 04:29:45]  * x2_out_Prec@1 10.260
+[27.06.2018 04:29:45]  * x3_out_Prec@1 9.980
+[27.06.2018 04:29:45] =============> Test epoch, final output classifier acc: tensor(96.7800, device='cuda:0'), x1 out classifier acc: tensor(9.9300, device='cuda:0'), x1 out classifier acc: tensor(10.2600, device='cuda:0'), x3 out classifier acc: tensor(9.9800, device='cuda:0'), test_losstensor(7.0273, device='cuda:0')
+[27.06.2018 04:29:45] =============================== train ===============================
+[27.06.2018 04:33:33] ==================================== epoch 53 ==============================
+[27.06.2018 04:33:33] accuracy tensor(99.9300, device='cuda:0'), x1_out accuracy tensor(10.1425, device='cuda:0'), x2_out accuracy tensor(10.1550, device='cuda:0'), x3_out accuracy tensor(9.7800, device='cuda:0'), loss tensor(6.9176, device='cuda:0'), learning rate 1.0000000000000005e-13
+[27.06.2018 04:33:33] =============================== validate ===============================
+[27.06.2018 04:33:50]  * Prec@1 96.940
+[27.06.2018 04:33:50]  * x1_out_Prec@1 10.050
+[27.06.2018 04:33:50]  * x2_out_Prec@1 9.610
+[27.06.2018 04:33:50]  * x3_out_Prec@1 9.930
+[27.06.2018 04:33:50] validation accuracy: tensor(96.9400, device='cuda:0'), val_x1_out_prec1: tensor(10.0500, device='cuda:0'), val_x2_out_prec1: tensor(9.6100, device='cuda:0'), val_x3_out_prec1: tensor(9.9300, device='cuda:0'), val_losstensor(7.0246, device='cuda:0')
+[27.06.2018 04:33:50] =============================== validate ===============================
+[27.06.2018 04:34:07]  * Prec@1 96.750
+[27.06.2018 04:34:07]  * x1_out_Prec@1 9.540
+[27.06.2018 04:34:07]  * x2_out_Prec@1 9.610
+[27.06.2018 04:34:07]  * x3_out_Prec@1 10.390
+[27.06.2018 04:34:07] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(9.5400, device='cuda:0'), x1 out classifier acc: tensor(9.6100, device='cuda:0'), x3 out classifier acc: tensor(10.3900, device='cuda:0'), test_losstensor(7.0292, device='cuda:0')
+[27.06.2018 04:34:07] =============================== train ===============================
+[27.06.2018 04:37:54] ==================================== epoch 54 ==============================
+[27.06.2018 04:37:54] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(9.9725, device='cuda:0'), x2_out accuracy tensor(9.9075, device='cuda:0'), x3_out accuracy tensor(9.8950, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000005e-13
+[27.06.2018 04:37:54] =============================== validate ===============================
+[27.06.2018 04:38:12]  * Prec@1 96.870
+[27.06.2018 04:38:12]  * x1_out_Prec@1 9.930
+[27.06.2018 04:38:12]  * x2_out_Prec@1 9.930
+[27.06.2018 04:38:12]  * x3_out_Prec@1 10.140
+[27.06.2018 04:38:12] validation accuracy: tensor(96.8700, device='cuda:0'), val_x1_out_prec1: tensor(9.9300, device='cuda:0'), val_x2_out_prec1: tensor(9.9300, device='cuda:0'), val_x3_out_prec1: tensor(10.1400, device='cuda:0'), val_losstensor(7.0219, device='cuda:0')
+[27.06.2018 04:38:12] =============================== validate ===============================
+[27.06.2018 04:38:29]  * Prec@1 96.770
+[27.06.2018 04:38:29]  * x1_out_Prec@1 9.810
+[27.06.2018 04:38:29]  * x2_out_Prec@1 10.310
+[27.06.2018 04:38:29]  * x3_out_Prec@1 9.860
+[27.06.2018 04:38:29] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(9.8100, device='cuda:0'), x1 out classifier acc: tensor(10.3100, device='cuda:0'), x3 out classifier acc: tensor(9.8600, device='cuda:0'), test_losstensor(7.0276, device='cuda:0')
+[27.06.2018 04:38:29] =============================== train ===============================
+[27.06.2018 04:42:16] ==================================== epoch 55 ==============================
+[27.06.2018 04:42:16] accuracy tensor(99.9075, device='cuda:0'), x1_out accuracy tensor(9.7150, device='cuda:0'), x2_out accuracy tensor(10.1125, device='cuda:0'), x3_out accuracy tensor(9.8625, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000006e-14
+[27.06.2018 04:42:16] =============================== validate ===============================
+[27.06.2018 04:42:34]  * Prec@1 96.880
+[27.06.2018 04:42:34]  * x1_out_Prec@1 9.740
+[27.06.2018 04:42:34]  * x2_out_Prec@1 10.140
+[27.06.2018 04:42:34]  * x3_out_Prec@1 9.750
+[27.06.2018 04:42:34] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(9.7400, device='cuda:0'), val_x2_out_prec1: tensor(10.1400, device='cuda:0'), val_x3_out_prec1: tensor(9.7500, device='cuda:0'), val_losstensor(7.0224, device='cuda:0')
+[27.06.2018 04:42:34] =============================== validate ===============================
+[27.06.2018 04:42:51]  * Prec@1 96.760
+[27.06.2018 04:42:51]  * x1_out_Prec@1 10.290
+[27.06.2018 04:42:51]  * x2_out_Prec@1 9.900
+[27.06.2018 04:42:51]  * x3_out_Prec@1 10.050
+[27.06.2018 04:42:51] =============> Test epoch, final output classifier acc: tensor(96.7600, device='cuda:0'), x1 out classifier acc: tensor(10.2900, device='cuda:0'), x1 out classifier acc: tensor(9.9000, device='cuda:0'), x3 out classifier acc: tensor(10.0500, device='cuda:0'), test_losstensor(7.0232, device='cuda:0')
+[27.06.2018 04:42:51] =============================== train ===============================
+[27.06.2018 04:46:38] ==================================== epoch 56 ==============================
+[27.06.2018 04:46:38] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(10.0100, device='cuda:0'), x2_out accuracy tensor(9.9100, device='cuda:0'), x3_out accuracy tensor(9.8950, device='cuda:0'), loss tensor(6.9193, device='cuda:0'), learning rate 1.0000000000000006e-14
+[27.06.2018 04:46:38] =============================== validate ===============================
+[27.06.2018 04:46:56]  * Prec@1 96.870
+[27.06.2018 04:46:56]  * x1_out_Prec@1 9.810
+[27.06.2018 04:46:56]  * x2_out_Prec@1 9.740
+[27.06.2018 04:46:56]  * x3_out_Prec@1 9.950
+[27.06.2018 04:46:56] validation accuracy: tensor(96.8700, device='cuda:0'), val_x1_out_prec1: tensor(9.8100, device='cuda:0'), val_x2_out_prec1: tensor(9.7400, device='cuda:0'), val_x3_out_prec1: tensor(9.9500, device='cuda:0'), val_losstensor(7.0212, device='cuda:0')
+[27.06.2018 04:46:56] =============================== validate ===============================
+[27.06.2018 04:47:13]  * Prec@1 96.810
+[27.06.2018 04:47:13]  * x1_out_Prec@1 9.850
+[27.06.2018 04:47:13]  * x2_out_Prec@1 10.270
+[27.06.2018 04:47:13]  * x3_out_Prec@1 10.220
+[27.06.2018 04:47:13] =============> Test epoch, final output classifier acc: tensor(96.8100, device='cuda:0'), x1 out classifier acc: tensor(9.8500, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x3 out classifier acc: tensor(10.2200, device='cuda:0'), test_losstensor(7.0252, device='cuda:0')
+[27.06.2018 04:47:13] =============================== train ===============================
+[27.06.2018 04:51:00] ==================================== epoch 57 ==============================
+[27.06.2018 04:51:00] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(10.0025, device='cuda:0'), x2_out accuracy tensor(9.8800, device='cuda:0'), x3_out accuracy tensor(9.9150, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000006e-14
+[27.06.2018 04:51:00] =============================== validate ===============================
+[27.06.2018 04:51:18]  * Prec@1 96.860
+[27.06.2018 04:51:18]  * x1_out_Prec@1 9.960
+[27.06.2018 04:51:18]  * x2_out_Prec@1 9.920
+[27.06.2018 04:51:18]  * x3_out_Prec@1 9.800
+[27.06.2018 04:51:18] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(9.9600, device='cuda:0'), val_x2_out_prec1: tensor(9.9200, device='cuda:0'), val_x3_out_prec1: tensor(9.8000, device='cuda:0'), val_losstensor(7.0237, device='cuda:0')
+[27.06.2018 04:51:18] =============================== validate ===============================
+[27.06.2018 04:51:35]  * Prec@1 96.800
+[27.06.2018 04:51:35]  * x1_out_Prec@1 9.700
+[27.06.2018 04:51:35]  * x2_out_Prec@1 10.060
+[27.06.2018 04:51:35]  * x3_out_Prec@1 10.150
+[27.06.2018 04:51:35] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(9.7000, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x3 out classifier acc: tensor(10.1500, device='cuda:0'), test_losstensor(7.0243, device='cuda:0')
+[27.06.2018 04:51:35] =============================== train ===============================
+[27.06.2018 04:55:22] ==================================== epoch 58 ==============================
+[27.06.2018 04:55:22] accuracy tensor(99.9100, device='cuda:0'), x1_out accuracy tensor(9.9525, device='cuda:0'), x2_out accuracy tensor(9.9725, device='cuda:0'), x3_out accuracy tensor(9.7825, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000006e-14
+[27.06.2018 04:55:22] =============================== validate ===============================
+[27.06.2018 04:55:39]  * Prec@1 96.920
+[27.06.2018 04:55:39]  * x1_out_Prec@1 10.330
+[27.06.2018 04:55:39]  * x2_out_Prec@1 9.380
+[27.06.2018 04:55:39]  * x3_out_Prec@1 9.890
+[27.06.2018 04:55:39] validation accuracy: tensor(96.9200, device='cuda:0'), val_x1_out_prec1: tensor(10.3300, device='cuda:0'), val_x2_out_prec1: tensor(9.3800, device='cuda:0'), val_x3_out_prec1: tensor(9.8900, device='cuda:0'), val_losstensor(7.0202, device='cuda:0')
+[27.06.2018 04:55:39] =============================== validate ===============================
+[27.06.2018 04:55:57]  * Prec@1 96.750
+[27.06.2018 04:55:57]  * x1_out_Prec@1 10.140
+[27.06.2018 04:55:57]  * x2_out_Prec@1 9.930
+[27.06.2018 04:55:57]  * x3_out_Prec@1 10.090
+[27.06.2018 04:55:57] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(10.1400, device='cuda:0'), x1 out classifier acc: tensor(9.9300, device='cuda:0'), x3 out classifier acc: tensor(10.0900, device='cuda:0'), test_losstensor(7.0249, device='cuda:0')
+[27.06.2018 04:55:57] =============================== train ===============================
+[27.06.2018 04:59:44] ==================================== epoch 59 ==============================
+[27.06.2018 04:59:44] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(10.2325, device='cuda:0'), x2_out accuracy tensor(9.9000, device='cuda:0'), x3_out accuracy tensor(9.5475, device='cuda:0'), loss tensor(6.9187, device='cuda:0'), learning rate 1.0000000000000006e-14
+[27.06.2018 04:59:44] =============================== validate ===============================
+[27.06.2018 05:00:01]  * Prec@1 96.850
+[27.06.2018 05:00:01]  * x1_out_Prec@1 10.080
+[27.06.2018 05:00:01]  * x2_out_Prec@1 9.780
+[27.06.2018 05:00:01]  * x3_out_Prec@1 10.340
+[27.06.2018 05:00:01] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(10.0800, device='cuda:0'), val_x2_out_prec1: tensor(9.7800, device='cuda:0'), val_x3_out_prec1: tensor(10.3400, device='cuda:0'), val_losstensor(7.0235, device='cuda:0')
+[27.06.2018 05:00:01] =============================== validate ===============================
+[27.06.2018 05:00:19]  * Prec@1 96.690
+[27.06.2018 05:00:19]  * x1_out_Prec@1 10.070
+[27.06.2018 05:00:19]  * x2_out_Prec@1 9.910
+[27.06.2018 05:00:19]  * x3_out_Prec@1 9.310
+[27.06.2018 05:00:19] =============> Test epoch, final output classifier acc: tensor(96.6900, device='cuda:0'), x1 out classifier acc: tensor(10.0700, device='cuda:0'), x1 out classifier acc: tensor(9.9100, device='cuda:0'), x3 out classifier acc: tensor(9.3100, device='cuda:0'), test_losstensor(7.0271, device='cuda:0')
+[27.06.2018 05:00:19] =============================== train ===============================
+[27.06.2018 05:04:05] ==================================== epoch 60 ==============================
+[27.06.2018 05:04:05] accuracy tensor(99.9225, device='cuda:0'), x1_out accuracy tensor(9.8550, device='cuda:0'), x2_out accuracy tensor(9.7850, device='cuda:0'), x3_out accuracy tensor(9.9325, device='cuda:0'), loss tensor(6.9193, device='cuda:0'), learning rate 1.0000000000000007e-15
+[27.06.2018 05:04:05] =============================== validate ===============================
+[27.06.2018 05:04:23]  * Prec@1 96.900
+[27.06.2018 05:04:23]  * x1_out_Prec@1 10.270
+[27.06.2018 05:04:23]  * x2_out_Prec@1 9.740
+[27.06.2018 05:04:23]  * x3_out_Prec@1 10.050
+[27.06.2018 05:04:23] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(10.2700, device='cuda:0'), val_x2_out_prec1: tensor(9.7400, device='cuda:0'), val_x3_out_prec1: tensor(10.0500, device='cuda:0'), val_losstensor(7.0191, device='cuda:0')
+[27.06.2018 05:04:23] =============================== validate ===============================
+[27.06.2018 05:04:41]  * Prec@1 96.760
+[27.06.2018 05:04:41]  * x1_out_Prec@1 10.150
+[27.06.2018 05:04:41]  * x2_out_Prec@1 10.180
+[27.06.2018 05:04:41]  * x3_out_Prec@1 10.200
+[27.06.2018 05:04:41] =============> Test epoch, final output classifier acc: tensor(96.7600, device='cuda:0'), x1 out classifier acc: tensor(10.1500, device='cuda:0'), x1 out classifier acc: tensor(10.1800, device='cuda:0'), x3 out classifier acc: tensor(10.2000, device='cuda:0'), test_losstensor(7.0223, device='cuda:0')
+[27.06.2018 05:04:41] =============================== train ===============================
+[27.06.2018 05:08:28] ==================================== epoch 61 ==============================
+[27.06.2018 05:08:28] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.9250, device='cuda:0'), x2_out accuracy tensor(10.1075, device='cuda:0'), x3_out accuracy tensor(9.8850, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000007e-15
+[27.06.2018 05:08:28] =============================== validate ===============================
+[27.06.2018 05:08:45]  * Prec@1 96.810
+[27.06.2018 05:08:45]  * x1_out_Prec@1 10.660
+[27.06.2018 05:08:45]  * x2_out_Prec@1 9.710
+[27.06.2018 05:08:45]  * x3_out_Prec@1 9.630
+[27.06.2018 05:08:45] validation accuracy: tensor(96.8100, device='cuda:0'), val_x1_out_prec1: tensor(10.6600, device='cuda:0'), val_x2_out_prec1: tensor(9.7100, device='cuda:0'), val_x3_out_prec1: tensor(9.6300, device='cuda:0'), val_losstensor(7.0260, device='cuda:0')
+[27.06.2018 05:08:45] =============================== validate ===============================
+[27.06.2018 05:09:03]  * Prec@1 96.660
+[27.06.2018 05:09:03]  * x1_out_Prec@1 9.470
+[27.06.2018 05:09:03]  * x2_out_Prec@1 9.850
+[27.06.2018 05:09:03]  * x3_out_Prec@1 10.560
+[27.06.2018 05:09:03] =============> Test epoch, final output classifier acc: tensor(96.6600, device='cuda:0'), x1 out classifier acc: tensor(9.4700, device='cuda:0'), x1 out classifier acc: tensor(9.8500, device='cuda:0'), x3 out classifier acc: tensor(10.5600, device='cuda:0'), test_losstensor(7.0289, device='cuda:0')
+[27.06.2018 05:09:03] =============================== train ===============================
+[27.06.2018 05:12:49] ==================================== epoch 62 ==============================
+[27.06.2018 05:12:49] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(10.1050, device='cuda:0'), x2_out accuracy tensor(9.9950, device='cuda:0'), x3_out accuracy tensor(10.0575, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000007e-15
+[27.06.2018 05:12:49] =============================== validate ===============================
+[27.06.2018 05:13:07]  * Prec@1 96.890
+[27.06.2018 05:13:07]  * x1_out_Prec@1 9.890
+[27.06.2018 05:13:07]  * x2_out_Prec@1 10.050
+[27.06.2018 05:13:07]  * x3_out_Prec@1 10.620
+[27.06.2018 05:13:07] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.8900, device='cuda:0'), val_x2_out_prec1: tensor(10.0500, device='cuda:0'), val_x3_out_prec1: tensor(10.6200, device='cuda:0'), val_losstensor(7.0208, device='cuda:0')
+[27.06.2018 05:13:07] =============================== validate ===============================
+[27.06.2018 05:13:24]  * Prec@1 96.820
+[27.06.2018 05:13:24]  * x1_out_Prec@1 9.890
+[27.06.2018 05:13:24]  * x2_out_Prec@1 9.460
+[27.06.2018 05:13:24]  * x3_out_Prec@1 10.770
+[27.06.2018 05:13:24] =============> Test epoch, final output classifier acc: tensor(96.8200, device='cuda:0'), x1 out classifier acc: tensor(9.8900, device='cuda:0'), x1 out classifier acc: tensor(9.4600, device='cuda:0'), x3 out classifier acc: tensor(10.7700, device='cuda:0'), test_losstensor(7.0262, device='cuda:0')
+[27.06.2018 05:13:24] =============================== train ===============================
+[27.06.2018 05:17:11] ==================================== epoch 63 ==============================
+[27.06.2018 05:17:11] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(10.0625, device='cuda:0'), x2_out accuracy tensor(10.0200, device='cuda:0'), x3_out accuracy tensor(10.1150, device='cuda:0'), loss tensor(6.9174, device='cuda:0'), learning rate 1.0000000000000007e-15
+[27.06.2018 05:17:11] =============================== validate ===============================
+[27.06.2018 05:17:29]  * Prec@1 96.810
+[27.06.2018 05:17:29]  * x1_out_Prec@1 10.210
+[27.06.2018 05:17:29]  * x2_out_Prec@1 9.590
+[27.06.2018 05:17:29]  * x3_out_Prec@1 10.170
+[27.06.2018 05:17:29] validation accuracy: tensor(96.8100, device='cuda:0'), val_x1_out_prec1: tensor(10.2100, device='cuda:0'), val_x2_out_prec1: tensor(9.5900, device='cuda:0'), val_x3_out_prec1: tensor(10.1700, device='cuda:0'), val_losstensor(7.0227, device='cuda:0')
+[27.06.2018 05:17:29] =============================== validate ===============================
+[27.06.2018 05:17:46]  * Prec@1 96.750
+[27.06.2018 05:17:46]  * x1_out_Prec@1 10.090
+[27.06.2018 05:17:46]  * x2_out_Prec@1 10.650
+[27.06.2018 05:17:46]  * x3_out_Prec@1 9.480
+[27.06.2018 05:17:46] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(10.0900, device='cuda:0'), x1 out classifier acc: tensor(10.6500, device='cuda:0'), x3 out classifier acc: tensor(9.4800, device='cuda:0'), test_losstensor(7.0279, device='cuda:0')
+[27.06.2018 05:17:46] =============================== train ===============================
+[27.06.2018 05:21:34] ==================================== epoch 64 ==============================
+[27.06.2018 05:21:34] accuracy tensor(99.9175, device='cuda:0'), x1_out accuracy tensor(9.8000, device='cuda:0'), x2_out accuracy tensor(10.1425, device='cuda:0'), x3_out accuracy tensor(10.1425, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.0000000000000007e-15
+[27.06.2018 05:21:34] =============================== validate ===============================
+[27.06.2018 05:21:51]  * Prec@1 96.780
+[27.06.2018 05:21:51]  * x1_out_Prec@1 10.530
+[27.06.2018 05:21:51]  * x2_out_Prec@1 9.910
+[27.06.2018 05:21:51]  * x3_out_Prec@1 9.890
+[27.06.2018 05:21:51] validation accuracy: tensor(96.7800, device='cuda:0'), val_x1_out_prec1: tensor(10.5300, device='cuda:0'), val_x2_out_prec1: tensor(9.9100, device='cuda:0'), val_x3_out_prec1: tensor(9.8900, device='cuda:0'), val_losstensor(7.0254, device='cuda:0')
+[27.06.2018 05:21:51] =============================== validate ===============================
+[27.06.2018 05:22:09]  * Prec@1 96.710
+[27.06.2018 05:22:09]  * x1_out_Prec@1 10.120
+[27.06.2018 05:22:09]  * x2_out_Prec@1 10.460
+[27.06.2018 05:22:09]  * x3_out_Prec@1 10.210
+[27.06.2018 05:22:09] =============> Test epoch, final output classifier acc: tensor(96.7100, device='cuda:0'), x1 out classifier acc: tensor(10.1200, device='cuda:0'), x1 out classifier acc: tensor(10.4600, device='cuda:0'), x3 out classifier acc: tensor(10.2100, device='cuda:0'), test_losstensor(7.0249, device='cuda:0')
+[27.06.2018 05:22:09] =============================== train ===============================
+[27.06.2018 05:25:56] ==================================== epoch 65 ==============================
+[27.06.2018 05:25:56] accuracy tensor(99.9475, device='cuda:0'), x1_out accuracy tensor(10.0175, device='cuda:0'), x2_out accuracy tensor(9.8725, device='cuda:0'), x3_out accuracy tensor(9.8700, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000007e-16
+[27.06.2018 05:25:56] =============================== validate ===============================
+[27.06.2018 05:26:14]  * Prec@1 96.910
+[27.06.2018 05:26:14]  * x1_out_Prec@1 10.350
+[27.06.2018 05:26:14]  * x2_out_Prec@1 9.920
+[27.06.2018 05:26:14]  * x3_out_Prec@1 10.440
+[27.06.2018 05:26:14] validation accuracy: tensor(96.9100, device='cuda:0'), val_x1_out_prec1: tensor(10.3500, device='cuda:0'), val_x2_out_prec1: tensor(9.9200, device='cuda:0'), val_x3_out_prec1: tensor(10.4400, device='cuda:0'), val_losstensor(7.0215, device='cuda:0')
+[27.06.2018 05:26:14] =============================== validate ===============================
+[27.06.2018 05:26:31]  * Prec@1 96.670
+[27.06.2018 05:26:31]  * x1_out_Prec@1 9.700
+[27.06.2018 05:26:31]  * x2_out_Prec@1 10.220
+[27.06.2018 05:26:31]  * x3_out_Prec@1 10.050
+[27.06.2018 05:26:31] =============> Test epoch, final output classifier acc: tensor(96.6700, device='cuda:0'), x1 out classifier acc: tensor(9.7000, device='cuda:0'), x1 out classifier acc: tensor(10.2200, device='cuda:0'), x3 out classifier acc: tensor(10.0500, device='cuda:0'), test_losstensor(7.0298, device='cuda:0')
+[27.06.2018 05:26:31] =============================== train ===============================
+[27.06.2018 05:30:18] ==================================== epoch 66 ==============================
+[27.06.2018 05:30:18] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.7325, device='cuda:0'), x2_out accuracy tensor(10.1650, device='cuda:0'), x3_out accuracy tensor(9.9900, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.0000000000000007e-16
+[27.06.2018 05:30:18] =============================== validate ===============================
+[27.06.2018 05:30:35]  * Prec@1 96.930
+[27.06.2018 05:30:35]  * x1_out_Prec@1 9.730
+[27.06.2018 05:30:35]  * x2_out_Prec@1 10.190
+[27.06.2018 05:30:35]  * x3_out_Prec@1 10.140
+[27.06.2018 05:30:35] validation accuracy: tensor(96.9300, device='cuda:0'), val_x1_out_prec1: tensor(9.7300, device='cuda:0'), val_x2_out_prec1: tensor(10.1900, device='cuda:0'), val_x3_out_prec1: tensor(10.1400, device='cuda:0'), val_losstensor(7.0219, device='cuda:0')
+[27.06.2018 05:30:35] =============================== validate ===============================
+[27.06.2018 05:30:53]  * Prec@1 96.670
+[27.06.2018 05:30:53]  * x1_out_Prec@1 9.910
+[27.06.2018 05:30:53]  * x2_out_Prec@1 10.290
+[27.06.2018 05:30:53]  * x3_out_Prec@1 9.890
+[27.06.2018 05:30:53] =============> Test epoch, final output classifier acc: tensor(96.6700, device='cuda:0'), x1 out classifier acc: tensor(9.9100, device='cuda:0'), x1 out classifier acc: tensor(10.2900, device='cuda:0'), x3 out classifier acc: tensor(9.8900, device='cuda:0'), test_losstensor(7.0268, device='cuda:0')
+[27.06.2018 05:30:53] =============================== train ===============================
+[27.06.2018 05:34:40] ==================================== epoch 67 ==============================
+[27.06.2018 05:34:40] accuracy tensor(99.9025, device='cuda:0'), x1_out accuracy tensor(10.0925, device='cuda:0'), x2_out accuracy tensor(9.8975, device='cuda:0'), x3_out accuracy tensor(10.1575, device='cuda:0'), loss tensor(6.9189, device='cuda:0'), learning rate 1.0000000000000007e-16
+[27.06.2018 05:34:40] =============================== validate ===============================
+[27.06.2018 05:34:58]  * Prec@1 96.940
+[27.06.2018 05:34:58]  * x1_out_Prec@1 9.620
+[27.06.2018 05:34:58]  * x2_out_Prec@1 9.890
+[27.06.2018 05:34:58]  * x3_out_Prec@1 9.850
+[27.06.2018 05:34:58] validation accuracy: tensor(96.9400, device='cuda:0'), val_x1_out_prec1: tensor(9.6200, device='cuda:0'), val_x2_out_prec1: tensor(9.8900, device='cuda:0'), val_x3_out_prec1: tensor(9.8500, device='cuda:0'), val_losstensor(7.0199, device='cuda:0')
+[27.06.2018 05:34:58] =============================== validate ===============================
+[27.06.2018 05:35:16]  * Prec@1 96.800
+[27.06.2018 05:35:16]  * x1_out_Prec@1 10.050
+[27.06.2018 05:35:16]  * x2_out_Prec@1 9.560
+[27.06.2018 05:35:16]  * x3_out_Prec@1 9.670
+[27.06.2018 05:35:16] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.0500, device='cuda:0'), x1 out classifier acc: tensor(9.5600, device='cuda:0'), x3 out classifier acc: tensor(9.6700, device='cuda:0'), test_losstensor(7.0266, device='cuda:0')
+[27.06.2018 05:35:16] =============================== train ===============================
+[27.06.2018 05:39:02] ==================================== epoch 68 ==============================
+[27.06.2018 05:39:02] accuracy tensor(99.8900, device='cuda:0'), x1_out accuracy tensor(10.0475, device='cuda:0'), x2_out accuracy tensor(9.6050, device='cuda:0'), x3_out accuracy tensor(10.0950, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000007e-16
+[27.06.2018 05:39:02] =============================== validate ===============================
+[27.06.2018 05:39:20]  * Prec@1 96.840
+[27.06.2018 05:39:20]  * x1_out_Prec@1 10.310
+[27.06.2018 05:39:20]  * x2_out_Prec@1 10.400
+[27.06.2018 05:39:20]  * x3_out_Prec@1 9.940
+[27.06.2018 05:39:20] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10.3100, device='cuda:0'), val_x2_out_prec1: tensor(10.4000, device='cuda:0'), val_x3_out_prec1: tensor(9.9400, device='cuda:0'), val_losstensor(7.0221, device='cuda:0')
+[27.06.2018 05:39:20] =============================== validate ===============================
+[27.06.2018 05:39:38]  * Prec@1 96.740
+[27.06.2018 05:39:38]  * x1_out_Prec@1 10.220
+[27.06.2018 05:39:38]  * x2_out_Prec@1 10.110
+[27.06.2018 05:39:38]  * x3_out_Prec@1 10.160
+[27.06.2018 05:39:38] =============> Test epoch, final output classifier acc: tensor(96.7400, device='cuda:0'), x1 out classifier acc: tensor(10.2200, device='cuda:0'), x1 out classifier acc: tensor(10.1100, device='cuda:0'), x3 out classifier acc: tensor(10.1600, device='cuda:0'), test_losstensor(7.0246, device='cuda:0')
+[27.06.2018 05:39:38] =============================== train ===============================
+[27.06.2018 05:43:25] ==================================== epoch 69 ==============================
+[27.06.2018 05:43:25] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(9.9425, device='cuda:0'), x2_out accuracy tensor(10.0450, device='cuda:0'), x3_out accuracy tensor(10.2750, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000007e-16
+[27.06.2018 05:43:25] =============================== validate ===============================
+[27.06.2018 05:43:42]  * Prec@1 96.840
+[27.06.2018 05:43:42]  * x1_out_Prec@1 10.200
+[27.06.2018 05:43:42]  * x2_out_Prec@1 10.240
+[27.06.2018 05:43:42]  * x3_out_Prec@1 9.590
+[27.06.2018 05:43:42] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10.2000, device='cuda:0'), val_x2_out_prec1: tensor(10.2400, device='cuda:0'), val_x3_out_prec1: tensor(9.5900, device='cuda:0'), val_losstensor(7.0195, device='cuda:0')
+[27.06.2018 05:43:42] =============================== validate ===============================
+[27.06.2018 05:43:59]  * Prec@1 96.850
+[27.06.2018 05:43:59]  * x1_out_Prec@1 9.720
+[27.06.2018 05:43:59]  * x2_out_Prec@1 10.200
+[27.06.2018 05:43:59]  * x3_out_Prec@1 10.460
+[27.06.2018 05:43:59] =============> Test epoch, final output classifier acc: tensor(96.8500, device='cuda:0'), x1 out classifier acc: tensor(9.7200, device='cuda:0'), x1 out classifier acc: tensor(10.2000, device='cuda:0'), x3 out classifier acc: tensor(10.4600, device='cuda:0'), test_losstensor(7.0236, device='cuda:0')
+[27.06.2018 05:43:59] =============================== train ===============================
+[27.06.2018 05:47:46] ==================================== epoch 70 ==============================
+[27.06.2018 05:47:46] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.9800, device='cuda:0'), x2_out accuracy tensor(9.9200, device='cuda:0'), x3_out accuracy tensor(9.9650, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000008e-17
+[27.06.2018 05:47:46] =============================== validate ===============================
+[27.06.2018 05:48:04]  * Prec@1 96.900
+[27.06.2018 05:48:04]  * x1_out_Prec@1 9.540
+[27.06.2018 05:48:04]  * x2_out_Prec@1 9.670
+[27.06.2018 05:48:04]  * x3_out_Prec@1 10.350
+[27.06.2018 05:48:04] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(9.5400, device='cuda:0'), val_x2_out_prec1: tensor(9.6700, device='cuda:0'), val_x3_out_prec1: tensor(10.3500, device='cuda:0'), val_losstensor(7.0236, device='cuda:0')
+[27.06.2018 05:48:04] =============================== validate ===============================
+[27.06.2018 05:48:21]  * Prec@1 96.730
+[27.06.2018 05:48:21]  * x1_out_Prec@1 10.380
+[27.06.2018 05:48:21]  * x2_out_Prec@1 10.710
+[27.06.2018 05:48:21]  * x3_out_Prec@1 9.850
+[27.06.2018 05:48:21] =============> Test epoch, final output classifier acc: tensor(96.7300, device='cuda:0'), x1 out classifier acc: tensor(10.3800, device='cuda:0'), x1 out classifier acc: tensor(10.7100, device='cuda:0'), x3 out classifier acc: tensor(9.8500, device='cuda:0'), test_losstensor(7.0270, device='cuda:0')
+[27.06.2018 05:48:21] =============================== train ===============================
+[27.06.2018 05:52:08] ==================================== epoch 71 ==============================
+[27.06.2018 05:52:08] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(10.0675, device='cuda:0'), x2_out accuracy tensor(9.9175, device='cuda:0'), x3_out accuracy tensor(10.1075, device='cuda:0'), loss tensor(6.9186, device='cuda:0'), learning rate 1.0000000000000008e-17
+[27.06.2018 05:52:08] =============================== validate ===============================
+[27.06.2018 05:52:25]  * Prec@1 96.840
+[27.06.2018 05:52:25]  * x1_out_Prec@1 9.650
+[27.06.2018 05:52:25]  * x2_out_Prec@1 10.650
+[27.06.2018 05:52:25]  * x3_out_Prec@1 10.070
+[27.06.2018 05:52:25] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(9.6500, device='cuda:0'), val_x2_out_prec1: tensor(10.6500, device='cuda:0'), val_x3_out_prec1: tensor(10.0700, device='cuda:0'), val_losstensor(7.0263, device='cuda:0')
+[27.06.2018 05:52:25] =============================== validate ===============================
+[27.06.2018 05:52:43]  * Prec@1 96.750
+[27.06.2018 05:52:43]  * x1_out_Prec@1 9.920
+[27.06.2018 05:52:43]  * x2_out_Prec@1 10.270
+[27.06.2018 05:52:43]  * x3_out_Prec@1 9.840
+[27.06.2018 05:52:43] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(9.9200, device='cuda:0'), x1 out classifier acc: tensor(10.2700, device='cuda:0'), x3 out classifier acc: tensor(9.8400, device='cuda:0'), test_losstensor(7.0290, device='cuda:0')
+[27.06.2018 05:52:43] =============================== train ===============================
+[27.06.2018 05:56:30] ==================================== epoch 72 ==============================
+[27.06.2018 05:56:30] accuracy tensor(99.9525, device='cuda:0'), x1_out accuracy tensor(9.9025, device='cuda:0'), x2_out accuracy tensor(10.1525, device='cuda:0'), x3_out accuracy tensor(10.0875, device='cuda:0'), loss tensor(6.9173, device='cuda:0'), learning rate 1.0000000000000008e-17
+[27.06.2018 05:56:30] =============================== validate ===============================
+[27.06.2018 05:56:47]  * Prec@1 96.820
+[27.06.2018 05:56:47]  * x1_out_Prec@1 9.420
+[27.06.2018 05:56:47]  * x2_out_Prec@1 10.150
+[27.06.2018 05:56:47]  * x3_out_Prec@1 9.550
+[27.06.2018 05:56:47] validation accuracy: tensor(96.8200, device='cuda:0'), val_x1_out_prec1: tensor(9.4200, device='cuda:0'), val_x2_out_prec1: tensor(10.1500, device='cuda:0'), val_x3_out_prec1: tensor(9.5500, device='cuda:0'), val_losstensor(7.0226, device='cuda:0')
+[27.06.2018 05:56:47] =============================== validate ===============================
+[27.06.2018 05:57:05]  * Prec@1 96.790
+[27.06.2018 05:57:05]  * x1_out_Prec@1 10.250
+[27.06.2018 05:57:05]  * x2_out_Prec@1 10.130
+[27.06.2018 05:57:05]  * x3_out_Prec@1 10.090
+[27.06.2018 05:57:05] =============> Test epoch, final output classifier acc: tensor(96.7900, device='cuda:0'), x1 out classifier acc: tensor(10.2500, device='cuda:0'), x1 out classifier acc: tensor(10.1300, device='cuda:0'), x3 out classifier acc: tensor(10.0900, device='cuda:0'), test_losstensor(7.0263, device='cuda:0')
+[27.06.2018 05:57:05] =============================== train ===============================
+[27.06.2018 06:00:52] ==================================== epoch 73 ==============================
+[27.06.2018 06:00:52] accuracy tensor(99.9300, device='cuda:0'), x1_out accuracy tensor(10.1675, device='cuda:0'), x2_out accuracy tensor(9.9750, device='cuda:0'), x3_out accuracy tensor(10.0025, device='cuda:0'), loss tensor(6.9180, device='cuda:0'), learning rate 1.0000000000000008e-17
+[27.06.2018 06:00:52] =============================== validate ===============================
+[27.06.2018 06:01:09]  * Prec@1 96.880
+[27.06.2018 06:01:09]  * x1_out_Prec@1 9.400
+[27.06.2018 06:01:09]  * x2_out_Prec@1 9.760
+[27.06.2018 06:01:09]  * x3_out_Prec@1 10.500
+[27.06.2018 06:01:09] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(9.4000, device='cuda:0'), val_x2_out_prec1: tensor(9.7600, device='cuda:0'), val_x3_out_prec1: tensor(10.5000, device='cuda:0'), val_losstensor(7.0239, device='cuda:0')
+[27.06.2018 06:01:09] =============================== validate ===============================
+[27.06.2018 06:01:27]  * Prec@1 96.710
+[27.06.2018 06:01:27]  * x1_out_Prec@1 9.980
+[27.06.2018 06:01:27]  * x2_out_Prec@1 10.220
+[27.06.2018 06:01:27]  * x3_out_Prec@1 9.870
+[27.06.2018 06:01:27] =============> Test epoch, final output classifier acc: tensor(96.7100, device='cuda:0'), x1 out classifier acc: tensor(9.9800, device='cuda:0'), x1 out classifier acc: tensor(10.2200, device='cuda:0'), x3 out classifier acc: tensor(9.8700, device='cuda:0'), test_losstensor(7.0270, device='cuda:0')
+[27.06.2018 06:01:27] =============================== train ===============================
+[27.06.2018 06:05:14] ==================================== epoch 74 ==============================
+[27.06.2018 06:05:14] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(10.2675, device='cuda:0'), x2_out accuracy tensor(9.9825, device='cuda:0'), x3_out accuracy tensor(10.2450, device='cuda:0'), loss tensor(6.9178, device='cuda:0'), learning rate 1.0000000000000008e-17
+[27.06.2018 06:05:14] =============================== validate ===============================
+[27.06.2018 06:05:31]  * Prec@1 96.750
+[27.06.2018 06:05:31]  * x1_out_Prec@1 9.620
+[27.06.2018 06:05:31]  * x2_out_Prec@1 9.490
+[27.06.2018 06:05:31]  * x3_out_Prec@1 10.290
+[27.06.2018 06:05:31] validation accuracy: tensor(96.7500, device='cuda:0'), val_x1_out_prec1: tensor(9.6200, device='cuda:0'), val_x2_out_prec1: tensor(9.4900, device='cuda:0'), val_x3_out_prec1: tensor(10.2900, device='cuda:0'), val_losstensor(7.0239, device='cuda:0')
+[27.06.2018 06:05:31] =============================== validate ===============================
+[27.06.2018 06:05:49]  * Prec@1 96.700
+[27.06.2018 06:05:49]  * x1_out_Prec@1 10.580
+[27.06.2018 06:05:49]  * x2_out_Prec@1 10.450
+[27.06.2018 06:05:49]  * x3_out_Prec@1 9.910
+[27.06.2018 06:05:49] =============> Test epoch, final output classifier acc: tensor(96.7000, device='cuda:0'), x1 out classifier acc: tensor(10.5800, device='cuda:0'), x1 out classifier acc: tensor(10.4500, device='cuda:0'), x3 out classifier acc: tensor(9.9100, device='cuda:0'), test_losstensor(7.0238, device='cuda:0')
+[27.06.2018 06:05:49] =============================== train ===============================
+[27.06.2018 06:09:36] ==================================== epoch 75 ==============================
+[27.06.2018 06:09:36] accuracy tensor(99.9400, device='cuda:0'), x1_out accuracy tensor(9.6700, device='cuda:0'), x2_out accuracy tensor(10.0275, device='cuda:0'), x3_out accuracy tensor(10.2675, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.0000000000000008e-18
+[27.06.2018 06:09:36] =============================== validate ===============================
+[27.06.2018 06:09:53]  * Prec@1 96.910
+[27.06.2018 06:09:53]  * x1_out_Prec@1 10.150
+[27.06.2018 06:09:53]  * x2_out_Prec@1 10.210
+[27.06.2018 06:09:53]  * x3_out_Prec@1 9.920
+[27.06.2018 06:09:53] validation accuracy: tensor(96.9100, device='cuda:0'), val_x1_out_prec1: tensor(10.1500, device='cuda:0'), val_x2_out_prec1: tensor(10.2100, device='cuda:0'), val_x3_out_prec1: tensor(9.9200, device='cuda:0'), val_losstensor(7.0214, device='cuda:0')
+[27.06.2018 06:09:53] =============================== validate ===============================
+[27.06.2018 06:10:11]  * Prec@1 96.750
+[27.06.2018 06:10:11]  * x1_out_Prec@1 9.960
+[27.06.2018 06:10:11]  * x2_out_Prec@1 9.660
+[27.06.2018 06:10:11]  * x3_out_Prec@1 10.010
+[27.06.2018 06:10:11] =============> Test epoch, final output classifier acc: tensor(96.7500, device='cuda:0'), x1 out classifier acc: tensor(9.9600, device='cuda:0'), x1 out classifier acc: tensor(9.6600, device='cuda:0'), x3 out classifier acc: tensor(10.0100, device='cuda:0'), test_losstensor(7.0291, device='cuda:0')
+[27.06.2018 06:10:11] =============================== train ===============================
+[27.06.2018 06:13:58] ==================================== epoch 76 ==============================
+[27.06.2018 06:13:58] accuracy tensor(99.9450, device='cuda:0'), x1_out accuracy tensor(10.0325, device='cuda:0'), x2_out accuracy tensor(9.6700, device='cuda:0'), x3_out accuracy tensor(10.2450, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000008e-18
+[27.06.2018 06:13:58] =============================== validate ===============================
+[27.06.2018 06:14:15]  * Prec@1 96.900
+[27.06.2018 06:14:15]  * x1_out_Prec@1 10.230
+[27.06.2018 06:14:15]  * x2_out_Prec@1 9.740
+[27.06.2018 06:14:15]  * x3_out_Prec@1 10.570
+[27.06.2018 06:14:15] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(10.2300, device='cuda:0'), val_x2_out_prec1: tensor(9.7400, device='cuda:0'), val_x3_out_prec1: tensor(10.5700, device='cuda:0'), val_losstensor(7.0230, device='cuda:0')
+[27.06.2018 06:14:15] =============================== validate ===============================
+[27.06.2018 06:14:33]  * Prec@1 96.730
+[27.06.2018 06:14:33]  * x1_out_Prec@1 10.420
+[27.06.2018 06:14:33]  * x2_out_Prec@1 9.580
+[27.06.2018 06:14:33]  * x3_out_Prec@1 10.110
+[27.06.2018 06:14:33] =============> Test epoch, final output classifier acc: tensor(96.7300, device='cuda:0'), x1 out classifier acc: tensor(10.4200, device='cuda:0'), x1 out classifier acc: tensor(9.5800, device='cuda:0'), x3 out classifier acc: tensor(10.1100, device='cuda:0'), test_losstensor(7.0288, device='cuda:0')
+[27.06.2018 06:14:33] =============================== train ===============================
+[27.06.2018 06:18:19] ==================================== epoch 77 ==============================
+[27.06.2018 06:18:19] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(9.9525, device='cuda:0'), x2_out accuracy tensor(9.7500, device='cuda:0'), x3_out accuracy tensor(10.0825, device='cuda:0'), loss tensor(6.9191, device='cuda:0'), learning rate 1.0000000000000008e-18
+[27.06.2018 06:18:19] =============================== validate ===============================
+[27.06.2018 06:18:37]  * Prec@1 96.890
+[27.06.2018 06:18:37]  * x1_out_Prec@1 9.930
+[27.06.2018 06:18:37]  * x2_out_Prec@1 9.340
+[27.06.2018 06:18:37]  * x3_out_Prec@1 10.120
+[27.06.2018 06:18:37] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.9300, device='cuda:0'), val_x2_out_prec1: tensor(9.3400, device='cuda:0'), val_x3_out_prec1: tensor(10.1200, device='cuda:0'), val_losstensor(7.0256, device='cuda:0')
+[27.06.2018 06:18:37] =============================== validate ===============================
+[27.06.2018 06:18:55]  * Prec@1 96.700
+[27.06.2018 06:18:55]  * x1_out_Prec@1 9.500
+[27.06.2018 06:18:55]  * x2_out_Prec@1 9.650
+[27.06.2018 06:18:55]  * x3_out_Prec@1 9.840
+[27.06.2018 06:18:55] =============> Test epoch, final output classifier acc: tensor(96.7000, device='cuda:0'), x1 out classifier acc: tensor(9.5000, device='cuda:0'), x1 out classifier acc: tensor(9.6500, device='cuda:0'), x3 out classifier acc: tensor(9.8400, device='cuda:0'), test_losstensor(7.0309, device='cuda:0')
+[27.06.2018 06:18:55] =============================== train ===============================
+[27.06.2018 06:22:41] ==================================== epoch 78 ==============================
+[27.06.2018 06:22:41] accuracy tensor(99.9150, device='cuda:0'), x1_out accuracy tensor(9.9825, device='cuda:0'), x2_out accuracy tensor(9.9250, device='cuda:0'), x3_out accuracy tensor(9.9525, device='cuda:0'), loss tensor(6.9190, device='cuda:0'), learning rate 1.0000000000000008e-18
+[27.06.2018 06:22:41] =============================== validate ===============================
+[27.06.2018 06:22:59]  * Prec@1 96.930
+[27.06.2018 06:22:59]  * x1_out_Prec@1 9.930
+[27.06.2018 06:22:59]  * x2_out_Prec@1 10.030
+[27.06.2018 06:22:59]  * x3_out_Prec@1 10.080
+[27.06.2018 06:22:59] validation accuracy: tensor(96.9300, device='cuda:0'), val_x1_out_prec1: tensor(9.9300, device='cuda:0'), val_x2_out_prec1: tensor(10.0300, device='cuda:0'), val_x3_out_prec1: tensor(10.0800, device='cuda:0'), val_losstensor(7.0246, device='cuda:0')
+[27.06.2018 06:22:59] =============================== validate ===============================
+[27.06.2018 06:23:16]  * Prec@1 96.890
+[27.06.2018 06:23:16]  * x1_out_Prec@1 9.830
+[27.06.2018 06:23:16]  * x2_out_Prec@1 10.430
+[27.06.2018 06:23:16]  * x3_out_Prec@1 9.650
+[27.06.2018 06:23:16] =============> Test epoch, final output classifier acc: tensor(96.8900, device='cuda:0'), x1 out classifier acc: tensor(9.8300, device='cuda:0'), x1 out classifier acc: tensor(10.4300, device='cuda:0'), x3 out classifier acc: tensor(9.6500, device='cuda:0'), test_losstensor(7.0231, device='cuda:0')
+[27.06.2018 06:23:16] =============================== train ===============================
+[27.06.2018 06:27:03] ==================================== epoch 79 ==============================
+[27.06.2018 06:27:03] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(9.9000, device='cuda:0'), x2_out accuracy tensor(10.0075, device='cuda:0'), x3_out accuracy tensor(10.2100, device='cuda:0'), loss tensor(6.9183, device='cuda:0'), learning rate 1.0000000000000008e-18
+[27.06.2018 06:27:03] =============================== validate ===============================
+[27.06.2018 06:27:21]  * Prec@1 96.870
+[27.06.2018 06:27:21]  * x1_out_Prec@1 9.890
+[27.06.2018 06:27:21]  * x2_out_Prec@1 10.180
+[27.06.2018 06:27:21]  * x3_out_Prec@1 10.110
+[27.06.2018 06:27:21] validation accuracy: tensor(96.8700, device='cuda:0'), val_x1_out_prec1: tensor(9.8900, device='cuda:0'), val_x2_out_prec1: tensor(10.1800, device='cuda:0'), val_x3_out_prec1: tensor(10.1100, device='cuda:0'), val_losstensor(7.0238, device='cuda:0')
+[27.06.2018 06:27:21] =============================== validate ===============================
+[27.06.2018 06:27:38]  * Prec@1 96.690
+[27.06.2018 06:27:38]  * x1_out_Prec@1 10.110
+[27.06.2018 06:27:38]  * x2_out_Prec@1 9.790
+[27.06.2018 06:27:38]  * x3_out_Prec@1 9.800
+[27.06.2018 06:27:38] =============> Test epoch, final output classifier acc: tensor(96.6900, device='cuda:0'), x1 out classifier acc: tensor(10.1100, device='cuda:0'), x1 out classifier acc: tensor(9.7900, device='cuda:0'), x3 out classifier acc: tensor(9.8000, device='cuda:0'), test_losstensor(7.0295, device='cuda:0')
+[27.06.2018 06:27:38] =============================== train ===============================
+[27.06.2018 06:31:25] ==================================== epoch 80 ==============================
+[27.06.2018 06:31:25] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(9.9725, device='cuda:0'), x2_out accuracy tensor(10.0975, device='cuda:0'), x3_out accuracy tensor(9.8175, device='cuda:0'), loss tensor(6.9193, device='cuda:0'), learning rate 1.0000000000000008e-19
+[27.06.2018 06:31:25] =============================== validate ===============================
+[27.06.2018 06:31:43]  * Prec@1 96.930
+[27.06.2018 06:31:43]  * x1_out_Prec@1 9.570
+[27.06.2018 06:31:43]  * x2_out_Prec@1 10.240
+[27.06.2018 06:31:43]  * x3_out_Prec@1 10.390
+[27.06.2018 06:31:43] validation accuracy: tensor(96.9300, device='cuda:0'), val_x1_out_prec1: tensor(9.5700, device='cuda:0'), val_x2_out_prec1: tensor(10.2400, device='cuda:0'), val_x3_out_prec1: tensor(10.3900, device='cuda:0'), val_losstensor(7.0195, device='cuda:0')
+[27.06.2018 06:31:43] =============================== validate ===============================
+[27.06.2018 06:32:01]  * Prec@1 96.820
+[27.06.2018 06:32:01]  * x1_out_Prec@1 10.000
+[27.06.2018 06:32:01]  * x2_out_Prec@1 9.690
+[27.06.2018 06:32:01]  * x3_out_Prec@1 9.600
+[27.06.2018 06:32:01] =============> Test epoch, final output classifier acc: tensor(96.8200, device='cuda:0'), x1 out classifier acc: tensor(10., device='cuda:0'), x1 out classifier acc: tensor(9.6900, device='cuda:0'), x3 out classifier acc: tensor(9.6000, device='cuda:0'), test_losstensor(7.0269, device='cuda:0')
+[27.06.2018 06:32:01] =============================== train ===============================
+[27.06.2018 06:35:48] ==================================== epoch 81 ==============================
+[27.06.2018 06:35:48] accuracy tensor(99.9500, device='cuda:0'), x1_out accuracy tensor(10.0175, device='cuda:0'), x2_out accuracy tensor(9.8625, device='cuda:0'), x3_out accuracy tensor(9.9200, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.0000000000000008e-19
+[27.06.2018 06:35:48] =============================== validate ===============================
+[27.06.2018 06:36:05]  * Prec@1 96.900
+[27.06.2018 06:36:05]  * x1_out_Prec@1 10.020
+[27.06.2018 06:36:05]  * x2_out_Prec@1 9.860
+[27.06.2018 06:36:05]  * x3_out_Prec@1 9.760
+[27.06.2018 06:36:05] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(10.0200, device='cuda:0'), val_x2_out_prec1: tensor(9.8600, device='cuda:0'), val_x3_out_prec1: tensor(9.7600, device='cuda:0'), val_losstensor(7.0217, device='cuda:0')
+[27.06.2018 06:36:05] =============================== validate ===============================
+[27.06.2018 06:36:23]  * Prec@1 96.830
+[27.06.2018 06:36:23]  * x1_out_Prec@1 9.710
+[27.06.2018 06:36:23]  * x2_out_Prec@1 9.930
+[27.06.2018 06:36:23]  * x3_out_Prec@1 9.820
+[27.06.2018 06:36:23] =============> Test epoch, final output classifier acc: tensor(96.8300, device='cuda:0'), x1 out classifier acc: tensor(9.7100, device='cuda:0'), x1 out classifier acc: tensor(9.9300, device='cuda:0'), x3 out classifier acc: tensor(9.8200, device='cuda:0'), test_losstensor(7.0260, device='cuda:0')
+[27.06.2018 06:36:23] =============================== train ===============================
+[27.06.2018 06:40:10] ==================================== epoch 82 ==============================
+[27.06.2018 06:40:10] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(9.9375, device='cuda:0'), x2_out accuracy tensor(9.9175, device='cuda:0'), x3_out accuracy tensor(9.9875, device='cuda:0'), loss tensor(6.9176, device='cuda:0'), learning rate 1.0000000000000008e-19
+[27.06.2018 06:40:10] =============================== validate ===============================
+[27.06.2018 06:40:27]  * Prec@1 96.840
+[27.06.2018 06:40:27]  * x1_out_Prec@1 10.320
+[27.06.2018 06:40:27]  * x2_out_Prec@1 10.230
+[27.06.2018 06:40:27]  * x3_out_Prec@1 9.920
+[27.06.2018 06:40:27] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(10.3200, device='cuda:0'), val_x2_out_prec1: tensor(10.2300, device='cuda:0'), val_x3_out_prec1: tensor(9.9200, device='cuda:0'), val_losstensor(7.0237, device='cuda:0')
+[27.06.2018 06:40:27] =============================== validate ===============================
+[27.06.2018 06:40:45]  * Prec@1 96.700
+[27.06.2018 06:40:45]  * x1_out_Prec@1 9.800
+[27.06.2018 06:40:45]  * x2_out_Prec@1 9.980
+[27.06.2018 06:40:45]  * x3_out_Prec@1 9.750
+[27.06.2018 06:40:45] =============> Test epoch, final output classifier acc: tensor(96.7000, device='cuda:0'), x1 out classifier acc: tensor(9.8000, device='cuda:0'), x1 out classifier acc: tensor(9.9800, device='cuda:0'), x3 out classifier acc: tensor(9.7500, device='cuda:0'), test_losstensor(7.0256, device='cuda:0')
+[27.06.2018 06:40:45] =============================== train ===============================
+[27.06.2018 06:44:31] ==================================== epoch 83 ==============================
+[27.06.2018 06:44:31] accuracy tensor(99.9275, device='cuda:0'), x1_out accuracy tensor(9.7525, device='cuda:0'), x2_out accuracy tensor(10.0675, device='cuda:0'), x3_out accuracy tensor(10.0100, device='cuda:0'), loss tensor(6.9190, device='cuda:0'), learning rate 1.0000000000000008e-19
+[27.06.2018 06:44:31] =============================== validate ===============================
+[27.06.2018 06:44:49]  * Prec@1 96.880
+[27.06.2018 06:44:49]  * x1_out_Prec@1 9.630
+[27.06.2018 06:44:49]  * x2_out_Prec@1 10.270
+[27.06.2018 06:44:49]  * x3_out_Prec@1 9.660
+[27.06.2018 06:44:49] validation accuracy: tensor(96.8800, device='cuda:0'), val_x1_out_prec1: tensor(9.6300, device='cuda:0'), val_x2_out_prec1: tensor(10.2700, device='cuda:0'), val_x3_out_prec1: tensor(9.6600, device='cuda:0'), val_losstensor(7.0231, device='cuda:0')
+[27.06.2018 06:44:49] =============================== validate ===============================
+[27.06.2018 06:45:07]  * Prec@1 96.710
+[27.06.2018 06:45:07]  * x1_out_Prec@1 10.080
+[27.06.2018 06:45:07]  * x2_out_Prec@1 9.880
+[27.06.2018 06:45:07]  * x3_out_Prec@1 10.170
+[27.06.2018 06:45:07] =============> Test epoch, final output classifier acc: tensor(96.7100, device='cuda:0'), x1 out classifier acc: tensor(10.0800, device='cuda:0'), x1 out classifier acc: tensor(9.8800, device='cuda:0'), x3 out classifier acc: tensor(10.1700, device='cuda:0'), test_losstensor(7.0277, device='cuda:0')
+[27.06.2018 06:45:07] =============================== train ===============================
+[27.06.2018 06:48:54] ==================================== epoch 84 ==============================
+[27.06.2018 06:48:54] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(10.0325, device='cuda:0'), x2_out accuracy tensor(9.8175, device='cuda:0'), x3_out accuracy tensor(10.0850, device='cuda:0'), loss tensor(6.9174, device='cuda:0'), learning rate 1.0000000000000008e-19
+[27.06.2018 06:48:54] =============================== validate ===============================
+[27.06.2018 06:49:11]  * Prec@1 96.840
+[27.06.2018 06:49:11]  * x1_out_Prec@1 9.900
+[27.06.2018 06:49:11]  * x2_out_Prec@1 9.320
+[27.06.2018 06:49:11]  * x3_out_Prec@1 10.140
+[27.06.2018 06:49:11] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(9.9000, device='cuda:0'), val_x2_out_prec1: tensor(9.3200, device='cuda:0'), val_x3_out_prec1: tensor(10.1400, device='cuda:0'), val_losstensor(7.0215, device='cuda:0')
+[27.06.2018 06:49:11] =============================== validate ===============================
+[27.06.2018 06:49:29]  * Prec@1 96.770
+[27.06.2018 06:49:29]  * x1_out_Prec@1 10.340
+[27.06.2018 06:49:29]  * x2_out_Prec@1 10.130
+[27.06.2018 06:49:29]  * x3_out_Prec@1 10.090
+[27.06.2018 06:49:29] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(10.3400, device='cuda:0'), x1 out classifier acc: tensor(10.1300, device='cuda:0'), x3 out classifier acc: tensor(10.0900, device='cuda:0'), test_losstensor(7.0259, device='cuda:0')
+[27.06.2018 06:49:29] =============================== train ===============================
+[27.06.2018 06:53:16] ==================================== epoch 85 ==============================
+[27.06.2018 06:53:16] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.6725, device='cuda:0'), x2_out accuracy tensor(10.1100, device='cuda:0'), x3_out accuracy tensor(9.9575, device='cuda:0'), loss tensor(6.9189, device='cuda:0'), learning rate 1.000000000000001e-20
+[27.06.2018 06:53:16] =============================== validate ===============================
+[27.06.2018 06:53:34]  * Prec@1 96.840
+[27.06.2018 06:53:34]  * x1_out_Prec@1 9.240
+[27.06.2018 06:53:34]  * x2_out_Prec@1 9.920
+[27.06.2018 06:53:34]  * x3_out_Prec@1 9.320
+[27.06.2018 06:53:34] validation accuracy: tensor(96.8400, device='cuda:0'), val_x1_out_prec1: tensor(9.2400, device='cuda:0'), val_x2_out_prec1: tensor(9.9200, device='cuda:0'), val_x3_out_prec1: tensor(9.3200, device='cuda:0'), val_losstensor(7.0228, device='cuda:0')
+[27.06.2018 06:53:34] =============================== validate ===============================
+[27.06.2018 06:53:51]  * Prec@1 96.770
+[27.06.2018 06:53:51]  * x1_out_Prec@1 9.990
+[27.06.2018 06:53:51]  * x2_out_Prec@1 9.970
+[27.06.2018 06:53:51]  * x3_out_Prec@1 10.330
+[27.06.2018 06:53:51] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(9.9900, device='cuda:0'), x1 out classifier acc: tensor(9.9700, device='cuda:0'), x3 out classifier acc: tensor(10.3300, device='cuda:0'), test_losstensor(7.0244, device='cuda:0')
+[27.06.2018 06:53:51] =============================== train ===============================
+[27.06.2018 06:57:37] ==================================== epoch 86 ==============================
+[27.06.2018 06:57:37] accuracy tensor(99.9125, device='cuda:0'), x1_out accuracy tensor(10.1475, device='cuda:0'), x2_out accuracy tensor(10.0300, device='cuda:0'), x3_out accuracy tensor(9.8100, device='cuda:0'), loss tensor(6.9189, device='cuda:0'), learning rate 1.000000000000001e-20
+[27.06.2018 06:57:37] =============================== validate ===============================
+[27.06.2018 06:57:55]  * Prec@1 96.820
+[27.06.2018 06:57:55]  * x1_out_Prec@1 10.090
+[27.06.2018 06:57:55]  * x2_out_Prec@1 9.650
+[27.06.2018 06:57:55]  * x3_out_Prec@1 10.320
+[27.06.2018 06:57:55] validation accuracy: tensor(96.8200, device='cuda:0'), val_x1_out_prec1: tensor(10.0900, device='cuda:0'), val_x2_out_prec1: tensor(9.6500, device='cuda:0'), val_x3_out_prec1: tensor(10.3200, device='cuda:0'), val_losstensor(7.0249, device='cuda:0')
+[27.06.2018 06:57:55] =============================== validate ===============================
+[27.06.2018 06:58:12]  * Prec@1 96.630
+[27.06.2018 06:58:12]  * x1_out_Prec@1 9.800
+[27.06.2018 06:58:12]  * x2_out_Prec@1 9.960
+[27.06.2018 06:58:12]  * x3_out_Prec@1 10.390
+[27.06.2018 06:58:12] =============> Test epoch, final output classifier acc: tensor(96.6300, device='cuda:0'), x1 out classifier acc: tensor(9.8000, device='cuda:0'), x1 out classifier acc: tensor(9.9600, device='cuda:0'), x3 out classifier acc: tensor(10.3900, device='cuda:0'), test_losstensor(7.0257, device='cuda:0')
+[27.06.2018 06:58:12] =============================== train ===============================
+[27.06.2018 07:01:59] ==================================== epoch 87 ==============================
+[27.06.2018 07:01:59] accuracy tensor(99.9225, device='cuda:0'), x1_out accuracy tensor(9.7850, device='cuda:0'), x2_out accuracy tensor(9.9675, device='cuda:0'), x3_out accuracy tensor(10.1775, device='cuda:0'), loss tensor(6.9190, device='cuda:0'), learning rate 1.000000000000001e-20
+[27.06.2018 07:01:59] =============================== validate ===============================
+[27.06.2018 07:02:17]  * Prec@1 96.860
+[27.06.2018 07:02:17]  * x1_out_Prec@1 10.070
+[27.06.2018 07:02:17]  * x2_out_Prec@1 10.020
+[27.06.2018 07:02:17]  * x3_out_Prec@1 9.940
+[27.06.2018 07:02:17] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.0700, device='cuda:0'), val_x2_out_prec1: tensor(10.0200, device='cuda:0'), val_x3_out_prec1: tensor(9.9400, device='cuda:0'), val_losstensor(7.0235, device='cuda:0')
+[27.06.2018 07:02:17] =============================== validate ===============================
+[27.06.2018 07:02:34]  * Prec@1 96.840
+[27.06.2018 07:02:34]  * x1_out_Prec@1 9.960
+[27.06.2018 07:02:34]  * x2_out_Prec@1 9.970
+[27.06.2018 07:02:34]  * x3_out_Prec@1 9.770
+[27.06.2018 07:02:34] =============> Test epoch, final output classifier acc: tensor(96.8400, device='cuda:0'), x1 out classifier acc: tensor(9.9600, device='cuda:0'), x1 out classifier acc: tensor(9.9700, device='cuda:0'), x3 out classifier acc: tensor(9.7700, device='cuda:0'), test_losstensor(7.0253, device='cuda:0')
+[27.06.2018 07:02:34] =============================== train ===============================
+[27.06.2018 07:06:21] ==================================== epoch 88 ==============================
+[27.06.2018 07:06:21] accuracy tensor(99.9050, device='cuda:0'), x1_out accuracy tensor(10.0350, device='cuda:0'), x2_out accuracy tensor(9.8975, device='cuda:0'), x3_out accuracy tensor(10.0800, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.000000000000001e-20
+[27.06.2018 07:06:21] =============================== validate ===============================
+[27.06.2018 07:06:39]  * Prec@1 96.830
+[27.06.2018 07:06:39]  * x1_out_Prec@1 9.960
+[27.06.2018 07:06:39]  * x2_out_Prec@1 10.190
+[27.06.2018 07:06:39]  * x3_out_Prec@1 10.190
+[27.06.2018 07:06:39] validation accuracy: tensor(96.8300, device='cuda:0'), val_x1_out_prec1: tensor(9.9600, device='cuda:0'), val_x2_out_prec1: tensor(10.1900, device='cuda:0'), val_x3_out_prec1: tensor(10.1900, device='cuda:0'), val_losstensor(7.0211, device='cuda:0')
+[27.06.2018 07:06:39] =============================== validate ===============================
+[27.06.2018 07:06:56]  * Prec@1 96.770
+[27.06.2018 07:06:56]  * x1_out_Prec@1 9.620
+[27.06.2018 07:06:56]  * x2_out_Prec@1 10.250
+[27.06.2018 07:06:56]  * x3_out_Prec@1 9.860
+[27.06.2018 07:06:56] =============> Test epoch, final output classifier acc: tensor(96.7700, device='cuda:0'), x1 out classifier acc: tensor(9.6200, device='cuda:0'), x1 out classifier acc: tensor(10.2500, device='cuda:0'), x3 out classifier acc: tensor(9.8600, device='cuda:0'), test_losstensor(7.0239, device='cuda:0')
+[27.06.2018 07:06:56] =============================== train ===============================
+[27.06.2018 07:10:43] ==================================== epoch 89 ==============================
+[27.06.2018 07:10:43] accuracy tensor(99.9325, device='cuda:0'), x1_out accuracy tensor(9.9225, device='cuda:0'), x2_out accuracy tensor(10.0725, device='cuda:0'), x3_out accuracy tensor(9.8800, device='cuda:0'), loss tensor(6.9182, device='cuda:0'), learning rate 1.000000000000001e-20
+[27.06.2018 07:10:43] =============================== validate ===============================
+[27.06.2018 07:11:01]  * Prec@1 96.860
+[27.06.2018 07:11:01]  * x1_out_Prec@1 10.360
+[27.06.2018 07:11:01]  * x2_out_Prec@1 10.300
+[27.06.2018 07:11:01]  * x3_out_Prec@1 10.580
+[27.06.2018 07:11:01] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.3600, device='cuda:0'), val_x2_out_prec1: tensor(10.3000, device='cuda:0'), val_x3_out_prec1: tensor(10.5800, device='cuda:0'), val_losstensor(7.0198, device='cuda:0')
+[27.06.2018 07:11:01] =============================== validate ===============================
+[27.06.2018 07:11:18]  * Prec@1 96.720
+[27.06.2018 07:11:18]  * x1_out_Prec@1 10.060
+[27.06.2018 07:11:18]  * x2_out_Prec@1 10.010
+[27.06.2018 07:11:18]  * x3_out_Prec@1 10.730
+[27.06.2018 07:11:18] =============> Test epoch, final output classifier acc: tensor(96.7200, device='cuda:0'), x1 out classifier acc: tensor(10.0600, device='cuda:0'), x1 out classifier acc: tensor(10.0100, device='cuda:0'), x3 out classifier acc: tensor(10.7300, device='cuda:0'), test_losstensor(7.0256, device='cuda:0')
+[27.06.2018 07:11:18] =============================== train ===============================
+[27.06.2018 07:15:05] ==================================== epoch 90 ==============================
+[27.06.2018 07:15:05] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.8725, device='cuda:0'), x2_out accuracy tensor(10.0875, device='cuda:0'), x3_out accuracy tensor(10.1475, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.000000000000001e-21
+[27.06.2018 07:15:05] =============================== validate ===============================
+[27.06.2018 07:15:23]  * Prec@1 96.890
+[27.06.2018 07:15:23]  * x1_out_Prec@1 10.080
+[27.06.2018 07:15:23]  * x2_out_Prec@1 9.980
+[27.06.2018 07:15:23]  * x3_out_Prec@1 10.160
+[27.06.2018 07:15:23] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(10.0800, device='cuda:0'), val_x2_out_prec1: tensor(9.9800, device='cuda:0'), val_x3_out_prec1: tensor(10.1600, device='cuda:0'), val_losstensor(7.0245, device='cuda:0')
+[27.06.2018 07:15:23] =============================== validate ===============================
+[27.06.2018 07:15:40]  * Prec@1 96.840
+[27.06.2018 07:15:40]  * x1_out_Prec@1 9.560
+[27.06.2018 07:15:40]  * x2_out_Prec@1 10.500
+[27.06.2018 07:15:40]  * x3_out_Prec@1 9.860
+[27.06.2018 07:15:40] =============> Test epoch, final output classifier acc: tensor(96.8400, device='cuda:0'), x1 out classifier acc: tensor(9.5600, device='cuda:0'), x1 out classifier acc: tensor(10.5000, device='cuda:0'), x3 out classifier acc: tensor(9.8600, device='cuda:0'), test_losstensor(7.0242, device='cuda:0')
+[27.06.2018 07:15:40] =============================== train ===============================
+[27.06.2018 07:19:27] ==================================== epoch 91 ==============================
+[27.06.2018 07:19:27] accuracy tensor(99.9400, device='cuda:0'), x1_out accuracy tensor(9.9650, device='cuda:0'), x2_out accuracy tensor(10., device='cuda:0'), x3_out accuracy tensor(9.6800, device='cuda:0'), loss tensor(6.9186, device='cuda:0'), learning rate 1.000000000000001e-21
+[27.06.2018 07:19:27] =============================== validate ===============================
+[27.06.2018 07:19:44]  * Prec@1 96.860
+[27.06.2018 07:19:44]  * x1_out_Prec@1 10.360
+[27.06.2018 07:19:44]  * x2_out_Prec@1 9.420
+[27.06.2018 07:19:44]  * x3_out_Prec@1 9.690
+[27.06.2018 07:19:44] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.3600, device='cuda:0'), val_x2_out_prec1: tensor(9.4200, device='cuda:0'), val_x3_out_prec1: tensor(9.6900, device='cuda:0'), val_losstensor(7.0237, device='cuda:0')
+[27.06.2018 07:19:44] =============================== validate ===============================
+[27.06.2018 07:20:02]  * Prec@1 96.810
+[27.06.2018 07:20:02]  * x1_out_Prec@1 9.520
+[27.06.2018 07:20:02]  * x2_out_Prec@1 9.910
+[27.06.2018 07:20:02]  * x3_out_Prec@1 10.050
+[27.06.2018 07:20:02] =============> Test epoch, final output classifier acc: tensor(96.8100, device='cuda:0'), x1 out classifier acc: tensor(9.5200, device='cuda:0'), x1 out classifier acc: tensor(9.9100, device='cuda:0'), x3 out classifier acc: tensor(10.0500, device='cuda:0'), test_losstensor(7.0264, device='cuda:0')
+[27.06.2018 07:20:02] =============================== train ===============================
+[27.06.2018 07:23:48] ==================================== epoch 92 ==============================
+[27.06.2018 07:23:48] accuracy tensor(99.9300, device='cuda:0'), x1_out accuracy tensor(9.8200, device='cuda:0'), x2_out accuracy tensor(9.8575, device='cuda:0'), x3_out accuracy tensor(9.8850, device='cuda:0'), loss tensor(6.9187, device='cuda:0'), learning rate 1.000000000000001e-21
+[27.06.2018 07:23:48] =============================== validate ===============================
+[27.06.2018 07:24:06]  * Prec@1 96.850
+[27.06.2018 07:24:06]  * x1_out_Prec@1 10.100
+[27.06.2018 07:24:06]  * x2_out_Prec@1 9.810
+[27.06.2018 07:24:06]  * x3_out_Prec@1 9.930
+[27.06.2018 07:24:06] validation accuracy: tensor(96.8500, device='cuda:0'), val_x1_out_prec1: tensor(10.1000, device='cuda:0'), val_x2_out_prec1: tensor(9.8100, device='cuda:0'), val_x3_out_prec1: tensor(9.9300, device='cuda:0'), val_losstensor(7.0222, device='cuda:0')
+[27.06.2018 07:24:06] =============================== validate ===============================
+[27.06.2018 07:24:23]  * Prec@1 96.730
+[27.06.2018 07:24:23]  * x1_out_Prec@1 10.210
+[27.06.2018 07:24:23]  * x2_out_Prec@1 9.950
+[27.06.2018 07:24:23]  * x3_out_Prec@1 10.490
+[27.06.2018 07:24:23] =============> Test epoch, final output classifier acc: tensor(96.7300, device='cuda:0'), x1 out classifier acc: tensor(10.2100, device='cuda:0'), x1 out classifier acc: tensor(9.9500, device='cuda:0'), x3 out classifier acc: tensor(10.4900, device='cuda:0'), test_losstensor(7.0253, device='cuda:0')
+[27.06.2018 07:24:23] =============================== train ===============================
+[27.06.2018 07:28:10] ==================================== epoch 93 ==============================
+[27.06.2018 07:28:10] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(10.0150, device='cuda:0'), x2_out accuracy tensor(9.9175, device='cuda:0'), x3_out accuracy tensor(10.0925, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.000000000000001e-21
+[27.06.2018 07:28:10] =============================== validate ===============================
+[27.06.2018 07:28:28]  * Prec@1 96.890
+[27.06.2018 07:28:28]  * x1_out_Prec@1 9.920
+[27.06.2018 07:28:28]  * x2_out_Prec@1 9.920
+[27.06.2018 07:28:28]  * x3_out_Prec@1 10.270
+[27.06.2018 07:28:28] validation accuracy: tensor(96.8900, device='cuda:0'), val_x1_out_prec1: tensor(9.9200, device='cuda:0'), val_x2_out_prec1: tensor(9.9200, device='cuda:0'), val_x3_out_prec1: tensor(10.2700, device='cuda:0'), val_losstensor(7.0216, device='cuda:0')
+[27.06.2018 07:28:28] =============================== validate ===============================
+[27.06.2018 07:28:45]  * Prec@1 96.840
+[27.06.2018 07:28:45]  * x1_out_Prec@1 10.360
+[27.06.2018 07:28:45]  * x2_out_Prec@1 9.380
+[27.06.2018 07:28:45]  * x3_out_Prec@1 10.540
+[27.06.2018 07:28:45] =============> Test epoch, final output classifier acc: tensor(96.8400, device='cuda:0'), x1 out classifier acc: tensor(10.3600, device='cuda:0'), x1 out classifier acc: tensor(9.3800, device='cuda:0'), x3 out classifier acc: tensor(10.5400, device='cuda:0'), test_losstensor(7.0276, device='cuda:0')
+[27.06.2018 07:28:45] =============================== train ===============================
+[27.06.2018 07:32:32] ==================================== epoch 94 ==============================
+[27.06.2018 07:32:32] accuracy tensor(99.9250, device='cuda:0'), x1_out accuracy tensor(10.0025, device='cuda:0'), x2_out accuracy tensor(10.1875, device='cuda:0'), x3_out accuracy tensor(10., device='cuda:0'), loss tensor(6.9178, device='cuda:0'), learning rate 1.000000000000001e-21
+[27.06.2018 07:32:32] =============================== validate ===============================
+[27.06.2018 07:32:49]  * Prec@1 96.860
+[27.06.2018 07:32:49]  * x1_out_Prec@1 9.460
+[27.06.2018 07:32:49]  * x2_out_Prec@1 10.040
+[27.06.2018 07:32:49]  * x3_out_Prec@1 10.060
+[27.06.2018 07:32:49] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(9.4600, device='cuda:0'), val_x2_out_prec1: tensor(10.0400, device='cuda:0'), val_x3_out_prec1: tensor(10.0600, device='cuda:0'), val_losstensor(7.0251, device='cuda:0')
+[27.06.2018 07:32:49] =============================== validate ===============================
+[27.06.2018 07:33:07]  * Prec@1 96.800
+[27.06.2018 07:33:07]  * x1_out_Prec@1 10.190
+[27.06.2018 07:33:07]  * x2_out_Prec@1 10.090
+[27.06.2018 07:33:07]  * x3_out_Prec@1 10.100
+[27.06.2018 07:33:07] =============> Test epoch, final output classifier acc: tensor(96.8000, device='cuda:0'), x1 out classifier acc: tensor(10.1900, device='cuda:0'), x1 out classifier acc: tensor(10.0900, device='cuda:0'), x3 out classifier acc: tensor(10.1000, device='cuda:0'), test_losstensor(7.0262, device='cuda:0')
+[27.06.2018 07:33:07] =============================== train ===============================
+[27.06.2018 07:36:55] ==================================== epoch 95 ==============================
+[27.06.2018 07:36:55] accuracy tensor(99.9550, device='cuda:0'), x1_out accuracy tensor(10.0650, device='cuda:0'), x2_out accuracy tensor(9.8175, device='cuda:0'), x3_out accuracy tensor(9.9300, device='cuda:0'), loss tensor(6.9184, device='cuda:0'), learning rate 1.0000000000000011e-22
+[27.06.2018 07:36:55] =============================== validate ===============================
+[27.06.2018 07:37:12]  * Prec@1 96.860
+[27.06.2018 07:37:12]  * x1_out_Prec@1 10.140
+[27.06.2018 07:37:12]  * x2_out_Prec@1 10.010
+[27.06.2018 07:37:12]  * x3_out_Prec@1 9.640
+[27.06.2018 07:37:12] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(10.1400, device='cuda:0'), val_x2_out_prec1: tensor(10.0100, device='cuda:0'), val_x3_out_prec1: tensor(9.6400, device='cuda:0'), val_losstensor(7.0231, device='cuda:0')
+[27.06.2018 07:37:12] =============================== validate ===============================
+[27.06.2018 07:37:29]  * Prec@1 96.820
+[27.06.2018 07:37:29]  * x1_out_Prec@1 9.680
+[27.06.2018 07:37:29]  * x2_out_Prec@1 9.250
+[27.06.2018 07:37:29]  * x3_out_Prec@1 10.410
+[27.06.2018 07:37:29] =============> Test epoch, final output classifier acc: tensor(96.8200, device='cuda:0'), x1 out classifier acc: tensor(9.6800, device='cuda:0'), x1 out classifier acc: tensor(9.2500, device='cuda:0'), x3 out classifier acc: tensor(10.4100, device='cuda:0'), test_losstensor(7.0283, device='cuda:0')
+[27.06.2018 07:37:29] =============================== train ===============================
+[27.06.2018 07:41:17] ==================================== epoch 96 ==============================
+[27.06.2018 07:41:17] accuracy tensor(99.9475, device='cuda:0'), x1_out accuracy tensor(9.7750, device='cuda:0'), x2_out accuracy tensor(10.0550, device='cuda:0'), x3_out accuracy tensor(9.9025, device='cuda:0'), loss tensor(6.9180, device='cuda:0'), learning rate 1.0000000000000011e-22
+[27.06.2018 07:41:17] =============================== validate ===============================
+[27.06.2018 07:41:34]  * Prec@1 96.900
+[27.06.2018 07:41:34]  * x1_out_Prec@1 9.890
+[27.06.2018 07:41:34]  * x2_out_Prec@1 9.920
+[27.06.2018 07:41:34]  * x3_out_Prec@1 10.260
+[27.06.2018 07:41:34] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(9.8900, device='cuda:0'), val_x2_out_prec1: tensor(9.9200, device='cuda:0'), val_x3_out_prec1: tensor(10.2600, device='cuda:0'), val_losstensor(7.0229, device='cuda:0')
+[27.06.2018 07:41:34] =============================== validate ===============================
+[27.06.2018 07:41:52]  * Prec@1 96.840
+[27.06.2018 07:41:52]  * x1_out_Prec@1 9.720
+[27.06.2018 07:41:52]  * x2_out_Prec@1 10.100
+[27.06.2018 07:41:52]  * x3_out_Prec@1 10.170
+[27.06.2018 07:41:52] =============> Test epoch, final output classifier acc: tensor(96.8400, device='cuda:0'), x1 out classifier acc: tensor(9.7200, device='cuda:0'), x1 out classifier acc: tensor(10.1000, device='cuda:0'), x3 out classifier acc: tensor(10.1700, device='cuda:0'), test_losstensor(7.0249, device='cuda:0')
+[27.06.2018 07:41:52] =============================== train ===============================
+[27.06.2018 07:45:39] ==================================== epoch 97 ==============================
+[27.06.2018 07:45:39] accuracy tensor(99.9300, device='cuda:0'), x1_out accuracy tensor(9.9600, device='cuda:0'), x2_out accuracy tensor(9.8400, device='cuda:0'), x3_out accuracy tensor(9.8600, device='cuda:0'), loss tensor(6.9181, device='cuda:0'), learning rate 1.0000000000000011e-22
+[27.06.2018 07:45:39] =============================== validate ===============================
+[27.06.2018 07:45:56]  * Prec@1 96.950
+[27.06.2018 07:45:56]  * x1_out_Prec@1 9.860
+[27.06.2018 07:45:56]  * x2_out_Prec@1 10.270
+[27.06.2018 07:45:56]  * x3_out_Prec@1 10.160
+[27.06.2018 07:45:56] validation accuracy: tensor(96.9500, device='cuda:0'), val_x1_out_prec1: tensor(9.8600, device='cuda:0'), val_x2_out_prec1: tensor(10.2700, device='cuda:0'), val_x3_out_prec1: tensor(10.1600, device='cuda:0'), val_losstensor(7.0223, device='cuda:0')
+[27.06.2018 07:45:56] =============================== validate ===============================
+[27.06.2018 07:46:13]  * Prec@1 96.680
+[27.06.2018 07:46:13]  * x1_out_Prec@1 9.940
+[27.06.2018 07:46:13]  * x2_out_Prec@1 10.130
+[27.06.2018 07:46:13]  * x3_out_Prec@1 10.190
+[27.06.2018 07:46:13] =============> Test epoch, final output classifier acc: tensor(96.6800, device='cuda:0'), x1 out classifier acc: tensor(9.9400, device='cuda:0'), x1 out classifier acc: tensor(10.1300, device='cuda:0'), x3 out classifier acc: tensor(10.1900, device='cuda:0'), test_losstensor(7.0263, device='cuda:0')
+[27.06.2018 07:46:13] =============================== train ===============================
+[27.06.2018 07:50:00] ==================================== epoch 98 ==============================
+[27.06.2018 07:50:00] accuracy tensor(99.9200, device='cuda:0'), x1_out accuracy tensor(10.3200, device='cuda:0'), x2_out accuracy tensor(10.0725, device='cuda:0'), x3_out accuracy tensor(10.2050, device='cuda:0'), loss tensor(6.9188, device='cuda:0'), learning rate 1.0000000000000011e-22
+[27.06.2018 07:50:00] =============================== validate ===============================
+[27.06.2018 07:50:17]  * Prec@1 96.860
+[27.06.2018 07:50:17]  * x1_out_Prec@1 9.670
+[27.06.2018 07:50:17]  * x2_out_Prec@1 9.890
+[27.06.2018 07:50:17]  * x3_out_Prec@1 9.730
+[27.06.2018 07:50:17] validation accuracy: tensor(96.8600, device='cuda:0'), val_x1_out_prec1: tensor(9.6700, device='cuda:0'), val_x2_out_prec1: tensor(9.8900, device='cuda:0'), val_x3_out_prec1: tensor(9.7300, device='cuda:0'), val_losstensor(7.0247, device='cuda:0')
+[27.06.2018 07:50:17] =============================== validate ===============================
+[27.06.2018 07:50:34]  * Prec@1 96.720
+[27.06.2018 07:50:34]  * x1_out_Prec@1 9.910
+[27.06.2018 07:50:34]  * x2_out_Prec@1 9.880
+[27.06.2018 07:50:34]  * x3_out_Prec@1 10.410
+[27.06.2018 07:50:34] =============> Test epoch, final output classifier acc: tensor(96.7200, device='cuda:0'), x1 out classifier acc: tensor(9.9100, device='cuda:0'), x1 out classifier acc: tensor(9.8800, device='cuda:0'), x3 out classifier acc: tensor(10.4100, device='cuda:0'), test_losstensor(7.0254, device='cuda:0')
+[27.06.2018 07:50:34] =============================== train ===============================
+[27.06.2018 07:54:22] ==================================== epoch 99 ==============================
+[27.06.2018 07:54:22] accuracy tensor(99.9350, device='cuda:0'), x1_out accuracy tensor(9.8900, device='cuda:0'), x2_out accuracy tensor(10.0500, device='cuda:0'), x3_out accuracy tensor(9.4150, device='cuda:0'), loss tensor(6.9186, device='cuda:0'), learning rate 1.0000000000000011e-22
+[27.06.2018 07:54:22] =============================== validate ===============================
+[27.06.2018 07:54:39]  * Prec@1 96.900
+[27.06.2018 07:54:39]  * x1_out_Prec@1 10.250
+[27.06.2018 07:54:39]  * x2_out_Prec@1 10.370
+[27.06.2018 07:54:39]  * x3_out_Prec@1 10.030
+[27.06.2018 07:54:39] validation accuracy: tensor(96.9000, device='cuda:0'), val_x1_out_prec1: tensor(10.2500, device='cuda:0'), val_x2_out_prec1: tensor(10.3700, device='cuda:0'), val_x3_out_prec1: tensor(10.0300, device='cuda:0'), val_losstensor(7.0184, device='cuda:0')
+[27.06.2018 07:54:39] =============================== validate ===============================
+[27.06.2018 07:54:56]  * Prec@1 96.810
+[27.06.2018 07:54:56]  * x1_out_Prec@1 9.670
+[27.06.2018 07:54:56]  * x2_out_Prec@1 10.490
+[27.06.2018 07:54:56]  * x3_out_Prec@1 9.570
+[27.06.2018 07:54:56] =============> Test epoch, final output classifier acc: tensor(96.8100, device='cuda:0'), x1 out classifier acc: tensor(9.6700, device='cuda:0'), x1 out classifier acc: tensor(10.4900, device='cuda:0'), x3 out classifier acc: tensor(9.5700, device='cuda:0'), test_losstensor(7.0235, device='cuda:0')

@@ -1,9 +1,0 @@
-model,error,layers
-ResNet-18-No-include-pretrain,25.1800,18
-Elastic_ResNet-18-No-include-pretrain,30.9500,18
-ResNet-34-No-include-pretrain,22.4600,34
-Elastic_ResNet-34-No-include-pretrain,33.1300,34
-ResNet-50-No-include-pretrain,23.6600,50
-Elastic_ResNet-50-No-include-pretrain,29.1100,50
-ResNet-101-include-pretrain,22.3300,101
-Elastic_ResNet-101-include-pretrain,38.1000,101
