@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from ignite.handlers import EarlyStopping
-from torchsummary import summary
+# from torchsummary import summary
 from tensorboardX import SummaryWriter
 
 import os
@@ -56,11 +56,13 @@ def validate(val_loader, model, criterion):
                 losses += loss
                 
                 prec1 = accuracy(outputs[ix].data, target)
-                all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+                # all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+                all_acc[ix].update(prec1[0].item(), input.size(0))
 
                 # top 5 accuracy
                 prec5 = accuracy(outputs[ix].data, target, topk=(5,))
-                all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
+                # all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
+                all_acc_top5[ix].update(prec5[0].item(), input.size(0))
     accs = []
     ls = []
     accs_top5 = []
@@ -127,16 +129,18 @@ def train(train_loader, model, criterion, optimizers, epoch):
 
                 # top 1 accuracy
                 prec1 = accuracy(outputs[ix].data, target)
-                all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+                # all_acc[ix].update(prec1[0].data[0].item(), input.size(0))
+                all_acc[ix].update(prec1[0].item(), input.size(0))
 
                 # # top 5 accuracy
                 prec5 = accuracy(outputs[ix].data, target, topk=(5,))
                 # print("prec top 5-1: ", prec5)
                 # print("prec top 5-2: ", prec5[0])
                 # print("prec top 5-3: ", prec5[0].data[0].item())
-                all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))            
+                # all_acc_top5[ix].update(prec5[0].data[0].item(), input.size(0))
+                all_acc_top5[ix].update(prec5[0].item(), input.size(0))
 
-        # elif args.backpropagation == 2:
+                # elif args.backpropagation == 2:
         #     # LOG("enter backpropagation method : " + str(args.backpropagation) +"\n", logFile)
         #     #　bp_2 
         #     for ix in range(num_outputs):
@@ -244,6 +248,7 @@ def main(**kwargs):
 
     elif args.data == "cifar10" or args.data == "CIFAR10":
         fig_title_str = " on CIFAR-10"
+
     elif args.data == "tiny_imagenet":
         fig_title_str = " on tiny_imagenet"
     else:
@@ -308,7 +313,8 @@ def main(**kwargs):
         cudnn.benchmark = True
 
     # TUT thinkstation data folder path
-    data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
+    # data_folder = "/media/yi/e7036176-287c-4b18-9609-9811b8e33769/tiny_imagenet/tiny-imagenet-200"
+    data_folder = "/media/yi/harddrive/dataset"
 
     # narvi data folder path
     # data_folder = "/home/zhouy/data/tiny-imagenet-200"
@@ -318,8 +324,9 @@ def main(**kwargs):
     # args.batch_size = 1
 
 
-    summary(model, (3,224,224))
+    # summary(model, (3,224,224))
 
+    print("data folder: ", data_folder)
 
     if args.data == "tiny_imagenet":
         train_loader, test_loader = tiny_image_data_loader(data_folder, args)
@@ -334,18 +341,18 @@ def main(**kwargs):
     
     criterion = nn.CrossEntropyLoss().cuda()
 
-    if args.data != "tiny_imagenet":
-        pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
-                                    momentum=args.momentum,
-                                    weight_decay=args.weight_decay)
+    # if args.data != "tiny_imagenet":
+    #     pretrain_optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), args.pretrain_learning_rate,
+    #                                 momentum=args.momentum,
+    #                                 weight_decay=args.weight_decay)
 
-        LOG("==> Pretraining for **1** epoches    \n", logFile)
-        for pretrain_epoch in range(0, 1):
-            accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
-            epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-            LOG(epoch_result, logFile)
+    #     LOG("==> Pretraining for **1** epoches    \n", logFile)
+    #     for pretrain_epoch in range(0, 1):
+    #         accs, losses, lr = train(train_loader, model, criterion, pretrain_optimizer, pretrain_epoch)
+    #         epoch_result = "    pretrain epoch: " + str(pretrain_epoch) + ", pretrain error: " + str(accs) + ", pretrain loss: " + str(losses) + ", pretrain learning rate: " + str(lr) + ", pretrain total train sum loss: " + str(sum(losses))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    #         LOG(epoch_result, logFile)
 
-        summary(model, (3,224,224))
+    #     summary(model, (3,224,224))
 
     LOG("==> Full training    \n", logFile)
     for param in model.parameters():
@@ -468,7 +475,7 @@ def main(**kwargs):
     LOG("program end time: " + end_ts_str +"\n", logFile)
 
     # here plot figures
-    plot_figs(epochs_train_accs, epochs_train_losses, epochs_test_accs, epochs_test_losses, args, captionStrDict)
+    # plot_figs(epochs_train_accs, epochs_train_losses, epochs_test_accs, epochs_test_losses, args, captionStrDict)
     LOG("============Finish============", logFile)
 
 if __name__ == "__main__":
